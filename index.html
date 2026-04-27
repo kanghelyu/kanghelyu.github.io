@@ -18,7 +18,7 @@
     }
     #bg { 
       position: fixed; inset: 0; z-index: 0; 
-      image-rendering: pixelated; /* 关键：全局像素化 */
+      image-rendering: pixelated; /* 全局Minecraft大颗粒风格 */
     }
     .overlay-text {
       position: absolute; z-index: 2; inset: 0;
@@ -129,7 +129,7 @@
     </div>
   </div>
   
-  <div class="small-signature">KLEIN · CALABI-YAU · PIXEL VOID</div>
+  <div class="small-signature">KLEIN · CALABI-YAU · MINECRAFT PIXEL</div>
 
   <script>
     // ============== 语言切换 ==============
@@ -162,7 +162,7 @@
     }
     toggleBtn.addEventListener('click', switchLanguage);
 
-    // ============== 纯数学Canvas动画（大颗粒像素风格极致优化版） ==============
+    // ============== Minecraft大颗粒像素Canvas动画 ==============
     const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d', { alpha: true });
     let w, h, time = 0, mouse = {x: 0, y: 0};
@@ -181,36 +181,36 @@
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
     function initMathRain() {
-      mathRain = Array.from({length: 15}, () => ({  // 大颗粒：数量极少
+      mathRain = Array.from({length: 8}, () => ({  // 仅8个超大颗粒
         x: Math.random() * w,
         y: Math.random() * h,
-        size: Math.random() * 18 + 32,  // 更大颗粒
-        speed: Math.random() * 4.5 + 2.5,
+        size: Math.random() * 26 + 56,  // Minecraft式大块像素 56~82px
+        speed: Math.random() * 3.8 + 2.2,
         symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
         angle: Math.random() * Math.PI * 2,
-        rotSpeed: (Math.random() - 0.5) * 0.025
+        rotSpeed: (Math.random() - 0.5) * 0.018
       }));
     }
 
     function generateKleinParams() {
       kleinParams = [];
-      for (let i = 0; i <= 18; i++) {      // 点阵大幅减少
-        for (let j = 0; j <= 12; j++) {
-          const u = i * Math.PI * 2 / 18;
-          const v = j * Math.PI * 2 / 12;
+      for (let i = 0; i <= 12; i++) {      // 极简点阵
+        for (let j = 0; j <= 8; j++) {
+          const u = i * Math.PI * 2 / 12;
+          const v = j * Math.PI * 2 / 8;
           kleinParams.push({u, v});
         }
       }
     }
 
     function initCalabiTori() {
-      calabiTori = Array.from({length: 4}, (_, i) => ({  // 数量减少
-        cx: w * (0.25 + i * 0.18),
-        cy: h * (0.35 + Math.sin(i) * 0.15),
-        radius: 55 + i * 12,
-        tube: 14 + i * 3,
+      calabiTori = Array.from({length: 3}, (_, i) => ({  // 仅3个超大块
+        cx: w * (0.22 + i * 0.28),
+        cy: h * (0.32 + Math.sin(i) * 0.18),
+        radius: 78 + i * 18,
+        tube: 22 + i * 6,
         rot: Math.random() * Math.PI * 2,
-        rotSpeed: 0.006 + i * 0.002
+        rotSpeed: 0.004 + i * 0.0015
       }));
     }
 
@@ -221,64 +221,64 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
-      // 极简像素网格
-      ctx.strokeStyle = 'rgba(168, 230, 230, 0.08)';
-      ctx.lineWidth = 2;
-      for (let x = 0; x < w; x += 96) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
-      for (let y = 0; y < h; y += 96) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+      // Minecraft式超大粗颗粒网格
+      ctx.strokeStyle = 'rgba(168, 230, 230, 0.09)';
+      ctx.lineWidth = 4;
+      for (let x = 0; x < w; x += 128) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 128) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
     }
 
     function drawMathRain() {
-      ctx.imageSmoothingEnabled = false;   // 全局像素化
-      ctx.shadowBlur = 4;                  // 极低辉光，突出颗粒感
+      ctx.imageSmoothingEnabled = false;
+      ctx.shadowBlur = 3;                  // 极低辉光，纯块状
       ctx.shadowColor = '#a8e6e6';
       for (let r of mathRain) {
         ctx.save();
         ctx.translate(r.x, r.y);
         ctx.rotate(r.angle);
         ctx.font = `bold ${r.size}px monospace`;
-        ctx.fillStyle = `rgba(244, 217, 160, ${0.9 + Math.sin(time * 0.15) * 0.1})`;
+        ctx.fillStyle = `rgba(244, 217, 160, ${0.92 + Math.sin(time * 0.18) * 0.08})`;
         ctx.fillText(r.symbol, 0, 0);
         ctx.restore();
 
         r.y += r.speed;
         r.angle += r.rotSpeed;
-        if (r.y > h + 80) {
-          r.y = -60;
+        if (r.y > h + 100) {
+          r.y = -80;
           r.x = Math.random() * w;
         }
         const dx = mouse.x - r.x;
         const dy = mouse.y - r.y;
-        if (Math.hypot(dx, dy) < 220) r.x += dx * 0.008;
+        if (Math.hypot(dx, dy) < 260) r.x += dx * 0.006;
       }
       ctx.imageSmoothingEnabled = true;
       ctx.shadowBlur = 0;
     }
 
     function drawKleinBottle() {
-      const phase = time * 0.0015;
-      ctx.strokeStyle = 'rgba(244, 217, 160, 0.75)';
-      ctx.lineWidth = 3.5;                 // 粗颗粒线条
-      ctx.shadowBlur = 8;
+      const phase = time * 0.0018;
+      ctx.strokeStyle = 'rgba(244, 217, 160, 0.82)';
+      ctx.lineWidth = 8;                   // Minecraft粗颗粒线条
+      ctx.shadowBlur = 6;
       ctx.shadowColor = '#f4d9a0';
 
-      for (let i = 0; i < kleinParams.length - 1; i++) {
+      for (let i = 0; i < kleinParams.length - 1; i += 2) {  // 进一步稀疏
         const p1 = kleinParams[i];
         const p2 = kleinParams[i + 1];
-        const offset1 = Math.sin(p1.u * 3 + phase) * 12;
-        const offset2 = Math.sin(p2.u * 3 + phase) * 12;
+        const offset1 = Math.sin(p1.u * 2.5 + phase) * 18;
+        const offset2 = Math.sin(p2.u * 2.5 + phase) * 18;
 
-        const x1 = (2 + Math.cos(p1.v)) * Math.cos(p1.u) * 105 + w * 0.72 + offset1;
-        const y1 = (2 + Math.cos(p1.v)) * Math.sin(p1.u) * 105 + h * 0.38 + offset1 * 0.5;
-        const z1 = Math.sin(p1.v) * 65;
-        const projX1 = x1 + z1 * 0.55;
-        const projY1 = y1 + z1 * 0.25;
+        const x1 = (2 + Math.cos(p1.v)) * Math.cos(p1.u) * 92 + w * 0.73 + offset1;
+        const y1 = (2 + Math.cos(p1.v)) * Math.sin(p1.u) * 92 + h * 0.36 + offset1 * 0.4;
+        const z1 = Math.sin(p1.v) * 52;
+        const projX1 = x1 + z1 * 0.48;
+        const projY1 = y1 + z1 * 0.22;
 
-        const x2 = (2 + Math.cos(p2.v)) * Math.cos(p2.u) * 105 + w * 0.72 + offset2;
-        const y2 = (2 + Math.cos(p2.v)) * Math.sin(p2.u) * 105 + h * 0.38 + offset2 * 0.5;
-        const z2 = Math.sin(p2.v) * 65;
-        const projX2 = x2 + z2 * 0.55;
-        const projY2 = y2 + z2 * 0.25;
+        const x2 = (2 + Math.cos(p2.v)) * Math.cos(p2.u) * 92 + w * 0.73 + offset2;
+        const y2 = (2 + Math.cos(p2.v)) * Math.sin(p2.u) * 92 + h * 0.36 + offset2 * 0.4;
+        const z2 = Math.sin(p2.v) * 52;
+        const projX2 = x2 + z2 * 0.48;
+        const projY2 = y2 + z2 * 0.22;
 
         ctx.beginPath();
         ctx.moveTo(projX1, projY1);
@@ -288,20 +288,20 @@
     }
 
     function drawCalabiYau() {
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 8;
       ctx.shadowColor = '#a8e6e6';
       for (let t of calabiTori) {
         t.rot += t.rotSpeed;
         ctx.save();
         ctx.translate(t.cx, t.cy);
         ctx.rotate(t.rot);
-        ctx.strokeStyle = 'rgba(168, 230, 230, 0.85)';
-        ctx.lineWidth = 4;               // 粗颗粒
+        ctx.strokeStyle = 'rgba(168, 230, 230, 0.88)';
+        ctx.lineWidth = 9;               // 超粗颗粒
         ctx.beginPath();
-        ctx.ellipse(0, 0, t.radius, t.radius * 0.4, 0, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, t.radius, t.radius * 0.38, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.ellipse(0, 0, t.tube, t.tube * 1.6, Math.PI / 3, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, t.tube, t.tube * 1.5, Math.PI / 3, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
