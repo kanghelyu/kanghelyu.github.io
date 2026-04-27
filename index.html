@@ -17,11 +17,11 @@
 
     html, body {
       width: 100%;
-      min-height: 100vh;
-      overflow-x: hidden;
+      height: 100%;
+      overflow: hidden;
       background: var(--math-ink);
       color: var(--paper);
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
     }
 
     #bg {
@@ -34,22 +34,38 @@
     }
 
     .overlay-text {
-      position: relative;
+      position: fixed;
+      inset: 0;
       z-index: 2;
-      min-height: 100vh;
       display: flex;
-      align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 8vw 10vw;
+      padding: 112px 10vw 72px;
       pointer-events: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
       background:
         radial-gradient(circle at center, rgba(15,28,34,0.08), rgba(15,28,34,0.22) 54%, rgba(15,28,34,0.50) 100%);
+    }
+
+    .overlay-text::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .overlay-text::-webkit-scrollbar-track {
+      background: rgba(15, 28, 34, 0.45);
+    }
+
+    .overlay-text::-webkit-scrollbar-thumb {
+      background: rgba(244, 217, 160, 0.58);
+      border: 2px solid rgba(15, 28, 34, 0.65);
     }
 
     .content-wrapper {
       max-width: 860px;
       width: 100%;
+      margin: auto 0;
       pointer-events: auto;
       filter: drop-shadow(0 12px 22px rgba(0,0,0,0.42));
     }
@@ -95,7 +111,7 @@
       font-size: clamp(1.05rem, 1.8vw, 1.22rem);
       line-height: 1.9;
       color: #e8d9c0;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       text-shadow:
         3px 3px 0 rgba(0,0,0,0.42),
         0 0 8px rgba(0,0,0,0.28);
@@ -147,6 +163,7 @@
 
     .footer {
       margin-top: 64px;
+      padding-bottom: 8px;
       font-size: 1.02rem;
       color: #c8b68a;
       opacity: 0.84;
@@ -185,7 +202,8 @@
     a:hover { text-shadow: 0 0 10px rgba(168,230,230,0.45); }
 
     @media (max-width: 760px) {
-      .overlay-text { padding: 22vw 8vw 12vw; }
+      .overlay-text { padding: 96px 8vw 52px; }
+      .content-wrapper { margin: 0; }
       .lang-toggle { top: 18px; right: 18px; padding: 10px 18px; }
     }
   </style>
@@ -204,11 +222,17 @@
       <div id="subtitle" class="subtitle">Undergraduate student in mathematics at Sichuan University.</div>
 
       <p id="intro-p1">My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.</p>
-      <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026.</p>
+      <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.</p>
 
-      <h2 id="exp-title">Academic Experience</h2>
-      <p id="exp-p1">I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.</p>
-      <p id="exp-p2">I have also worked on undergraduate research and modeling projects.</p>
+      <h2 id="exp-title">Experience</h2>
+      <p id="exp-p1">Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), from 01/07/2024 to 15/07/2024.</p>
+      <p id="exp-p2">International Mathematics Summer School at Westlake University, from 06/07/2025 to 16/07/2025.</p>
+      <p id="exp-p3">Visiting Program at New Uzbekistan University, from 12/11/2025 to 23/01/2026.</p>
+      <p id="exp-p4">Visiting Program at SUSTech, from 12/03/2026 to 12/05/2026.</p>
+
+      <h2 id="awards-title">Awards</h2>
+      <p id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</p>
+      <p id="awards-p2">College Students' Innovative Entrepreneurial Training Plan Program, National Level.</p>
 
       <h2 id="notes-title">Notes</h2>
       <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
@@ -238,14 +262,17 @@
         subtitle: "Undergraduate student in mathematics at Sichuan University.",
         introP1: "My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.",
         introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.",
+
         expTitle: "Experience",
-        expP1: "Summer School at New Uzbekistan University(Speakers: Pavel Etingof, Yuri Berest) from 01/07/2024 to 15/07/2024",
-        expP2: "International Mathematics Summer School at Westlake University from 06/07/2025 to 16/07/2025",
-        expP3: "Visiting Program at New Uzbekistan University from 12/11/2025 to 23/01/2026",
-        expP4: "Visiting Program at SusTech from 12/03/2026 to 12/05/2026",
-        expTitle: "Awrds",
-        expP1: "Contemporary Undergraduate Mathematical Contest in Modeling National Second Prize",
-        expP2: "College Students' Innovative Entrepreneurial Training Plan Program National Level",
+        expP1: "Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), from 01/07/2024 to 15/07/2024.",
+        expP2: "International Mathematics Summer School at Westlake University, from 06/07/2025 to 16/07/2025.",
+        expP3: "Visiting Program at New Uzbekistan University, from 12/11/2025 to 23/01/2026.",
+        expP4: "Visiting Program at SUSTech, from 12/03/2026 to 12/05/2026.",
+
+        awardsTitle: "Awards",
+        awardsP1: "Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.",
+        awardsP2: "College Students' Innovative Entrepreneurial Training Plan Program, National Level.",
+
         notesTitle: "Notes",
         notesP: "This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.",
         contactTitle: "Contact",
@@ -256,30 +283,29 @@
         btnCv: "CV"
       },
       zh: {
-eyebrow: "数学 · 几何 · 表示论",
-subtitle: "四川大学数学专业本科生",
-introP1: "我的兴趣方向是纯数学，尤其是几何、代数、表示论以及数学物理。",
-introP2: "我将于2026年开始在南方科技大学攻读博士学位，导师为 Vyacheslav Futorny 教授。",
+        eyebrow: "数学 · 几何 · 表示论",
+        subtitle: "四川大学数学专业本科生",
+        introP1: "我的兴趣方向是纯数学，尤其是几何、代数、表示论以及数学物理。",
+        introP2: "我将于2026年开始在南方科技大学攻读博士学位，导师为 Vyacheslav Futorny 教授。",
 
-expTitle: "学术经历",
-expP1: "2024年7月1日至2024年7月15日，参加新乌兹别克斯坦大学暑期学校（讲者：Pavel Etingof、Yuri Berest）。",
-expP2: "2025年7月6日至2025年7月16日，参加西湖大学国际数学暑期学校。",
-expP3: "2025年11月12日至2026年1月23日，参加新乌兹别克斯坦大学访问项目。",
-expP4: "2026年3月12日至2026年5月12日，参加南方科技大学访问项目。",
+        expTitle: "学术经历",
+        expP1: "2024年7月1日至2024年7月15日，参加新乌兹别克斯坦大学暑期学校（讲者：Pavel Etingof、Yuri Berest）。",
+        expP2: "2025年7月6日至2025年7月16日，参加西湖大学国际数学暑期学校。",
+        expP3: "2025年11月12日至2026年1月23日，参加新乌兹别克斯坦大学访问项目。",
+        expP4: "2026年3月12日至2026年5月12日，参加南方科技大学访问项目。",
 
-awardsTitle: "获奖与项目",
-awardsP1: "全国大学生数学建模竞赛国家二等奖。",
-awardsP2: "大学生创新创业训练计划项目国家级立项。",
+        awardsTitle: "获奖与项目",
+        awardsP1: "全国大学生数学建模竞赛国家二等奖。",
+        awardsP2: "大学生创新创业训练计划项目国家级立项。",
 
-notesTitle: "笔记",
-notesP: "此 GitHub 页面旨在收集数学笔记、阅读材料以及小型研究相关项目。",
-contactTitle: "联系方式",
-footer: "几何 · 代数 · 表示论 · 数学物理",
-btnEmail: "邮件",
-btnGithub: "GitHub",
-btnNotes: "笔记",
-btnCv: "简历"
-
+        notesTitle: "笔记",
+        notesP: "此 GitHub 页面旨在收集数学笔记、阅读材料以及小型研究相关项目。",
+        contactTitle: "联系方式",
+        footer: "几何 · 代数 · 表示论 · 数学物理",
+        btnEmail: "邮件",
+        btnGithub: "GitHub",
+        btnNotes: "笔记",
+        btnCv: "简历"
       }
     };
 
@@ -294,9 +320,17 @@ btnCv: "简历"
       document.getElementById("subtitle").textContent = t.subtitle;
       document.getElementById("intro-p1").textContent = t.introP1;
       document.getElementById("intro-p2").textContent = t.introP2;
+
       document.getElementById("exp-title").textContent = t.expTitle;
       document.getElementById("exp-p1").textContent = t.expP1;
       document.getElementById("exp-p2").textContent = t.expP2;
+      document.getElementById("exp-p3").textContent = t.expP3;
+      document.getElementById("exp-p4").textContent = t.expP4;
+
+      document.getElementById("awards-title").textContent = t.awardsTitle;
+      document.getElementById("awards-p1").textContent = t.awardsP1;
+      document.getElementById("awards-p2").textContent = t.awardsP2;
+
       document.getElementById("notes-title").textContent = t.notesTitle;
       document.getElementById("notes-p").textContent = t.notesP;
       document.getElementById("contact-title").textContent = t.contactTitle;
@@ -647,7 +681,7 @@ btnCv: "简历"
     function drawBigFormulaBlocks() {
       const items = [
         { text: "∂² = 0", x: 0.16, y: 0.18, c: "rgba(244,217,160,0.30)" },
-        { text: "∇×F", x: 0.83, y: 0.18, c: "rgba(168,230,230,0.30)" },
+        { text: "Spec(R)", x: 0.83, y: 0.18, c: "rgba(168,230,230,0.30)" },
         { text: "H⁰(X,L)", x: 0.17, y: 0.78, c: "rgba(168,230,230,0.24)" },
         { text: "GLₙ", x: 0.83, y: 0.78, c: "rgba(244,217,160,0.25)" }
       ];
