@@ -131,34 +131,8 @@
   <script>
     // ============== 语言切换 ==============
     const translations = {
-      en: {
-        eyebrow: "MATHEMATICS · GEOMETRY · REPRESENTATION THEORY",
-        subtitle: "Undergraduate student in mathematics at Sichuan University.",
-        introP1: "My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.",
-        introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.",
-        expTitle: "Academic Experience",
-        expP1: "I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.",
-        expP2: "I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.",
-        notesTitle: "Notes",
-        notesP: "This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.",
-        contactTitle: "Contact",
-        footer: "GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
-        btnEmail: "Email", btnGithub: "GitHub", btnNotes: "Notes", btnCv: "CV"
-      },
-      zh: {
-        eyebrow: "数学 · 几何 · 表示论",
-        subtitle: "四川大学数学系本科生",
-        introP1: "我的兴趣领域是纯数学，特别是几何、代数、表示论以及数学物理。",
-        introP2: "我将于2026年开始在南方科技大学攻读博士学位，由Vyacheslav Futorny教授指导。",
-        expTitle: "学术经历",
-        expP1: "我参加了多项数学项目和研究活动，包括在新乌兹别克斯坦大学和西湖大学的暑期学校。",
-        expP2: "我还参与了本科研究和建模项目，涉及数学抽象、几何建模、优化和算法方法。",
-        notesTitle: "笔记",
-        notesP: "此GitHub页面旨在收集数学笔记、阅读材料和小规模研究相关项目。",
-        contactTitle: "联系方式",
-        footer: "几何 · 代数 · 表示论 · 数学物理",
-        btnEmail: "邮件", btnGithub: "GitHub", btnNotes: "笔记", btnCv: "简历"
-      }
+      en: { eyebrow: "MATHEMATICS · GEOMETRY · REPRESENTATION THEORY", subtitle: "Undergraduate student in mathematics at Sichuan University.", introP1: "My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.", introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.", expTitle: "Academic Experience", expP1: "I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.", expP2: "I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.", notesTitle: "Notes", notesP: "This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.", contactTitle: "Contact", footer: "GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS", btnEmail: "Email", btnGithub: "GitHub", btnNotes: "Notes", btnCv: "CV" },
+      zh: { eyebrow: "数学 · 几何 · 表示论", subtitle: "四川大学数学系本科生", introP1: "我的兴趣领域是纯数学，特别是几何、代数、表示论以及数学物理。", introP2: "我将于2026年开始在南方科技大学攻读博士学位，由Vyacheslav Futorny教授指导。", expTitle: "学术经历", expP1: "我参加了多项数学项目和研究活动，包括在新乌兹别克斯坦大学和西湖大学的暑期学校。", expP2: "我还参与了本科研究和建模项目，涉及数学抽象、几何建模、优化和算法方法。", notesTitle: "笔记", notesP: "此GitHub页面旨在收集数学笔记、阅读材料和小规模研究相关项目。", contactTitle: "联系方式", footer: "几何 · 代数 · 表示论 · 数学物理", btnEmail: "邮件", btnGithub: "GitHub", btnNotes: "笔记", btnCv: "简历" }
     };
 
     let currentLang = 'en';
@@ -185,23 +159,26 @@
     }
     toggleBtn.addEventListener('click', switchLanguage);
 
-    // ============== 纯数学Canvas动画 ==============
+    // ============== 纯数学Canvas动画（已优化） ==============
     const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let w, h, time = 0, mouse = {x: 0, y: 0};
-    let particles = [], mathRain = [], kleinPoints = [], calabiTori = [];
+    let mathRain = [], kleinParams = [], calabiTori = [];
+
+    const mathSymbols = ['∫', '∂', '∇', '∑', '∏', '∞', 'Δ', 'Ω', 'Φ', 'Ψ'];
 
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
+      initMathRain();
+      generateKleinParams();
+      initCalabiTori();
     }
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-    // 数学符号雨
-    const mathSymbols = ['∫', '∂', '∇', '∑', '∏', '∞', 'Δ', 'Ω', 'Φ', 'Ψ'];
     function initMathRain() {
-      mathRain = Array.from({length: 85}, () => ({
+      mathRain = Array.from({length: 55}, () => ({  // 优化：数量降至55
         x: Math.random() * w,
         y: Math.random() * h,
         size: Math.random() * 18 + 12,
@@ -212,25 +189,17 @@
       }));
     }
 
-    // 旋转克莱因瓶参数化投影（4D→2D）
-    function generateKlein(uSteps = 36, vSteps = 24) {
-      kleinPoints = [];
-      for (let i = 0; i <= uSteps; i++) {
-        for (let j = 0; j <= vSteps; j++) {
-          const u = i * Math.PI * 2 / uSteps;
-          const v = j * Math.PI * 2 / vSteps;
-          // Klein bottle parametric equations (simplified projection)
-          const x = (2 + Math.cos(v)) * Math.cos(u) * 120 + w * 0.68;
-          const y = (2 + Math.cos(v)) * Math.sin(u) * 120 + h * 0.42;
-          const z = Math.sin(v) * 80 + Math.sin(u) * 40;
-          const projX = x + z * 0.6;
-          const projY = y + z * 0.3;
-          kleinPoints.push({projX, projY, u, v});
+    function generateKleinParams() {
+      kleinParams = [];
+      for (let i = 0; i <= 36; i++) {
+        for (let j = 0; j <= 24; j++) {
+          const u = i * Math.PI * 2 / 36;
+          const v = j * Math.PI * 2 / 24;
+          kleinParams.push({u, v});
         }
       }
     }
 
-    // Calabi-Yau近似：多层旋转环面
     function initCalabiTori() {
       calabiTori = Array.from({length: 9}, (_, i) => ({
         cx: w * (0.28 + i * 0.08),
@@ -249,7 +218,6 @@
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, w, h);
 
-      // 微弱数学网格
       ctx.strokeStyle = 'rgba(168, 230, 230, 0.07)';
       ctx.lineWidth = 1;
       for (let x = 0; x < w; x += 64) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
@@ -257,7 +225,7 @@
     }
 
     function drawMathRain() {
-      ctx.shadowBlur = 14;
+      ctx.shadowBlur = 12;      // 优化：统一设置一次
       ctx.shadowColor = '#a8e6e6';
       for (let r of mathRain) {
         ctx.save();
@@ -274,65 +242,71 @@
           r.y = -40;
           r.x = Math.random() * w;
         }
-        // 鼠标轻微吸引
         const dx = mouse.x - r.x;
         const dy = mouse.y - r.y;
         if (Math.hypot(dx, dy) < 180) r.x += dx * 0.012;
       }
+      ctx.shadowBlur = 0;  // 重置
     }
 
     function drawKleinBottle() {
+      const phase = time * 0.0012;
       ctx.strokeStyle = 'rgba(244, 217, 160, 0.65)';
       ctx.lineWidth = 1.8;
-      ctx.shadowBlur = 22;
+      ctx.shadowBlur = 18;
       ctx.shadowColor = '#f4d9a0';
-      const phase = time * 0.0008;
 
-      for (let i = 0; i < kleinPoints.length - 1; i++) {
-        const p1 = kleinPoints[i];
-        const p2 = kleinPoints[i + 1];
+      for (let i = 0; i < kleinParams.length - 1; i++) {
+        const p1 = kleinParams[i];
+        const p2 = kleinParams[i + 1];
         const offset1 = Math.sin(p1.u * 4 + phase) * 8;
         const offset2 = Math.sin(p2.u * 4 + phase) * 8;
+
+        const x1 = (2 + Math.cos(p1.v)) * Math.cos(p1.u) * 120 + w * 0.68 + offset1;
+        const y1 = (2 + Math.cos(p1.v)) * Math.sin(p1.u) * 120 + h * 0.42 + offset1 * 0.6;
+        const z1 = Math.sin(p1.v) * 80 + Math.sin(p1.u) * 40;
+        const projX1 = x1 + z1 * 0.6;
+        const projY1 = y1 + z1 * 0.3;
+
+        const x2 = (2 + Math.cos(p2.v)) * Math.cos(p2.u) * 120 + w * 0.68 + offset2;
+        const y2 = (2 + Math.cos(p2.v)) * Math.sin(p2.u) * 120 + h * 0.42 + offset2 * 0.6;
+        const z2 = Math.sin(p2.v) * 80 + Math.sin(p2.u) * 40;
+        const projX2 = x2 + z2 * 0.6;
+        const projY2 = y2 + z2 * 0.3;
+
         ctx.beginPath();
-        ctx.moveTo(p1.projX + offset1, p1.projY + offset1 * 0.6);
-        ctx.lineTo(p2.projX + offset2, p2.projY + offset2 * 0.6);
+        ctx.moveTo(projX1, projY1);
+        ctx.lineTo(projX2, projY2);
         ctx.stroke();
       }
-      // 轻微旋转整体
-      generateKlein(36, 24); // 每帧微调参数实现旋转
     }
 
     function drawCalabiYau() {
-      ctx.shadowBlur = 28;
+      ctx.shadowBlur = 22;
       ctx.shadowColor = '#a8e6e6';
       for (let t of calabiTori) {
         t.rot += t.rotSpeed;
         ctx.save();
         ctx.translate(t.cx + Math.sin(time * 0.001) * 12, t.cy);
         ctx.rotate(t.rot);
-
         ctx.strokeStyle = 'rgba(168, 230, 230, 0.75)';
         ctx.lineWidth = 1.6;
-        // 外环
         ctx.beginPath();
         ctx.ellipse(0, 0, t.radius, t.radius * 0.38, 0, 0, Math.PI * 2);
         ctx.stroke();
-        // 内管
         ctx.beginPath();
         ctx.ellipse(0, 0, t.tube, t.tube * 1.8, Math.PI / 3, 0, Math.PI * 2);
         ctx.stroke();
-
         ctx.restore();
       }
     }
 
     function drawParticleConnections() {
-      ctx.shadowBlur = 0;
       ctx.strokeStyle = 'rgba(168, 230, 230, 0.12)';
       ctx.lineWidth = 0.9;
-      for (let i = 0; i < mathRain.length; i += 7) {
+      for (let i = 0; i < mathRain.length; i += 9) {  // 优化：采样间隔加大
         const p1 = mathRain[i];
-        for (let j = i + 1; j < i + 14 && j < mathRain.length; j++) {
+        for (let j = i + 1; j < i + 16 && j < mathRain.length; j++) {
           const p2 = mathRain[j];
           const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
           if (d < 135) {
@@ -360,9 +334,6 @@
 
     // 初始化
     resize();
-    initMathRain();
-    generateKlein();
-    initCalabiTori();
     animate();
   </script>
 </body>
