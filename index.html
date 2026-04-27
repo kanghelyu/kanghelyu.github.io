@@ -513,91 +513,261 @@ function generateRain() {
       ctx.globalCompositeOperation = "source-over";
     }
 
-    // ---------------- Forest ----------------
-    let backTrees = [];
-    let middleTrees = [];
-    let frontTrees = [];
+    // ---------------- Fractal forest ----------------
+let backFractals = [];
+let middleFractals = [];
+let frontFractals = [];
 
-    function makeTreeLine(count, yBase, minH, maxH, spread, swayAmp) {
-      const arr = [];
-      for (let i = 0; i < count; i++) {
-        arr.push({
-          x: (i / Math.max(1, count - 1)) * w + rand(-spread, spread),
-          y: yBase + rand(-10, 12),
-          h: rand(minH, maxH),
-          tw: rand(13, 35),
-          sway: rand(0, Math.PI * 2),
-          swayAmp
-        });
-      }
-      return arr;
-    }
+function weightedPick(entries) {
+  const total = entries.reduce((s, item) => s + item.w, 0);
+  let r = Math.random() * total;
+  for (const item of entries) {
+    r -= item.w;
+    if (r <= 0) return item.type;
+  }
+  return entries[entries.length - 1].type;
+}
 
-    function generateTrees() {
-      backTrees = makeTreeLine(64, horizon - 25, 54, 118, 18, 1.2);
-      middleTrees = makeTreeLine(56, horizon - 2, 82, 155, 24, 1.8);
-      frontTrees = makeTreeLine(46, horizon + 24, 108, 210, 30, 2.2);
-    }
+function makeFractalLine(count, yBase, minScale, maxScale, spread, swayAmp, weights) {
+  const arr = [];
+  for (let i = 0; i < count; i++) {
+    arr.push({
+      x: (i / Math.max(1, count - 1)) * w + rand(-spread, spread),
+      y: yBase + rand(-12, 12),
+      scale: rand(minScale, maxScale),
+      sway: rand(0, Math.PI * 2),
+      swayAmp,
+      rot: rand(-0.08, 0.08),
+      type: weightedPick(weights)
+    });
+  }
+  return arr;
+}
 
-    function drawPine(tree, fill, t, sharpen = 1) {
-      const offset = Math.sin(t * 0.0018 + tree.sway) * tree.swayAmp;
-      const x = tree.x + offset;
-      const y = tree.y;
-      const height = tree.h;
-      const tw = tree.tw;
+function generateTrees() {
+  backFractals = makeFractalLine(
+    26, horizon - 22, 26, 56, 26, 0.8,
+    [
+      { type: "branch", w: 3 },
+      { type: "fern", w: 2 },
+      { type: "triangle", w: 3 },
+      { type: "crystal", w: 2 }
+    ]
+  );
 
-      ctx.fillStyle = fill;
+  middleFractals = makeFractalLine(
+    22, horizon - 2, 38, 78, 30, 1.2,
+    [
+      { type: "branch", w: 3 },
+      { type: "fern", w: 3 },
+      { type: "triangle", w: 2 },
+      { type: "crystal", w: 2 }
+    ]
+  );
 
-      ctx.fillRect(x - 1.1, y - height * 0.04, 2.2, height * 0.34);
+  frontFractals = makeFractalLine(
+    18, horizon + 22, 52, 98, 34, 1.6,
+    [
+      { type: "branch", w: 2 },
+      { type: "fern", w: 3 },
+      { type: "triangle", w: 2 },
+      { type: "crystal", w: 3 }
+    ]
+  );
+}
 
-      const layers = 5;
-      for (let i = 0; i < layers; i++) {
-        const yy = y - height * (0.08 + i * 0.145);
-        const ww = tw * (1.15 - i * 0.14) * sharpen;
-        const hh = height * (0.24 - i * 0.013);
+function drawFractalLine(arr, color, alpha, t) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  for (const f of arr) {
+    drawFractal(f, color, t);
+  }
+  ctx.restore();
+}
 
-        ctx.beginPath();
-        ctx.moveTo(x, yy - hh);
-        ctx.lineTo(x - ww, yy + hh * 0.28);
-        ctx.lineTo(x + ww, yy + hh * 0.28);
-        ctx.closePath();
-        ctx.fill();
-      }
-    }
+function drawFractal(f, color, t) {
+  const offset = Math.sin(t * 0.0016 + f.sway) * f.swayAmp;
+  const breathe = 1 + Math.sin(t * 0.002 + f.sway) * 0.02;
 
-    function drawTreeLine(arr, color, alpha, t, sharpen) {
-      ctx.globalAlpha = alpha;
-      for (const tree of arr) {
-        drawPine(tree, color, t, sharpen);
-      }
-      ctx.globalAlpha = 1;
-    }
+  ctx.save();
+  ctx.translate(f.x + offset, f.y);
+  ctx.rotate(f.rot + Math.sin(t * 0.001 + f.sway) * 0.03);
+  ctx.scale(breathe, breathe);
 
-    function drawForestReflection(t) {
-      ctx.save();
-      ctx.translate(0, horizon * 2 + 22);
-      ctx.scale(1, -1);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = Math.max(0.7, f.scale * 0.035);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
 
-      ctx.globalAlpha = 0.12;
-      for (const tree of backTrees) drawPine(tree, "rgba(32, 55, 54, 0.9)", t, 0.95);
+  if (f.type === "branch") {
+    drawBranchFractal(f.scale, 4);
+  } else if (f.type === "fern") {
+    drawFernFractal(f.scale * 0.95, 4);
+  } else if (f.type === "triangle") {
+    drawTriangleFractal(f.scale * 0.95, 4);
+  } else {
+    drawCrystalFractal(f.scale * 0.52, 3);
+  }
 
-      ctx.globalAlpha = 0.17;
-      for (const tree of middleTrees) drawPine(tree, "rgba(25, 43, 42, 0.95)", t, 1.02);
+  ctx.restore();
+}
 
-      ctx.globalAlpha = 0.2;
-      for (const tree of frontTrees) drawPine(tree, "rgba(18, 33, 32, 0.98)", t, 1.04);
+function drawBranchFractal(len, depth) {
+  if (depth <= 0 || len < 4) return;
 
-      ctx.restore();
-      ctx.globalAlpha = 1;
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -len);
+  ctx.stroke();
 
-      // Soft blur-like water veil over the reflection.
-      const veil = ctx.createLinearGradient(0, horizon, 0, h);
-      veil.addColorStop(0, "rgba(58, 82, 86, 0.12)");
-      veil.addColorStop(0.35, "rgba(48, 70, 76, 0.28)");
-      veil.addColorStop(1, "rgba(34, 50, 55, 0.54)");
-      ctx.fillStyle = veil;
-      ctx.fillRect(0, horizon, w, h - horizon);
-    }
+  ctx.save();
+  ctx.translate(0, -len);
+
+  const prev = ctx.lineWidth;
+
+  ctx.save();
+  ctx.rotate(-0.42);
+  ctx.lineWidth = Math.max(0.45, prev * 0.76);
+  drawBranchFractal(len * 0.76, depth - 1);
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(0.46);
+  ctx.lineWidth = Math.max(0.45, prev * 0.76);
+  drawBranchFractal(len * 0.74, depth - 1);
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(0.03);
+  ctx.lineWidth = Math.max(0.4, prev * 0.62);
+  drawBranchFractal(len * 0.58, depth - 1);
+  ctx.restore();
+
+  ctx.restore();
+}
+
+function drawFernFractal(len, depth) {
+  if (depth <= 0 || len < 5) return;
+
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, -len);
+  ctx.stroke();
+
+  const prev = ctx.lineWidth;
+
+  for (let i = 0.24; i < 0.94; i += 0.18) {
+    const y = -len * i;
+    const leaf = len * (0.18 + (1 - i) * 0.28);
+
+    ctx.save();
+    ctx.translate(0, y);
+    ctx.rotate(-0.92);
+    ctx.lineWidth = Math.max(0.35, prev * 0.72);
+    drawBranchFractal(leaf, depth - 1);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(0, y);
+    ctx.rotate(0.92);
+    ctx.lineWidth = Math.max(0.35, prev * 0.72);
+    drawBranchFractal(leaf * 0.96, depth - 1);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.translate(0, -len);
+  ctx.lineWidth = Math.max(0.35, prev * 0.7);
+  drawFernFractal(len * 0.72, depth - 1);
+  ctx.restore();
+}
+
+function trianglePath(size) {
+  const h = size * 0.866;
+  ctx.beginPath();
+  ctx.moveTo(0, -h);
+  ctx.lineTo(-size / 2, 0);
+  ctx.lineTo(size / 2, 0);
+  ctx.closePath();
+}
+
+function drawTriangleFractal(size, depth) {
+  if (depth <= 0 || size < 8) return;
+
+  trianglePath(size);
+  ctx.stroke();
+
+  if (depth === 1) return;
+
+  const h = size * 0.866;
+  const child = size * 0.5;
+
+  ctx.save();
+  ctx.translate(0, -h * 0.5);
+  drawTriangleFractal(child, depth - 1);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(-size * 0.25, 0);
+  drawTriangleFractal(child, depth - 1);
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(size * 0.25, 0);
+  drawTriangleFractal(child, depth - 1);
+  ctx.restore();
+}
+
+function regularPolygon(radius, sides) {
+  ctx.beginPath();
+  for (let i = 0; i < sides; i++) {
+    const a = -Math.PI / 2 + (i * Math.PI * 2) / sides;
+    const x = Math.cos(a) * radius;
+    const y = Math.sin(a) * radius;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+}
+
+function drawCrystalFractal(radius, depth) {
+  if (depth <= 0 || radius < 4) return;
+
+  regularPolygon(radius, 6);
+  ctx.stroke();
+
+  if (depth === 1) return;
+
+  for (let i = 0; i < 6; i++) {
+    const a = -Math.PI / 2 + (i * Math.PI * 2) / 6;
+    ctx.save();
+    ctx.translate(Math.cos(a) * radius * 0.9, Math.sin(a) * radius * 0.9);
+    ctx.scale(0.82, 0.82);
+    drawCrystalFractal(radius * 0.48, depth - 1);
+    ctx.restore();
+  }
+}
+
+function drawForestReflection(t) {
+  ctx.save();
+  ctx.translate(0, horizon * 2 + 22);
+  ctx.scale(1, -1);
+
+  drawFractalLine(backFractals, "rgba(32, 55, 54, 0.9)", 0.11, t);
+  drawFractalLine(middleFractals, "rgba(25, 43, 42, 0.95)", 0.16, t);
+  drawFractalLine(frontFractals, "rgba(18, 33, 32, 0.98)", 0.2, t);
+
+  ctx.restore();
+
+  const veil = ctx.createLinearGradient(0, horizon, 0, h);
+  veil.addColorStop(0, "rgba(58, 82, 86, 0.12)");
+  veil.addColorStop(0.35, "rgba(48, 70, 76, 0.28)");
+  veil.addColorStop(1, "rgba(34, 50, 55, 0.54)");
+  ctx.fillStyle = veil;
+  ctx.fillRect(0, horizon, w, h - horizon);
+}
+
 
     // ---------------- Sky and lake ----------------
     function drawSky() {
