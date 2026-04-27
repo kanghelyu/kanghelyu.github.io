@@ -3,8 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Kanghe Lyu</title>
+
   <style>
+    :root {
+      --cream: #fff4e4;
+      --soft-cream: rgba(255, 244, 228, 0.92);
+      --muted-cream: rgba(255, 236, 210, 0.72);
+      --gold: #f4c98b;
+      --gold-soft: rgba(244, 201, 139, 0.7);
+      --blue-shadow: #263d46;
+      --link: #ffd69a;
+      --link-hover: #ffe8bf;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,9 +28,13 @@
       width: 100%;
       min-height: 100%;
       overflow-x: hidden;
-      font-family: "Georgia", "Times New Roman", serif;
-      color: #f3efe7;
-      background: #31404c;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--cream);
+      background: #33454d;
+    }
+
+    body {
+      min-height: 100vh;
     }
 
     #bg {
@@ -26,160 +43,343 @@
       z-index: 0;
     }
 
-    .overlay {
+    /*
+      This layer is not a text box.
+      It is a soft atmospheric darkening on the left,
+      so the text remains readable while the rain and lake remain visible.
+    */
+    .reading-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(25, 39, 42, 0.62) 0%,
+          rgba(25, 39, 42, 0.46) 28%,
+          rgba(25, 39, 42, 0.18) 55%,
+          rgba(25, 39, 42, 0.03) 100%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(26, 35, 38, 0.16) 0%,
+          rgba(26, 35, 38, 0) 42%,
+          rgba(20, 28, 28, 0.24) 100%
+        );
+    }
+
+    .page {
       position: relative;
       z-index: 2;
       min-height: 100vh;
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(280px, 780px) 1fr;
       align-items: center;
-      padding: 70px 8vw;
+      padding: 72px 8vw;
     }
 
     .content {
-      max-width: 760px;
-      line-height: 1.85;
+      max-width: 780px;
       text-shadow:
-        0 1px 2px rgba(0,0,0,0.25),
-        0 6px 24px rgba(0,0,0,0.18),
-        0 0 18px rgba(255,255,255,0.06);
+        0 1px 2px rgba(0, 0, 0, 0.32),
+        0 8px 28px rgba(0, 0, 0, 0.22);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--muted-cream);
+      font-size: 0.92rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), rgba(244, 201, 139, 0));
+      display: inline-block;
     }
 
     h1 {
-      font-size: 3.2rem;
+      font-size: clamp(2.35rem, 5vw, 4.65rem);
+      line-height: 1.02;
       font-weight: 500;
-      letter-spacing: 0.5px;
-      color: #fff7ef;
-      margin-bottom: 12px;
+      letter-spacing: -0.035em;
+      color: #fff7ec;
+      margin-bottom: 16px;
     }
 
     .subtitle {
-      font-size: 1.08rem;
-      color: rgba(248, 238, 226, 0.88);
+      max-width: 620px;
+      color: rgba(255, 239, 216, 0.86);
+      font-size: clamp(1rem, 1.45vw, 1.18rem);
+      line-height: 1.7;
       margin-bottom: 28px;
     }
 
-    h2 {
-      margin-top: 28px;
-      margin-bottom: 8px;
-      font-size: 1.22rem;
-      font-weight: 600;
-      color: #ffe6c2;
-      letter-spacing: 0.2px;
+    .intro {
+      max-width: 690px;
+      margin-top: 8px;
     }
 
     p {
-      font-size: 1.04rem;
-      color: rgba(247, 241, 232, 0.95);
+      color: var(--soft-cream);
+      font-size: clamp(1rem, 1.2vw, 1.06rem);
+      line-height: 1.88;
+      margin-bottom: 13px;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    h2 {
+      font-size: 1.12rem;
+      line-height: 1.2;
+      font-weight: 600;
+      color: var(--gold);
       margin-bottom: 10px;
+      letter-spacing: 0.015em;
     }
 
-    a {
-      color: #f9d9a6;
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 9px 15px 10px;
+      color: rgba(255, 244, 230, 0.94);
       text-decoration: none;
-      border-bottom: 1px solid rgba(249, 217, 166, 0.35);
+      font-size: 0.95rem;
+      border: 1px solid rgba(255, 220, 170, 0.42);
+      border-radius: 999px;
+      background: rgba(255, 232, 190, 0.055);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 8px 26px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(1.5px);
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease,
+        color 180ms ease;
     }
 
-    a:hover {
-      color: #ffe9c5;
-      border-bottom-color: rgba(255, 233, 197, 0.7);
+    .button:hover {
+      color: #fff9ef;
+      border-color: rgba(255, 226, 181, 0.72);
+      background: rgba(255, 232, 190, 0.11);
+      transform: translateY(-1px);
+    }
+
+    .inline-link {
+      color: var(--link);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 214, 154, 0.36);
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+
+    .inline-link:hover {
+      color: var(--link-hover);
+      border-bottom-color: rgba(255, 232, 191, 0.78);
     }
 
     .footer {
-      margin-top: 34px;
-      font-size: 0.95rem;
-      color: rgba(245, 228, 205, 0.8);
+      margin-top: 36px;
+      color: rgba(255, 233, 205, 0.66);
+      font-size: 0.94rem;
+      line-height: 1.8;
     }
 
-    .signature {
+    .small-signature {
       position: fixed;
-      right: 18px;
-      bottom: 12px;
+      right: 20px;
+      bottom: 16px;
       z-index: 3;
-      font-size: 0.84rem;
-      color: rgba(255, 241, 223, 0.4);
+      color: rgba(255, 238, 215, 0.36);
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
       pointer-events: none;
-      letter-spacing: 0.2px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .math-whisper {
+      position: fixed;
+      z-index: 1;
+      pointer-events: none;
+      font-style: italic;
+      color: rgba(255, 235, 205, 0.075);
+      text-shadow: 0 0 18px rgba(255, 204, 150, 0.08);
+      user-select: none;
+    }
+
+    .mw-1 {
+      top: 14%;
+      right: 13%;
+      font-size: clamp(2.8rem, 6vw, 6rem);
+    }
+
+    .mw-2 {
+      top: 33%;
+      right: 7%;
+      font-size: clamp(1.6rem, 3vw, 3.1rem);
+    }
+
+    .mw-3 {
+      bottom: 18%;
+      right: 20%;
+      font-size: clamp(1.7rem, 3.6vw, 3.8rem);
     }
 
     @media (max-width: 900px) {
-      .overlay {
-        align-items: flex-start;
-        padding-top: 60px;
+      .page {
+        display: block;
+        padding: 54px 28px 44px;
       }
-      h1 {
-        font-size: 2.45rem;
+
+      .reading-gradient {
+        background:
+          linear-gradient(
+            90deg,
+            rgba(25, 39, 42, 0.68) 0%,
+            rgba(25, 39, 42, 0.48) 48%,
+            rgba(25, 39, 42, 0.2) 100%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(26, 35, 38, 0.14) 0%,
+            rgba(26, 35, 38, 0) 40%,
+            rgba(20, 28, 28, 0.3) 100%
+          );
+      }
+
+      .content {
+        max-width: 720px;
+      }
+
+      .button-row {
+        gap: 10px;
+      }
+
+      .math-whisper {
+        display: none;
       }
     }
 
-    @media (max-width: 640px) {
-      .overlay {
-        padding: 42px 24px 36px;
+    @media (max-width: 560px) {
+      .page {
+        padding: 42px 22px 36px;
       }
-      h1 {
-        font-size: 2.05rem;
+
+      .eyebrow {
+        font-size: 0.78rem;
+        margin-bottom: 14px;
       }
-      .subtitle,
-      p {
-        font-size: 0.98rem;
+
+      .eyebrow::before {
+        width: 30px;
       }
-      h2 {
-        font-size: 1.12rem;
+
+      .button {
+        font-size: 0.9rem;
+        min-height: 38px;
+        padding-inline: 13px;
+      }
+
+      .small-signature {
+        display: none;
       }
     }
   </style>
 </head>
+
 <body>
   <canvas id="bg"></canvas>
+  <div class="reading-gradient"></div>
 
-  <div class="overlay">
-    <main class="content">
+  <div class="math-whisper mw-1">ℝPⁿ</div>
+  <div class="math-whisper mw-2">Poisson</div>
+  <div class="math-whisper mw-3">W</div>
+
+  <main class="page">
+    <section class="content">
+      <div class="eyebrow">Mathematics · Geometry · Representation Theory</div>
+
       <h1>Kanghe Lyu</h1>
+
       <div class="subtitle">
-        Undergraduate student in mathematics at Sichuan University
+        Undergraduate student in mathematics at Sichuan University.
       </div>
 
-      <p>
-        My interests are in pure mathematics, especially geometry, algebra,
-        representation theory, and mathematical physics.
-      </p>
+      <div class="intro">
+        <p>
+          My interests are in pure mathematics, especially geometry, algebra,
+          representation theory, and mathematical physics.
+        </p>
 
-      <p>
-        I will begin my Ph.D. study at the Southern University of Science and Technology
-        in 2026, under the supervision of Prof. Vyacheslav Futorny.
-      </p>
+        <p>
+          I will begin my Ph.D. study at the Southern University of Science and Technology
+          in 2026, under the supervision of Prof. Vyacheslav Futorny.
+        </p>
+      </div>
 
-      <h2>Academic Experience</h2>
-      <p>
-        I have participated in several mathematical programs and research activities,
-        including summer schools at New Uzbekistan University and Westlake University.
-      </p>
+      <div class="section">
+        <h2>Academic Experience</h2>
+        <p>
+          I have participated in several mathematical programs and research activities,
+          including summer schools at New Uzbekistan University and Westlake University.
+        </p>
+        <p>
+          I have also worked on undergraduate research and modeling projects involving
+          mathematical abstraction, geometric modeling, optimization, and algorithmic methods.
+        </p>
+      </div>
 
-      <p>
-        I have also worked on undergraduate research and modeling projects involving
-        mathematical abstraction, geometric modeling, optimization, and algorithmic methods.
-      </p>
+      <div class="section">
+        <h2>Notes</h2>
+        <p>
+          This GitHub page is intended to collect mathematical notes, reading materials,
+          and small research-related projects.
+        </p>
+      </div>
 
-      <h2>Notes</h2>
-      <p>
-        This GitHub page is intended to collect mathematical notes, reading materials,
-        and small research-related projects.
-      </p>
+      <div class="section">
+        <h2>Contact</h2>
+        <p>
+          Email:
+          <a class="inline-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
+          <br />
+          GitHub:
+          <a class="inline-link" href="https://github.com/lv7074916" target="_blank">lv7074916</a>
+        </p>
+      </div>
 
-      <h2>Contact</h2>
-      <p>
-        Email:
-        <a href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a><br />
-        GitHub:
-        <a href="https://github.com/lv7074916" target="_blank">lv7074916</a>
-      </p>
+      <nav class="button-row" aria-label="Main links">
+        <a class="button" href="mailto:kanghelyu@foxmail.com">Email</a>
+        <a class="button" href="https://github.com/lv7074916" target="_blank">GitHub</a>
+        <a class="button" href="#notes">Notes</a>
+        <a class="button" href="#cv">CV</a>
+      </nav>
 
       <div class="footer">
         Geometry · Algebra · Representation Theory · Mathematical Physics
       </div>
-    </main>
-  </div>
+    </section>
+  </main>
 
-  <div class="signature">Rainy lakeside dusk · forest atmosphere</div>
+  <div class="small-signature">rain · forest · lake · dusk</div>
 
   <script>
     const canvas = document.getElementById("bg");
@@ -187,15 +387,17 @@
 
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
-    let horizon = h * 0.58;
+    let horizon = h * 0.59;
+    let frame = 0;
 
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
-      horizon = h * 0.58;
+      horizon = h * 0.59;
       generateTrees();
       generateRain();
       generateMist();
+      generateStarsOfRain();
     }
 
     window.addEventListener("resize", resize);
@@ -204,27 +406,41 @@
       return a + Math.random() * (b - a);
     }
 
-    // ---------- Rain ----------
+    function clamp(x, a, b) {
+      return Math.max(a, Math.min(b, x));
+    }
+
+    // ---------------- Rain ----------------
     let rainFar = [];
     let rainNear = [];
+    let rainSparkles = [];
 
     function generateRain() {
-      rainFar = Array.from({ length: 160 }, () => ({
+      rainFar = Array.from({ length: Math.floor(w * h / 8500) }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        len: rand(8, 16),
-        speed: rand(2.2, 4.2),
-        dx: rand(-0.25, -0.08),
-        opacity: rand(0.05, 0.14)
+        len: rand(9, 18),
+        speed: rand(2.1, 4.2),
+        dx: rand(-0.28, -0.08),
+        opacity: rand(0.045, 0.13)
       }));
 
-      rainNear = Array.from({ length: 130 }, () => ({
+      rainNear = Array.from({ length: Math.floor(w * h / 10500) }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        len: rand(12, 26),
-        speed: rand(4.5, 8.5),
-        dx: rand(-0.4, -0.14),
-        opacity: rand(0.08, 0.22)
+        len: rand(14, 30),
+        speed: rand(4.6, 8.8),
+        dx: rand(-0.48, -0.16),
+        opacity: rand(0.075, 0.21)
+      }));
+    }
+
+    function generateStarsOfRain() {
+      rainSparkles = Array.from({ length: 36 }, () => ({
+        x: Math.random() * w,
+        y: rand(horizon + 20, h - 20),
+        phase: Math.random() * Math.PI * 2,
+        r: rand(0.8, 1.8)
       }));
     }
 
@@ -232,69 +448,85 @@
       for (const d of arr) {
         d.x += d.dx;
         d.y += d.speed;
-        if (d.y > h + 30 || d.x < -40) {
-          d.x = Math.random() * w + 80;
-          d.y = -20;
+        if (d.y > h + 34 || d.x < -46) {
+          d.x = Math.random() * w + 90;
+          d.y = -28;
         }
       }
     }
 
-    function drawRain(arr, colorBase) {
-      ctx.lineWidth = 1;
+    function drawRain(arr, rgb, width) {
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
       for (const d of arr) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(${colorBase}, ${d.opacity})`;
+        ctx.strokeStyle = `rgba(${rgb}, ${d.opacity})`;
         ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x + d.dx * 9, d.y + d.len);
+        ctx.lineTo(d.x + d.dx * 10, d.y + d.len);
         ctx.stroke();
+      }
+      ctx.lineCap = "butt";
+    }
+
+    function drawRainSparkles(t) {
+      for (const s of rainSparkles) {
+        const alpha = 0.04 + 0.05 * Math.max(0, Math.sin(t * 0.035 + s.phase));
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(255, 230, 190, ${alpha})`;
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 
-    // ---------- Mist ----------
+    // ---------------- Mist ----------------
     let mist = [];
 
     function generateMist() {
-      mist = Array.from({ length: 8 }, () => ({
-        x: rand(-0.2 * w, w * 1.05),
-        y: rand(horizon - 60, horizon + 70),
-        r: rand(120, 260),
-        alpha: rand(0.035, 0.09),
-        vx: rand(-0.08, 0.08)
+      mist = Array.from({ length: 11 }, () => ({
+        x: rand(-0.15 * w, w * 1.1),
+        y: rand(horizon - 65, horizon + 92),
+        r: rand(130, 310),
+        alpha: rand(0.025, 0.075),
+        vx: rand(-0.06, 0.065)
       }));
     }
 
     function updateMist() {
       for (const m of mist) {
         m.x += m.vx;
-        if (m.x < -300) m.x = w + 200;
-        if (m.x > w + 300) m.x = -200;
+        if (m.x < -360) m.x = w + 260;
+        if (m.x > w + 360) m.x = -260;
       }
     }
 
     function drawMist() {
+      ctx.globalCompositeOperation = "screen";
       for (const m of mist) {
         const g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r);
-        g.addColorStop(0, `rgba(210, 225, 225, ${m.alpha})`);
-        g.addColorStop(1, `rgba(210, 225, 225, 0)`);
+        g.addColorStop(0, `rgba(210, 222, 217, ${m.alpha})`);
+        g.addColorStop(0.45, `rgba(210, 222, 217, ${m.alpha * 0.45})`);
+        g.addColorStop(1, `rgba(210, 222, 217, 0)`);
         ctx.fillStyle = g;
         ctx.beginPath();
         ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.globalCompositeOperation = "source-over";
     }
 
-    // ---------- Forest silhouettes ----------
+    // ---------------- Forest ----------------
     let backTrees = [];
+    let middleTrees = [];
     let frontTrees = [];
 
     function makeTreeLine(count, yBase, minH, maxH, spread, swayAmp) {
       const arr = [];
       for (let i = 0; i < count; i++) {
         arr.push({
-          x: (i / count) * w + rand(-spread, spread),
-          y: yBase + rand(-12, 12),
+          x: (i / Math.max(1, count - 1)) * w + rand(-spread, spread),
+          y: yBase + rand(-10, 12),
           h: rand(minH, maxH),
-          w: rand(14, 34),
+          tw: rand(13, 35),
           sway: rand(0, Math.PI * 2),
           swayAmp
         });
@@ -303,194 +535,309 @@
     }
 
     function generateTrees() {
-      backTrees = makeTreeLine(60, horizon - 18, 60, 135, 22, 1.8);
-      frontTrees = makeTreeLine(55, horizon + 10, 90, 185, 26, 2.4);
+      backTrees = makeTreeLine(64, horizon - 25, 54, 118, 18, 1.2);
+      middleTrees = makeTreeLine(56, horizon - 2, 82, 155, 24, 1.8);
+      frontTrees = makeTreeLine(46, horizon + 24, 108, 210, 30, 2.2);
     }
 
     function drawPine(tree, fill, t, sharpen = 1) {
-      const offset = Math.sin(t * 0.002 + tree.sway) * tree.swayAmp;
+      const offset = Math.sin(t * 0.0018 + tree.sway) * tree.swayAmp;
       const x = tree.x + offset;
       const y = tree.y;
-      const h = tree.h;
-      const tw = tree.w;
+      const height = tree.h;
+      const tw = tree.tw;
 
       ctx.fillStyle = fill;
 
-      // trunk
-      ctx.fillRect(x - 1.2, y, 2.4, h * 0.22);
+      ctx.fillRect(x - 1.1, y - height * 0.04, 2.2, height * 0.34);
 
-      // layered pine crown
-      for (let i = 0; i < 4; i++) {
-        const yy = y - h * (0.18 + i * 0.18);
-        const ww = tw * (1.08 - i * 0.16) * sharpen;
-        const hh = h * 0.28;
+      const layers = 5;
+      for (let i = 0; i < layers; i++) {
+        const yy = y - height * (0.08 + i * 0.145);
+        const ww = tw * (1.15 - i * 0.14) * sharpen;
+        const hh = height * (0.24 - i * 0.013);
+
         ctx.beginPath();
         ctx.moveTo(x, yy - hh);
-        ctx.lineTo(x - ww, yy + hh * 0.2);
-        ctx.lineTo(x + ww, yy + hh * 0.2);
+        ctx.lineTo(x - ww, yy + hh * 0.28);
+        ctx.lineTo(x + ww, yy + hh * 0.28);
         ctx.closePath();
         ctx.fill();
       }
     }
 
-    function drawForestReflection() {
+    function drawTreeLine(arr, color, alpha, t, sharpen) {
+      ctx.globalAlpha = alpha;
+      for (const tree of arr) {
+        drawPine(tree, color, t, sharpen);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function drawForestReflection(t) {
       ctx.save();
-      ctx.translate(0, horizon * 2 + 18);
+      ctx.translate(0, horizon * 2 + 22);
       ctx.scale(1, -1);
 
-      ctx.globalAlpha = 0.16;
-      for (const t of backTrees) drawPine(t, "rgba(32,52,55,0.85)", frame, 1.0);
-      ctx.globalAlpha = 0.22;
-      for (const t of frontTrees) drawPine(t, "rgba(20,34,34,0.92)", frame, 1.05);
+      ctx.globalAlpha = 0.12;
+      for (const tree of backTrees) drawPine(tree, "rgba(32, 55, 54, 0.9)", t, 0.95);
+
+      ctx.globalAlpha = 0.17;
+      for (const tree of middleTrees) drawPine(tree, "rgba(25, 43, 42, 0.95)", t, 1.02);
+
+      ctx.globalAlpha = 0.2;
+      for (const tree of frontTrees) drawPine(tree, "rgba(18, 33, 32, 0.98)", t, 1.04);
+
       ctx.restore();
-    }
+      ctx.globalAlpha = 1;
 
-    // ---------- Water ----------
-    function drawLakeBase() {
-      const g = ctx.createLinearGradient(0, horizon, 0, h);
-      g.addColorStop(0, "#31454d");
-      g.addColorStop(0.33, "#2b3f47");
-      g.addColorStop(1, "#223238");
-      ctx.fillStyle = g;
+      // Soft blur-like water veil over the reflection.
+      const veil = ctx.createLinearGradient(0, horizon, 0, h);
+      veil.addColorStop(0, "rgba(58, 82, 86, 0.12)");
+      veil.addColorStop(0.35, "rgba(48, 70, 76, 0.28)");
+      veil.addColorStop(1, "rgba(34, 50, 55, 0.54)");
+      ctx.fillStyle = veil;
       ctx.fillRect(0, horizon, w, h - horizon);
     }
 
-    function drawWaterGlow() {
-      const g = ctx.createLinearGradient(0, horizon, 0, h);
-      g.addColorStop(0, "rgba(235,168,95,0.18)");
-      g.addColorStop(0.22, "rgba(201,145,92,0.08)");
-      g.addColorStop(0.8, "rgba(255,255,255,0.02)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, horizon, w, h - horizon);
-    }
-
-    function drawRipples(t) {
-      for (let i = 0; i < 24; i++) {
-        const y = horizon + 12 + i * 11;
-        const alpha = 0.025 + i * 0.002;
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(235, 224, 205, ${alpha})`;
-        ctx.lineWidth = 1;
-        for (let x = 0; x <= w; x += 12) {
-          const yy = y + Math.sin(x * 0.015 + t * 0.03 + i) * (1.2 + i * 0.03);
-          if (x === 0) ctx.moveTo(x, yy);
-          else ctx.lineTo(x, yy);
-        }
-        ctx.stroke();
-      }
-    }
-
-    function drawRainSplashes(t) {
-      for (let i = 0; i < 45; i++) {
-        const x = (i * 151.7 + t * 2.3) % (w + 120) - 60;
-        const y = horizon + 16 + ((i * 37.9) % (h - horizon - 30));
-        const r = 1.4 + ((i * 2.1) % 2.2);
-        ctx.beginPath();
-        ctx.strokeStyle = "rgba(240,236,228,0.08)";
-        ctx.lineWidth = 0.8;
-        ctx.ellipse(x, y, r * 2.2, r, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-    }
-
-    // ---------- Sky ----------
+    // ---------------- Sky and lake ----------------
     function drawSky() {
-      const g = ctx.createLinearGradient(0, 0, 0, horizon);
-      g.addColorStop(0, "#55656d");
-      g.addColorStop(0.28, "#6a6f71");
-      g.addColorStop(0.55, "#857066");
-      g.addColorStop(0.78, "#a57a5f");
-      g.addColorStop(1, "#7a6a5a");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, horizon);
+      const sky = ctx.createLinearGradient(0, 0, 0, horizon + 30);
+      sky.addColorStop(0, "#536870");
+      sky.addColorStop(0.18, "#637278");
+      sky.addColorStop(0.43, "#7c746d");
+      sky.addColorStop(0.68, "#a2785e");
+      sky.addColorStop(0.86, "#7f6c5d");
+      sky.addColorStop(1, "#4b5d5d");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, horizon + 30);
+    }
+
+    function drawCloudVeil(t) {
+      ctx.globalCompositeOperation = "screen";
+      for (let i = 0; i < 7; i++) {
+        const x = ((i * 270 + t * (0.08 + i * 0.01)) % (w + 460)) - 230;
+        const y = 55 + i * 32;
+        const rx = 230 + i * 18;
+        const ry = 42 + i * 4;
+
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rx);
+        g.addColorStop(0, "rgba(220, 222, 213, 0.035)");
+        g.addColorStop(1, "rgba(220, 222, 213, 0)");
+
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
     }
 
     function drawSunGlow() {
       const x = w * 0.72;
-      const y = horizon - 70;
-      const g = ctx.createRadialGradient(x, y, 0, x, y, 230);
-      g.addColorStop(0, "rgba(255, 195, 125, 0.33)");
-      g.addColorStop(0.3, "rgba(245, 176, 108, 0.17)");
-      g.addColorStop(0.7, "rgba(245, 176, 108, 0.05)");
-      g.addColorStop(1, "rgba(245, 176, 108, 0)");
+      const y = horizon - 78;
+
+      const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(240, w * 0.23));
+      g.addColorStop(0, "rgba(255, 194, 121, 0.36)");
+      g.addColorStop(0.24, "rgba(246, 172, 102, 0.2)");
+      g.addColorStop(0.58, "rgba(244, 160, 95, 0.07)");
+      g.addColorStop(1, "rgba(244, 160, 95, 0)");
+
       ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, horizon + 60);
+      ctx.fillRect(0, 0, w, horizon + 80);
+
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255, 213, 150, 0.12)";
+      ctx.arc(x, y, 22, 0, Math.PI * 2);
+      ctx.fill();
     }
 
     function drawDistantHills() {
       ctx.beginPath();
-      ctx.moveTo(0, horizon - 35);
-      for (let x = 0; x <= w; x += 24) {
-        const y = horizon - 38 - Math.sin(x * 0.008) * 18 - Math.sin(x * 0.021) * 8;
+      ctx.moveTo(0, horizon - 42);
+
+      for (let x = 0; x <= w; x += 20) {
+        const y =
+          horizon - 42
+          - Math.sin(x * 0.007) * 21
+          - Math.sin(x * 0.019 + 1.4) * 8;
         ctx.lineTo(x, y);
       }
-      ctx.lineTo(w, horizon + 20);
-      ctx.lineTo(0, horizon + 20);
+
+      ctx.lineTo(w, horizon + 34);
+      ctx.lineTo(0, horizon + 34);
       ctx.closePath();
-      ctx.fillStyle = "rgba(65, 78, 77, 0.55)";
+
+      const g = ctx.createLinearGradient(0, horizon - 120, 0, horizon + 40);
+      g.addColorStop(0, "rgba(58, 77, 75, 0.58)");
+      g.addColorStop(1, "rgba(47, 64, 62, 0.86)");
+      ctx.fillStyle = g;
       ctx.fill();
     }
 
-    function drawShoreLine() {
-      ctx.beginPath();
-      ctx.moveTo(0, horizon);
-      for (let x = 0; x <= w; x += 18) {
-        const y = horizon + Math.sin(x * 0.018) * 2.8;
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(w, h);
-      ctx.lineTo(0, h);
-      ctx.closePath();
-      ctx.fillStyle = "rgba(32, 44, 41, 0.24)";
-      ctx.fill();
+    function drawLakeBase() {
+      const lake = ctx.createLinearGradient(0, horizon, 0, h);
+      lake.addColorStop(0, "#40585d");
+      lake.addColorStop(0.28, "#344d55");
+      lake.addColorStop(0.62, "#2b4149");
+      lake.addColorStop(1, "#22343a");
+      ctx.fillStyle = lake;
+      ctx.fillRect(0, horizon, w, h - horizon);
     }
 
-    // ---------- Floating math glow ----------
-    function drawMathHints() {
+    function drawLakeLight(t) {
+      const x = w * 0.72;
+
+      const g = ctx.createRadialGradient(x, horizon + 30, 0, x, horizon + 70, Math.max(260, w * 0.28));
+      g.addColorStop(0, "rgba(255, 192, 122, 0.22)");
+      g.addColorStop(0.35, "rgba(237, 169, 110, 0.1)");
+      g.addColorStop(0.8, "rgba(237, 169, 110, 0.025)");
+      g.addColorStop(1, "rgba(237, 169, 110, 0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, horizon, w, h - horizon);
+
+      // Narrow, broken reflection strokes.
       ctx.save();
-      ctx.fillStyle = "rgba(255, 240, 220, 0.05)";
-      ctx.font = "italic 28px Georgia";
-      ctx.fillText("RPⁿ", w * 0.78, h * 0.2);
-      ctx.fillText("Poisson", w * 0.84, h * 0.32);
-      ctx.fillText("W", w * 0.8, h * 0.43);
+      ctx.globalCompositeOperation = "screen";
+      for (let i = 0; i < 42; i++) {
+        const yy = horizon + 18 + i * 7.5;
+        const spread = 24 + i * 3.8;
+        const len = Math.max(20, 150 - i * 2.3);
+        const jitter = Math.sin(t * 0.018 + i * 0.9) * 11;
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 205, 145, ${clamp(0.09 - i * 0.0016, 0.016, 0.09)})`;
+        ctx.lineWidth = 1;
+        ctx.moveTo(x - len * 0.5 - spread * Math.random() * 0.08 + jitter, yy);
+        ctx.lineTo(x + len * 0.5 + spread * Math.random() * 0.08 + jitter, yy + Math.sin(i) * 0.8);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
-    let frame = 0;
+    function drawRipples(t) {
+      ctx.save();
+      for (let i = 0; i < 30; i++) {
+        const y = horizon + 10 + i * 10.5;
+        const amp = 0.8 + i * 0.035;
+        const alpha = clamp(0.028 + i * 0.001, 0.02, 0.065);
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(238, 230, 214, ${alpha})`;
+        ctx.lineWidth = 1;
+
+        for (let x = 0; x <= w; x += 10) {
+          const yy =
+            y
+            + Math.sin(x * 0.014 + t * 0.028 + i * 0.5) * amp
+            + Math.sin(x * 0.031 + t * 0.011) * 0.45;
+
+          if (x === 0) ctx.moveTo(x, yy);
+          else ctx.lineTo(x, yy);
+        }
+
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawRainRings(t) {
+      ctx.save();
+      ctx.lineWidth = 0.75;
+      for (let i = 0; i < 64; i++) {
+        const x = (i * 127.13 + t * 1.7) % (w + 120) - 60;
+        const y = horizon + 18 + ((i * 41.9) % Math.max(80, h - horizon - 28));
+        const pulse = (Math.sin(t * 0.08 + i) + 1) / 2;
+        const rx = 2 + pulse * 4.5;
+        const ry = 0.8 + pulse * 1.7;
+
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(255, 239, 220, ${0.035 + pulse * 0.035})`;
+        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawShore() {
+      ctx.beginPath();
+      ctx.moveTo(0, horizon + 2);
+
+      for (let x = 0; x <= w; x += 16) {
+        const y = horizon + 3 + Math.sin(x * 0.016) * 2.3 + Math.sin(x * 0.047) * 1.1;
+        ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(w, horizon + 42);
+      ctx.lineTo(0, horizon + 42);
+      ctx.closePath();
+
+      const g = ctx.createLinearGradient(0, horizon - 10, 0, horizon + 52);
+      g.addColorStop(0, "rgba(28, 42, 39, 0.28)");
+      g.addColorStop(1, "rgba(24, 35, 33, 0)");
+      ctx.fillStyle = g;
+      ctx.fill();
+    }
+
+    // ---------------- Subtle mathematical atmosphere ----------------
+    function drawFaintGeometry(t) {
+      const cx = w * 0.79;
+      const cy = h * 0.34;
+      const r = Math.min(w, h) * 0.16;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(t * 0.0009);
+      ctx.globalAlpha = 0.055;
+      ctx.strokeStyle = "rgba(255, 225, 180, 0.55)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i < 6; i++) {
+        ctx.beginPath();
+        ctx.ellipse(0, 0, r, r * (0.2 + i * 0.1), i * Math.PI / 6, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(0, 0, r * 0.72, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
+    }
 
     function animate() {
-      frame++;
+      frame += 1;
 
       ctx.clearRect(0, 0, w, h);
 
       drawSky();
+      drawCloudVeil(frame);
       drawSunGlow();
       drawDistantHills();
 
-      // back forest
-      for (const t of backTrees) drawPine(t, "rgba(34,52,50,0.9)", frame, 0.95);
+      drawTreeLine(backTrees, "rgba(36, 61, 58, 0.92)", 0.72, frame, 0.92);
+      drawTreeLine(middleTrees, "rgba(27, 48, 45, 0.96)", 0.88, frame, 1);
 
       drawLakeBase();
-      drawForestReflection();
-      drawWaterGlow();
+      drawForestReflection(frame);
+      drawLakeLight(frame);
       drawRipples(frame);
-      drawRainSplashes(frame);
+      drawRainRings(frame);
+      drawRainSparkles(frame);
 
-      drawShoreLine();
+      drawShore();
 
-      // front forest
-      for (const t of frontTrees) drawPine(t, "rgba(21,33,32,0.98)", frame, 1.08);
+      drawTreeLine(frontTrees, "rgba(18, 32, 30, 1)", 0.95, frame, 1.08);
 
       updateMist();
       drawMist();
 
-      drawMathHints();
+      drawFaintGeometry(frame);
 
       updateRain(rainFar);
       updateRain(rainNear);
-      drawRain(rainFar, "220, 228, 232");
-      drawRain(rainNear, "245, 242, 235");
+      drawRain(rainFar, "220, 228, 230", 0.8);
+      drawRain(rainNear, "255, 246, 230", 1);
 
       requestAnimationFrame(animate);
     }
@@ -498,6 +845,7 @@
     generateTrees();
     generateRain();
     generateMist();
+    generateStarsOfRain();
     animate();
   </script>
 </body>
