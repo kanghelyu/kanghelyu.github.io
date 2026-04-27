@@ -415,26 +415,25 @@
     let rainNear = [];
     let rainSparkles = [];
 
-    function generateRain() {
-      rainFar = Array.from({ length: Math.floor(w * h / 8500) }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        len: rand(9, 18),
-        speed: rand(2.1, 4.2),
-        dx: rand(-0.28, -0.08),
-        opacity: rand(0.045, 0.13)
-      }));
+function generateRain() {
+  rainFar = Array.from({ length: Math.floor(w * h / 8500) }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    len: rand(14, 24),   // 原来是 9, 18
+    speed: rand(2.1, 4.2),
+    dx: rand(-0.28, -0.08),
+    opacity: rand(0.05, 0.15)
+  }));
 
-      rainNear = Array.from({ length: Math.floor(w * h / 10500) }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        len: rand(14, 30),
-        speed: rand(4.6, 8.8),
-        dx: rand(-0.48, -0.16),
-        opacity: rand(0.075, 0.21)
-      }));
-    }
-
+  rainNear = Array.from({ length: Math.floor(w * h / 10500) }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    len: rand(20, 38),   // 原来是 14, 30
+    speed: rand(4.6, 8.8),
+    dx: rand(-0.48, -0.16),
+    opacity: rand(0.09, 0.24)
+  }));
+}
     function generateStarsOfRain() {
       rainSparkles = Array.from({ length: 36 }, () => ({
         x: Math.random() * w,
