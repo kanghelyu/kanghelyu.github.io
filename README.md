@@ -2,17 +2,9 @@
 
 I am an undergraduate student in mathematics at Sichuan University.
 
-My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics. I am particularly interested in the structures that arise from symmetries, invariants, and categorical viewpoints.
+My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics. 
 
 I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.
-
-## Interests
-
-- Geometry and topology
-- Algebra and representation theory
-- Lie algebras and related structures
-- Algebraic and categorical methods
-- Mathematical physics
 
 ## Academic Experience
 
