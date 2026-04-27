@@ -1,39 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Your Name</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Kanghe Lyu</title>
 
   <style>
     body {
+      margin: 0;
+      background: #f7f5ef;
+      color: #1f2933;
       font-family: Georgia, "Times New Roman", serif;
-      max-width: 760px;
-      margin: 60px auto;
-      padding: 0 24px;
-      line-height: 1.7;
-      color: #222;
-      background: #fafafa;
+      line-height: 1.75;
     }
 
-    h1, h2 {
-      font-weight: normal;
-      color: #111;
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 72px 28px 56px;
+    }
+
+    header {
+      border-bottom: 1px solid #d8d2c4;
+      padding-bottom: 28px;
+      margin-bottom: 36px;
     }
 
     h1 {
-      font-size: 2.2em;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 12px;
+      margin: 0;
+      font-size: 44px;
+      font-weight: normal;
+      letter-spacing: 0.02em;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #5f6b7a;
+      font-size: 18px;
+    }
+
+    nav {
+      margin-top: 22px;
+      font-size: 15px;
+    }
+
+    nav a {
+      margin-right: 18px;
+      color: #375a7f;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
     }
 
     h2 {
-      margin-top: 36px;
-      font-size: 1.4em;
+      margin-top: 42px;
+      font-size: 24px;
+      font-weight: normal;
+      border-bottom: 1px solid #ddd6c6;
+      padding-bottom: 6px;
+    }
+
+    p {
+      margin: 14px 0;
+    }
+
+    ul {
+      padding-left: 24px;
+    }
+
+    li {
+      margin: 5px 0;
     }
 
     a {
-      color: #0645ad;
+      color: #2f5d8c;
       text-decoration: none;
     }
 
@@ -41,72 +84,181 @@
       text-decoration: underline;
     }
 
-    .subtitle {
-      color: #555;
+    .entry {
+      margin-top: 18px;
+    }
+
+    .entry-title {
+      font-weight: bold;
+    }
+
+    .entry-meta {
+      color: #6b7280;
+      font-size: 15px;
+    }
+
+    .quote {
+      margin-top: 32px;
+      padding-left: 18px;
+      border-left: 3px solid #b8aa91;
+      color: #52606d;
       font-style: italic;
     }
 
-    ul {
-      padding-left: 22px;
+    footer {
+      margin-top: 52px;
+      padding-top: 18px;
+      border-top: 1px solid #d8d2c4;
+      color: #7b8794;
+      font-size: 14px;
     }
 
-    footer {
-      margin-top: 48px;
-      padding-top: 16px;
-      border-top: 1px solid #ddd;
-      color: #666;
-      font-size: 0.9em;
+    @media (max-width: 600px) {
+      .page {
+        padding: 48px 22px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      nav a {
+        display: inline-block;
+        margin-bottom: 6px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <h1>Your Name</h1>
+  <main class="page">
+    <header>
+      <h1>Kanghe Lyu</h1>
 
-  <p class="subtitle">
-    Pure Mathematics · Structure · Proof
-  </p>
+      <div class="subtitle">
+        Mathematics · Geometry · Algebra · Mathematical Physics
+      </div>
 
-  <p>
-    I am interested in pure mathematics, especially algebra, geometry,
-    topology, and the foundations of mathematics.
-  </p>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#interests">Interests</a>
+        <a href="#education">Education</a>
+        <a href="#experience">Experience</a>
+        <a href="#notes">Notes</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </header>
 
-  <h2>Research Interests</h2>
+    <section id="about">
+      <p>
+        I am an undergraduate student in mathematics at Sichuan University.
+      </p>
 
-  <ul>
-    <li>Algebra</li>
-    <li>Number theory</li>
-    <li>Algebraic geometry</li>
-    <li>Topology</li>
-    <li>Category theory</li>
-    <li>Logic and foundations</li>
-  </ul>
+      <p>
+        My interests are in pure mathematics, especially geometry, algebra,
+        representation theory, and mathematical physics. I am particularly interested
+        in the structures that arise from symmetries, invariants, and categorical
+        viewpoints.
+      </p>
 
-  <h2>Notes and Projects</h2>
+      <p>
+        I will begin my Ph.D. study at the Southern University of Science and Technology
+        in 2026, under the supervision of Prof. Vyacheslav Futorny.
+      </p>
+    </section>
 
-  <ul>
-    <li><a href="https://github.com/your-username/notes">Mathematical Notes</a></li>
-    <li><a href="https://github.com/your-username/examples">Examples and Counterexamples</a></li>
-    <li><a href="https://github.com/your-username/formalization">Formalization</a></li>
-  </ul>
+    <section id="interests">
+      <h2>Research Interests</h2>
 
-  <h2>Writing Style</h2>
+      <ul>
+        <li>Geometry and topology</li>
+        <li>Algebra and representation theory</li>
+        <li>Lie algebras and related structures</li>
+        <li>Algebraic and categorical methods</li>
+        <li>Mathematical physics</li>
+      </ul>
+    </section>
 
-  <p>
-    I care about clear definitions, motivating examples, and proofs that
-    explain why a statement is true.
-  </p>
+    <section id="education">
+      <h2>Education</h2>
 
-  <h2>Contact</h2>
+      <div class="entry">
+        <div class="entry-title">Sichuan University</div>
+        <div class="entry-meta">
+          B.S. in Mathematics and Applied Mathematics
+        </div>
+      </div>
 
-  <p>
-    Email: your.email@example.com<br>
-    GitHub: <a href="https://github.com/Kanghe-Lyu">Kanghe-Lyu</a>
-  </p>
+      <div class="entry">
+        <div class="entry-title">Southern University of Science and Technology</div>
+        <div class="entry-meta">
+          Ph.D. student in Mathematics, expected to start in 2026
+        </div>
+      </div>
+    </section>
 
-  <footer>
-    Last updated: 2026
-  </footer>
+    <section id="experience">
+      <h2>Academic Experience</h2>
+
+      <p>
+        I have participated in several mathematical programs and research activities,
+        including summer schools at New Uzbekistan University and Westlake University.
+      </p>
+
+      <p>
+        I have also worked on undergraduate research and modeling projects involving
+        mathematical abstraction, geometric modeling, optimization, and algorithmic
+        methods.
+      </p>
+
+      <p>
+        My current reading and preparation are centered around algebraic structures,
+        representation theory, and related topics in mathematical physics.
+      </p>
+    </section>
+
+    <section id="notes">
+      <h2>Notes and Writing</h2>
+
+      <p>
+        This page will be used to collect mathematical notes, reading materials,
+        and small research-related projects.
+      </p>
+
+      <ul>
+        <li>
+          <a href="https://github.com/lv7074916/notes">Mathematical Notes</a>
+        </li>
+        <li>
+          <a href="https://github.com/lv7074916/seminar">Seminar Notes</a>
+        </li>
+        <li>
+          <a href="https://github.com/lv7074916/examples">Examples and Counterexamples</a>
+        </li>
+      </ul>
+
+      <p class="quote">
+        Definitions before notation; examples before generality.
+      </p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+
+      <p>
+        Email:
+        <a href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
+      </p>
+
+      <p>
+        GitHub:
+        <a href="https://github.com/lv7074916">lv7074916</a>
+      </p>
+    </section>
+
+    <footer>
+      Last updated: 2026
+    </footer>
+  </main>
 </body>
 </html>
