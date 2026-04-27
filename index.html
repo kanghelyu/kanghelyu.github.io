@@ -454,18 +454,6 @@
       }
     }
 
-    function drawPixelLabel(text, x, y, color) {
-      bctx.font = "bold 6px Georgia";
-      bctx.textAlign = "center";
-      bctx.textBaseline = "middle";
-
-      bctx.fillStyle = "rgba(0,0,0,0.50)";
-      bctx.fillText(text, Math.round(x + 1), Math.round(y + 1));
-
-      bctx.fillStyle = color;
-      bctx.fillText(text, Math.round(x), Math.round(y));
-    }
-
     function drawTorus(cx, cy, scale, t) {
       const U = 28;
       const V = 18;
@@ -507,8 +495,6 @@
           }
         }
       }
-
-      drawPixelLabel(label, cx, cy + scale * 0.45, "rgba(244,217,160,0.62)");
     }
 
     function drawKlein(cx, cy, scale, t) {
@@ -562,8 +548,6 @@
           }
         }
       }
-
-      drawPixelLabel("KLEIN", cx, cy + scale * 0.46, "rgba(168,230,230,0.64)");
     }
 
     function drawLargePixelSymbols() {
@@ -668,7 +652,7 @@
 
       drawTorus(bw * 0.22, bh * 0.40, s * 0.92, time);
       drawKlein(bw * 0.78, bh * 0.39, s * 0.96, time);
-      drawTorus(bw * 0.50, bh * 0.77, s * 0.58, -time * 0.75, "T²");
+      drawTorus(bw * 0.50, bh * 0.77, s * 0.58, -time * 0.75);
 
       drawLargePixelSymbols();
       drawVignette();
