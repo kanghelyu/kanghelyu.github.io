@@ -1,1020 +1,385 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kanghe Lyu</title>
-
   <style>
     :root {
-      --cream: #fff4e4;
-      --soft-cream: rgba(255, 244, 228, 0.92);
-      --muted-cream: rgba(255, 236, 210, 0.72);
-      --gold: #f4c98b;
-      --gold-soft: rgba(244, 201, 139, 0.7);
-      --blue-shadow: #263d46;
-      --link: #ffd69a;
-      --link-hover: #ffe8bf;
+      --neon-cyan: #00f7ff;
+      --neon-purple: #c724ff;
+      --neon-gold: #ffd700;
+      --glass: rgba(15, 15, 35, 0.75);
+      --text: #e0f8ff;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 100%;
-      min-height: 100%;
-      overflow-x: hidden;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--cream);
-      background: #33454d;
+      width: 100%; min-height: 100%; overflow-x: hidden;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      color: var(--text); background: #0a0a1f;
     }
-
-    body {
-      min-height: 100vh;
+    #bg { position: fixed; inset: 0; z-index: 0; }
+    .overlay {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: radial-gradient(circle at 30% 20%, rgba(199, 36, 255, 0.15) 0%, transparent 50%),
+                  radial-gradient(circle at 70% 80%, rgba(0, 247, 255, 0.15) 0%, transparent 50%);
     }
-
-    #bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-    }
-
-    /*
-      This layer is not a text box.
-      It is a soft atmospheric darkening on the left,
-      so the text remains readable while the rain and lake remain visible.
-    */
-    .reading-gradient {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      background:
-        linear-gradient(
-          90deg,
-          rgba(25, 39, 42, 0.62) 0%,
-          rgba(25, 39, 42, 0.46) 28%,
-          rgba(25, 39, 42, 0.18) 55%,
-          rgba(25, 39, 42, 0.03) 100%
-        ),
-        linear-gradient(
-          180deg,
-          rgba(26, 35, 38, 0.16) 0%,
-          rgba(26, 35, 38, 0) 42%,
-          rgba(20, 28, 28, 0.24) 100%
-        );
-    }
-
     .page {
-      position: relative;
-      z-index: 2;
-      min-height: 100vh;
-      display: grid;
-      grid-template-columns: minmax(280px, 780px) 1fr;
-      align-items: center;
-      padding: 72px 8vw;
+      position: relative; z-index: 2; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 60px 5vw;
     }
-
     .content {
-      max-width: 780px;
-      text-shadow:
-        0 1px 2px rgba(0, 0, 0, 0.32),
-        0 8px 28px rgba(0, 0, 0, 0.22);
+      max-width: 820px; width: 100%;
+      background: var(--glass);
+      backdrop-filter: blur(22px);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: 24px;
+      padding: 58px 52px;
+      box-shadow: 0 0 80px -10px var(--neon-cyan),
+                  0 0 40px -10px var(--neon-purple),
+                  inset 0 1px 0 rgba(255,255,255,0.1);
+      position: relative;
     }
-
-    .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 18px;
-      color: var(--muted-cream);
-      font-size: 0.92rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+    .content::before {
+      content: ''; position: absolute; inset: 0; border-radius: 24px;
+      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.08), transparent);
+      pointer-events: none; animation: scan 8s linear infinite;
     }
-
-    .eyebrow::before {
-      content: "";
-      width: 42px;
-      height: 1px;
-      background: linear-gradient(90deg, var(--gold), rgba(244, 201, 139, 0));
-      display: inline-block;
+    @keyframes scan { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    .lang-toggle {
+      position: fixed; top: 30px; right: 40px; z-index: 10;
+      padding: 10px 24px; border-radius: 9999px;
+      background: rgba(15,15,35,0.9); border: 2px solid var(--neon-cyan);
+      color: var(--neon-cyan); font-weight: 600; letter-spacing: 1px;
+      cursor: pointer; transition: all 0.3s ease;
+      box-shadow: 0 0 25px var(--neon-cyan);
     }
-
-    h1 {
-      font-size: clamp(2.35rem, 5vw, 4.65rem);
-      line-height: 1.02;
-      font-weight: 500;
-      letter-spacing: -0.035em;
-      color: #fff7ec;
-      margin-bottom: 16px;
-    }
-
-    .subtitle {
-      max-width: 620px;
-      color: rgba(255, 239, 216, 0.86);
-      font-size: clamp(1rem, 1.45vw, 1.18rem);
-      line-height: 1.7;
-      margin-bottom: 28px;
-    }
-
-    .intro {
-      max-width: 690px;
-      margin-top: 8px;
-    }
-
-    p {
-      color: var(--soft-cream);
-      font-size: clamp(1rem, 1.2vw, 1.06rem);
-      line-height: 1.88;
-      margin-bottom: 13px;
-    }
-
-    .section {
-      margin-top: 30px;
-    }
-
-    h2 {
-      font-size: 1.12rem;
-      line-height: 1.2;
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 10px;
-      letter-spacing: 0.015em;
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 34px;
-    }
-
+    .lang-toggle:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--neon-cyan); }
+    .eyebrow { font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase; 
+               color: var(--neon-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
+    .eyebrow::before { content: ''; width: 48px; height: 2px; background: var(--neon-gold); }
+    h1 { font-size: clamp(2.8rem, 6vw, 5.2rem); line-height: 1; margin-bottom: 16px; 
+         background: linear-gradient(90deg, #00f7ff, #c724ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { font-size: 1.25rem; color: #b0f0ff; margin-bottom: 32px; }
+    p { line-height: 1.85; margin-bottom: 18px; font-size: 1.1rem; color: #d0f8ff; }
+    h2 { color: var(--neon-purple); font-size: 1.35rem; margin: 42px 0 14px; letter-spacing: 1px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
     .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 40px;
-      padding: 9px 15px 10px;
-      color: rgba(255, 244, 230, 0.94);
-      text-decoration: none;
-      font-size: 0.95rem;
-      border: 1px solid rgba(255, 220, 170, 0.42);
-      border-radius: 999px;
-      background: rgba(255, 232, 190, 0.055);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.08),
-        0 8px 26px rgba(0, 0, 0, 0.08);
-      backdrop-filter: blur(1.5px);
-      transition:
-        transform 180ms ease,
-        border-color 180ms ease,
-        background 180ms ease,
-        color 180ms ease;
+      padding: 14px 28px; border: 2px solid var(--neon-cyan); border-radius: 9999px;
+      color: var(--neon-cyan); text-decoration: none; font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 20px rgba(0,247,255,0.4);
     }
-
-    .button:hover {
-      color: #fff9ef;
-      border-color: rgba(255, 226, 181, 0.72);
-      background: rgba(255, 232, 190, 0.11);
-      transform: translateY(-1px);
-    }
-
-    .inline-link {
-      color: var(--link);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(255, 214, 154, 0.36);
-      transition: color 180ms ease, border-color 180ms ease;
-    }
-
-    .inline-link:hover {
-      color: var(--link-hover);
-      border-bottom-color: rgba(255, 232, 191, 0.78);
-    }
-
-    .footer {
-      margin-top: 36px;
-      color: rgba(255, 233, 205, 0.66);
-      font-size: 0.94rem;
-      line-height: 1.8;
-    }
-
+    .button:hover { background: var(--neon-cyan); color: #0a0a1f; transform: translateY(-3px); }
+    .footer { margin-top: 48px; text-align: center; font-size: 0.95rem; color: #88c8ff; opacity: 0.7; }
     .small-signature {
-      position: fixed;
-      right: 20px;
-      bottom: 16px;
-      z-index: 3;
-      color: rgba(255, 238, 215, 0.36);
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      pointer-events: none;
-      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .math-whisper {
-      position: fixed;
-      z-index: 1;
-      pointer-events: none;
-      font-style: italic;
-      color: rgba(255, 235, 205, 0.075);
-      text-shadow: 0 0 18px rgba(255, 204, 150, 0.08);
-      user-select: none;
-    }
-
-    .mw-1 {
-      top: 14%;
-      right: 13%;
-      font-size: clamp(2.8rem, 6vw, 6rem);
-    }
-
-    .mw-2 {
-      top: 33%;
-      right: 7%;
-      font-size: clamp(1.6rem, 3vw, 3.1rem);
-    }
-
-    .mw-3 {
-      bottom: 18%;
-      right: 20%;
-      font-size: clamp(1.7rem, 3.6vw, 3.8rem);
-    }
-
-    @media (max-width: 900px) {
-      .page {
-        display: block;
-        padding: 54px 28px 44px;
-      }
-
-      .reading-gradient {
-        background:
-          linear-gradient(
-            90deg,
-            rgba(25, 39, 42, 0.68) 0%,
-            rgba(25, 39, 42, 0.48) 48%,
-            rgba(25, 39, 42, 0.2) 100%
-          ),
-          linear-gradient(
-            180deg,
-            rgba(26, 35, 38, 0.14) 0%,
-            rgba(26, 35, 38, 0) 40%,
-            rgba(20, 28, 28, 0.3) 100%
-          );
-      }
-
-      .content {
-        max-width: 720px;
-      }
-
-      .button-row {
-        gap: 10px;
-      }
-
-      .math-whisper {
-        display: none;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .page {
-        padding: 42px 22px 36px;
-      }
-
-      .eyebrow {
-        font-size: 0.78rem;
-        margin-bottom: 14px;
-      }
-
-      .eyebrow::before {
-        width: 30px;
-      }
-
-      .button {
-        font-size: 0.9rem;
-        min-height: 38px;
-        padding-inline: 13px;
-      }
-
-      .small-signature {
-        display: none;
-      }
+      position: fixed; bottom: 24px; left: 40px; color: rgba(0,247,255,0.3);
+      font-size: 0.8rem; letter-spacing: 2px; pointer-events: none;
     }
   </style>
 </head>
-
 <body>
   <canvas id="bg"></canvas>
-  <div class="reading-gradient"></div>
-
-  <div class="math-whisper mw-1">ℝPⁿ</div>
-  <div class="math-whisper mw-2">Poisson</div>
-  <div class="math-whisper mw-3">W</div>
-
-  <main class="page">
-    <section class="content">
-      <div class="eyebrow">Mathematics · Geometry · Representation Theory</div>
-
-      <h1>Kanghe Lyu</h1>
-
-      <div class="subtitle">
-        Undergraduate student in mathematics at Sichuan University.
-      </div>
-
+  <div class="overlay"></div>
+  
+  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+  
+  <div class="page">
+    <div class="content">
+      <div id="eyebrow" class="eyebrow">Mathematics · Geometry · Representation Theory</div>
+      
+      <h1 id="name">Kanghe Lyu</h1>
+      
+      <div id="subtitle" class="subtitle">Undergraduate student in mathematics at Sichuan University.</div>
+      
       <div class="intro">
-        <p>
-          My interests are in pure mathematics, especially geometry, algebra,
-          representation theory, and mathematical physics.
-        </p>
-
-        <p>
-          I will begin my Ph.D. study at the Southern University of Science and Technology
-          in 2026, under the supervision of Prof. Vyacheslav Futorny.
-        </p>
+        <p id="intro-p1">My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.</p>
+        <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.</p>
       </div>
-
+      
       <div class="section">
-        <h2>Academic Experience</h2>
-        <p>
-          I have participated in several mathematical programs and research activities,
-          including summer schools at New Uzbekistan University and Westlake University.
-        </p>
-        <p>
-          I have also worked on undergraduate research and modeling projects involving
-          mathematical abstraction, geometric modeling, optimization, and algorithmic methods.
-        </p>
+        <h2 id="exp-title">Academic Experience</h2>
+        <p id="exp-p1">I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.</p>
+        <p id="exp-p2">I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.</p>
       </div>
-
+      
       <div class="section">
-        <h2>Notes</h2>
-        <p>
-          This GitHub page is intended to collect mathematical notes, reading materials,
-          and small research-related projects.
-        </p>
+        <h2 id="notes-title">Notes</h2>
+        <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
       </div>
-
+      
       <div class="section">
-        <h2>Contact</h2>
+        <h2 id="contact-title">Contact</h2>
         <p>
-          Email:
-          <a class="inline-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
-          <br />
-          GitHub:
-          <a class="inline-link" href="https://github.com/lv7074916" target="_blank">lv7074916</a>
+          Email: <a href="mailto:kanghelyu@foxmail.com" style="color:var(--neon-cyan); text-decoration:none;">kanghelyu@foxmail.com</a><br>
+          GitHub: <a href="https://github.com/lv7074916" target="_blank" style="color:var(--neon-cyan); text-decoration:none;">lv7074916</a>
         </p>
       </div>
-
-      <nav class="button-row" aria-label="Main links">
-        <a class="button" href="mailto:kanghelyu@foxmail.com">Email</a>
-        <a class="button" href="https://github.com/lv7074916" target="_blank">GitHub</a>
-        <a class="button" href="#notes">Notes</a>
-        <a class="button" href="#cv">CV</a>
+      
+      <nav class="button-row">
+        <a id="btn-email" href="mailto:kanghelyu@foxmail.com" class="button">Email</a>
+        <a id="btn-github" href="https://github.com/lv7074916" target="_blank" class="button">GitHub</a>
+        <a id="btn-notes" href="#notes" class="button">Notes</a>
+        <a id="btn-cv" href="#" class="button">CV</a>
       </nav>
-
-      <div class="footer">
-        Geometry · Algebra · Representation Theory · Mathematical Physics
-      </div>
-    </section>
-  </main>
-
-  <div class="small-signature">rain · forest · lake · dusk</div>
+      
+      <div id="footer" class="footer">Geometry · Algebra · Representation Theory · Mathematical Physics</div>
+    </div>
+  </div>
+  
+  <div class="small-signature">QUANTUM · RAIN · VOID · ECHO</div>
 
   <script>
-    const canvas = document.getElementById("bg");
-    const ctx = canvas.getContext("2d");
+    // ============== 语言切换 ==============
+    const translations = {
+      en: {
+        eyebrow: "Mathematics · Geometry · Representation Theory",
+        subtitle: "Undergraduate student in mathematics at Sichuan University.",
+        introP1: "My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.",
+        introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.",
+        expTitle: "Academic Experience",
+        expP1: "I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.",
+        expP2: "I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.",
+        notesTitle: "Notes",
+        notesP: "This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.",
+        contactTitle: "Contact",
+        footer: "Geometry · Algebra · Representation Theory · Mathematical Physics",
+        btnEmail: "Email",
+        btnGithub: "GitHub",
+        btnNotes: "Notes",
+        btnCv: "CV"
+      },
+      zh: {
+        eyebrow: "数学 · 几何 · 表示论",
+        subtitle: "四川大学数学系本科生",
+        introP1: "我的兴趣领域是纯数学，特别是几何、代数、表示论以及数学物理。",
+        introP2: "我将于2026年开始在南方科技大学攻读博士学位，由Vyacheslav Futorny教授指导。",
+        expTitle: "学术经历",
+        expP1: "我参加了多项数学项目和研究活动，包括在新乌兹别克斯坦大学和西湖大学的暑期学校。",
+        expP2: "我还参与了本科研究和建模项目，涉及数学抽象、几何建模、优化和算法方法。",
+        notesTitle: "笔记",
+        notesP: "此GitHub页面旨在收集数学笔记、阅读材料和小规模研究相关项目。",
+        contactTitle: "联系方式",
+        footer: "几何 · 代数 · 表示论 · 数学物理",
+        btnEmail: "邮件",
+        btnGithub: "GitHub",
+        btnNotes: "笔记",
+        btnCv: "简历"
+      }
+    };
 
-    let w = canvas.width = window.innerWidth;
-    let h = canvas.height = window.innerHeight;
-    let horizon = h * 0.59;
-    let frame = 0;
+    let currentLang = 'en';
+    const toggleBtn = document.getElementById('lang-toggle');
+    
+    function switchLanguage() {
+      currentLang = currentLang === 'en' ? 'zh' : 'en';
+      const t = translations[currentLang];
+      
+      document.getElementById('eyebrow').textContent = t.eyebrow;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('intro-p1').textContent = t.introP1;
+      document.getElementById('intro-p2').textContent = t.introP2;
+      document.getElementById('exp-title').textContent = t.expTitle;
+      document.getElementById('exp-p1').textContent = t.expP1;
+      document.getElementById('exp-p2').textContent = t.expP2;
+      document.getElementById('notes-title').textContent = t.notesTitle;
+      document.getElementById('notes-p').textContent = t.notesP;
+      document.getElementById('contact-title').textContent = t.contactTitle;
+      document.getElementById('footer').textContent = t.footer;
+      document.getElementById('btn-email').textContent = t.btnEmail;
+      document.getElementById('btn-github').textContent = t.btnGithub;
+      document.getElementById('btn-notes').textContent = t.btnNotes;
+      document.getElementById('btn-cv').textContent = t.btnCv;
+      
+      toggleBtn.textContent = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
+    }
+    
+    toggleBtn.addEventListener('click', switchLanguage);
+
+    // ============== 复杂科幻Canvas动画 ==============
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [], rainDrops = [], geometries = [], connections = [];
+    let time = 0;
+    let mouse = { x: 0, y: 0 };
 
     function resize() {
       w = canvas.width = window.innerWidth;
       h = canvas.height = window.innerHeight;
-      horizon = h * 0.59;
-      generateTrees();
-      generateRain();
-      generateMist();
-      generateStarsOfRain();
+    }
+    window.addEventListener('resize', resize);
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+    // 粒子系统
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.size = Math.random() * 2.8 + 0.6;
+        this.speed = Math.random() * 3.5 + 1.5;
+        this.hue = Math.random() * 60 + 180; // 青紫色系
+      }
+      update() {
+        this.y += this.speed;
+        this.x += Math.sin(time * 0.001 + this.y * 0.01) * 1.2; // 轻微波浪
+        if (this.y > h) this.reset();
+        // 鼠标吸引/排斥
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 220) {
+          this.x += dx * 0.008;
+          this.y += dy * 0.008;
+        }
+      }
+      draw() {
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 88%, 0.9)`;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = `hsl(${this.hue}, 100%, 88%)`;
+        ctx.fillRect(this.x, this.y, this.size, this.size * 4); // 雨滴状
+      }
     }
 
-    window.addEventListener("resize", resize);
-
-    function rand(a, b) {
-      return a + Math.random() * (b - a);
+    // 浮动几何体
+    class Geometry {
+      constructor() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h * 0.6;
+        this.radius = Math.random() * 48 + 22;
+        this.angle = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.015;
+        this.type = Math.random() > 0.5 ? 'torus' : 'poly';
+      }
+      update() {
+        this.angle += this.rotSpeed;
+        this.x += Math.sin(time * 0.0008) * 0.8;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.strokeStyle = 'rgba(255, 215, 0, 0.65)';
+        ctx.lineWidth = 2.5;
+        ctx.shadowBlur = 25;
+        ctx.shadowColor = '#ffd700';
+        if (this.type === 'torus') {
+          ctx.beginPath();
+          ctx.ellipse(0, 0, this.radius, this.radius * 0.35, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        } else {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const a = i * Math.PI / 3;
+            ctx.lineTo(Math.cos(a) * this.radius, Math.sin(a) * this.radius);
+          }
+          ctx.closePath();
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
     }
 
-    function clamp(x, a, b) {
-      return Math.max(a, Math.min(b, x));
-    }
-
-    // ---------------- Rain ----------------
-    let rainFar = [];
-    let rainNear = [];
-    let rainSparkles = [];
-
-function generateRain() {
-  rainFar = Array.from({ length: Math.floor(w * h / 8500) }, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    len: rand(14, 24),   // 原来是 9, 18
-    speed: rand(2.1, 4.2),
-    dx: rand(-0.28, -0.08),
-    opacity: rand(0.05, 0.15)
-  }));
-
-  rainNear = Array.from({ length: Math.floor(w * h / 10500) }, () => ({
-    x: Math.random() * w,
-    y: Math.random() * h,
-    len: rand(20, 38),   // 原来是 14, 30
-    speed: rand(4.6, 8.8),
-    dx: rand(-0.48, -0.16),
-    opacity: rand(0.09, 0.24)
-  }));
-}
-    function generateStarsOfRain() {
-      rainSparkles = Array.from({ length: 36 }, () => ({
+    function init() {
+      resize();
+      particles = Array.from({ length: 380 }, () => new Particle());
+      rainDrops = Array.from({ length: 120 }, () => ({
         x: Math.random() * w,
-        y: rand(horizon + 20, h - 20),
-        phase: Math.random() * Math.PI * 2,
-        r: rand(0.8, 1.8)
+        y: Math.random() * h,
+        len: Math.random() * 28 + 14,
+        speed: Math.random() * 18 + 9,
+        opacity: Math.random() * 0.7 + 0.3
       }));
+      geometries = Array.from({ length: 14 }, () => new Geometry());
     }
 
-    function updateRain(arr) {
-      for (const d of arr) {
-        d.x += d.dx;
-        d.y += d.speed;
-        if (d.y > h + 34 || d.x < -46) {
-          d.x = Math.random() * w + 90;
-          d.y = -28;
-        }
-      }
-    }
-
-    function drawRain(arr, rgb, width) {
-      ctx.lineWidth = width;
-      ctx.lineCap = "round";
-      for (const d of arr) {
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(${rgb}, ${d.opacity})`;
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x + d.dx * 10, d.y + d.len);
-        ctx.stroke();
-      }
-      ctx.lineCap = "butt";
-    }
-
-    function drawRainSparkles(t) {
-      for (const s of rainSparkles) {
-        const alpha = 0.04 + 0.05 * Math.max(0, Math.sin(t * 0.035 + s.phase));
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(255, 230, 190, ${alpha})`;
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    // ---------------- Mist ----------------
-    let mist = [];
-
-    function generateMist() {
-      mist = Array.from({ length: 11 }, () => ({
-        x: rand(-0.15 * w, w * 1.1),
-        y: rand(horizon - 65, horizon + 92),
-        r: rand(130, 310),
-        alpha: rand(0.025, 0.075),
-        vx: rand(-0.06, 0.065)
-      }));
-    }
-
-    function updateMist() {
-      for (const m of mist) {
-        m.x += m.vx;
-        if (m.x < -360) m.x = w + 260;
-        if (m.x > w + 360) m.x = -260;
-      }
-    }
-
-    function drawMist() {
-      ctx.globalCompositeOperation = "screen";
-      for (const m of mist) {
-        const g = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r);
-        g.addColorStop(0, `rgba(210, 222, 217, ${m.alpha})`);
-        g.addColorStop(0.45, `rgba(210, 222, 217, ${m.alpha * 0.45})`);
-        g.addColorStop(1, `rgba(210, 222, 217, 0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.arc(m.x, m.y, m.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalCompositeOperation = "source-over";
-    }
-
-    // ---------------- Fractal forest ----------------
-let backFractals = [];
-let middleFractals = [];
-let frontFractals = [];
-
-function weightedPick(entries) {
-  const total = entries.reduce((s, item) => s + item.w, 0);
-  let r = Math.random() * total;
-  for (const item of entries) {
-    r -= item.w;
-    if (r <= 0) return item.type;
-  }
-  return entries[entries.length - 1].type;
-}
-
-function makeFractalLine(count, yBase, minScale, maxScale, spread, swayAmp, weights) {
-  const arr = [];
-  for (let i = 0; i < count; i++) {
-    arr.push({
-      x: (i / Math.max(1, count - 1)) * w + rand(-spread, spread),
-      y: yBase + rand(-12, 12),
-      scale: rand(minScale, maxScale),
-      sway: rand(0, Math.PI * 2),
-      swayAmp,
-      rot: rand(-0.08, 0.08),
-      type: weightedPick(weights)
-    });
-  }
-  return arr;
-}
-
-function generateTrees() {
-  backFractals = makeFractalLine(
-    26, horizon - 22, 26, 56, 26, 0.8,
-    [
-      { type: "branch", w: 3 },
-      { type: "fern", w: 2 },
-      { type: "triangle", w: 3 },
-      { type: "crystal", w: 2 }
-    ]
-  );
-
-  middleFractals = makeFractalLine(
-    22, horizon - 2, 38, 78, 30, 1.2,
-    [
-      { type: "branch", w: 3 },
-      { type: "fern", w: 3 },
-      { type: "triangle", w: 2 },
-      { type: "crystal", w: 2 }
-    ]
-  );
-
-  frontFractals = makeFractalLine(
-    18, horizon + 22, 52, 98, 34, 1.6,
-    [
-      { type: "branch", w: 2 },
-      { type: "fern", w: 3 },
-      { type: "triangle", w: 2 },
-      { type: "crystal", w: 3 }
-    ]
-  );
-}
-
-function drawFractalLine(arr, color, alpha, t) {
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  for (const f of arr) {
-    drawFractal(f, color, t);
-  }
-  ctx.restore();
-}
-
-function drawFractal(f, color, t) {
-  const offset = Math.sin(t * 0.0016 + f.sway) * f.swayAmp;
-  const breathe = 1 + Math.sin(t * 0.002 + f.sway) * 0.02;
-
-  ctx.save();
-  ctx.translate(f.x + offset, f.y);
-  ctx.rotate(f.rot + Math.sin(t * 0.001 + f.sway) * 0.03);
-  ctx.scale(breathe, breathe);
-
-  ctx.strokeStyle = color;
-  ctx.fillStyle = color;
-  ctx.lineWidth = Math.max(0.7, f.scale * 0.035);
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-
-  if (f.type === "branch") {
-    drawBranchFractal(f.scale, 4);
-  } else if (f.type === "fern") {
-    drawFernFractal(f.scale * 0.95, 4);
-  } else if (f.type === "triangle") {
-    drawTriangleFractal(f.scale * 0.95, 4);
-  } else {
-    drawCrystalFractal(f.scale * 0.52, 3);
-  }
-
-  ctx.restore();
-}
-
-function drawBranchFractal(len, depth) {
-  if (depth <= 0 || len < 4) return;
-
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(0, -len);
-  ctx.stroke();
-
-  ctx.save();
-  ctx.translate(0, -len);
-
-  const prev = ctx.lineWidth;
-
-  ctx.save();
-  ctx.rotate(-0.42);
-  ctx.lineWidth = Math.max(0.45, prev * 0.76);
-  drawBranchFractal(len * 0.76, depth - 1);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(0.46);
-  ctx.lineWidth = Math.max(0.45, prev * 0.76);
-  drawBranchFractal(len * 0.74, depth - 1);
-  ctx.restore();
-
-  ctx.save();
-  ctx.rotate(0.03);
-  ctx.lineWidth = Math.max(0.4, prev * 0.62);
-  drawBranchFractal(len * 0.58, depth - 1);
-  ctx.restore();
-
-  ctx.restore();
-}
-
-function drawFernFractal(len, depth) {
-  if (depth <= 0 || len < 5) return;
-
-  ctx.beginPath();
-  ctx.moveTo(0, 0);
-  ctx.lineTo(0, -len);
-  ctx.stroke();
-
-  const prev = ctx.lineWidth;
-
-  for (let i = 0.24; i < 0.94; i += 0.18) {
-    const y = -len * i;
-    const leaf = len * (0.18 + (1 - i) * 0.28);
-
-    ctx.save();
-    ctx.translate(0, y);
-    ctx.rotate(-0.92);
-    ctx.lineWidth = Math.max(0.35, prev * 0.72);
-    drawBranchFractal(leaf, depth - 1);
-    ctx.restore();
-
-    ctx.save();
-    ctx.translate(0, y);
-    ctx.rotate(0.92);
-    ctx.lineWidth = Math.max(0.35, prev * 0.72);
-    drawBranchFractal(leaf * 0.96, depth - 1);
-    ctx.restore();
-  }
-
-  ctx.save();
-  ctx.translate(0, -len);
-  ctx.lineWidth = Math.max(0.35, prev * 0.7);
-  drawFernFractal(len * 0.72, depth - 1);
-  ctx.restore();
-}
-
-function trianglePath(size) {
-  const h = size * 0.866;
-  ctx.beginPath();
-  ctx.moveTo(0, -h);
-  ctx.lineTo(-size / 2, 0);
-  ctx.lineTo(size / 2, 0);
-  ctx.closePath();
-}
-
-function drawTriangleFractal(size, depth) {
-  if (depth <= 0 || size < 8) return;
-
-  trianglePath(size);
-  ctx.stroke();
-
-  if (depth === 1) return;
-
-  const h = size * 0.866;
-  const child = size * 0.5;
-
-  ctx.save();
-  ctx.translate(0, -h * 0.5);
-  drawTriangleFractal(child, depth - 1);
-  ctx.restore();
-
-  ctx.save();
-  ctx.translate(-size * 0.25, 0);
-  drawTriangleFractal(child, depth - 1);
-  ctx.restore();
-
-  ctx.save();
-  ctx.translate(size * 0.25, 0);
-  drawTriangleFractal(child, depth - 1);
-  ctx.restore();
-}
-
-function regularPolygon(radius, sides) {
-  ctx.beginPath();
-  for (let i = 0; i < sides; i++) {
-    const a = -Math.PI / 2 + (i * Math.PI * 2) / sides;
-    const x = Math.cos(a) * radius;
-    const y = Math.sin(a) * radius;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
-  ctx.closePath();
-}
-
-function drawCrystalFractal(radius, depth) {
-  if (depth <= 0 || radius < 4) return;
-
-  regularPolygon(radius, 6);
-  ctx.stroke();
-
-  if (depth === 1) return;
-
-  for (let i = 0; i < 6; i++) {
-    const a = -Math.PI / 2 + (i * Math.PI * 2) / 6;
-    ctx.save();
-    ctx.translate(Math.cos(a) * radius * 0.9, Math.sin(a) * radius * 0.9);
-    ctx.scale(0.82, 0.82);
-    drawCrystalFractal(radius * 0.48, depth - 1);
-    ctx.restore();
-  }
-}
-
-function drawForestReflection(t) {
-  ctx.save();
-  ctx.translate(0, horizon * 2 + 22);
-  ctx.scale(1, -1);
-
-  drawFractalLine(backFractals, "rgba(32, 55, 54, 0.9)", 0.11, t);
-  drawFractalLine(middleFractals, "rgba(25, 43, 42, 0.95)", 0.16, t);
-  drawFractalLine(frontFractals, "rgba(18, 33, 32, 0.98)", 0.2, t);
-
-  ctx.restore();
-
-  const veil = ctx.createLinearGradient(0, horizon, 0, h);
-  veil.addColorStop(0, "rgba(58, 82, 86, 0.12)");
-  veil.addColorStop(0.35, "rgba(48, 70, 76, 0.28)");
-  veil.addColorStop(1, "rgba(34, 50, 55, 0.54)");
-  ctx.fillStyle = veil;
-  ctx.fillRect(0, horizon, w, h - horizon);
-}
-
-
-    // ---------------- Sky and lake ----------------
-    function drawSky() {
-      const sky = ctx.createLinearGradient(0, 0, 0, horizon + 30);
-      sky.addColorStop(0, "#536870");
-      sky.addColorStop(0.18, "#637278");
-      sky.addColorStop(0.43, "#7c746d");
-      sky.addColorStop(0.68, "#a2785e");
-      sky.addColorStop(0.86, "#7f6c5d");
-      sky.addColorStop(1, "#4b5d5d");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, horizon + 30);
-    }
-
-    function drawCloudVeil(t) {
-      ctx.globalCompositeOperation = "screen";
-      for (let i = 0; i < 7; i++) {
-        const x = ((i * 270 + t * (0.08 + i * 0.01)) % (w + 460)) - 230;
-        const y = 55 + i * 32;
-        const rx = 230 + i * 18;
-        const ry = 42 + i * 4;
-
-        const g = ctx.createRadialGradient(x, y, 0, x, y, rx);
-        g.addColorStop(0, "rgba(220, 222, 213, 0.035)");
-        g.addColorStop(1, "rgba(220, 222, 213, 0)");
-
-        ctx.fillStyle = g;
-        ctx.beginPath();
-        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalCompositeOperation = "source-over";
-    }
-
-    function drawSunGlow() {
-      const x = w * 0.72;
-      const y = horizon - 78;
-
-      const g = ctx.createRadialGradient(x, y, 0, x, y, Math.max(240, w * 0.23));
-      g.addColorStop(0, "rgba(255, 194, 121, 0.36)");
-      g.addColorStop(0.24, "rgba(246, 172, 102, 0.2)");
-      g.addColorStop(0.58, "rgba(244, 160, 95, 0.07)");
-      g.addColorStop(1, "rgba(244, 160, 95, 0)");
-
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, w, horizon + 80);
-
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(255, 213, 150, 0.12)";
-      ctx.arc(x, y, 22, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function drawDistantHills() {
-      ctx.beginPath();
-      ctx.moveTo(0, horizon - 42);
-
-      for (let x = 0; x <= w; x += 20) {
-        const y =
-          horizon - 42
-          - Math.sin(x * 0.007) * 21
-          - Math.sin(x * 0.019 + 1.4) * 8;
-        ctx.lineTo(x, y);
-      }
-
-      ctx.lineTo(w, horizon + 34);
-      ctx.lineTo(0, horizon + 34);
-      ctx.closePath();
-
-      const g = ctx.createLinearGradient(0, horizon - 120, 0, horizon + 40);
-      g.addColorStop(0, "rgba(58, 77, 75, 0.58)");
-      g.addColorStop(1, "rgba(47, 64, 62, 0.86)");
-      ctx.fillStyle = g;
-      ctx.fill();
-    }
-
-    function drawLakeBase() {
-      const lake = ctx.createLinearGradient(0, horizon, 0, h);
-      lake.addColorStop(0, "#40585d");
-      lake.addColorStop(0.28, "#344d55");
-      lake.addColorStop(0.62, "#2b4149");
-      lake.addColorStop(1, "#22343a");
-      ctx.fillStyle = lake;
-      ctx.fillRect(0, horizon, w, h - horizon);
-    }
-
-    function drawLakeLight(t) {
-      const x = w * 0.72;
-
-      const g = ctx.createRadialGradient(x, horizon + 30, 0, x, horizon + 70, Math.max(260, w * 0.28));
-      g.addColorStop(0, "rgba(255, 192, 122, 0.22)");
-      g.addColorStop(0.35, "rgba(237, 169, 110, 0.1)");
-      g.addColorStop(0.8, "rgba(237, 169, 110, 0.025)");
-      g.addColorStop(1, "rgba(237, 169, 110, 0)");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, horizon, w, h - horizon);
-
-      // Narrow, broken reflection strokes.
-      ctx.save();
-      ctx.globalCompositeOperation = "screen";
-      for (let i = 0; i < 42; i++) {
-        const yy = horizon + 18 + i * 7.5;
-        const spread = 24 + i * 3.8;
-        const len = Math.max(20, 150 - i * 2.3);
-        const jitter = Math.sin(t * 0.018 + i * 0.9) * 11;
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 205, 145, ${clamp(0.09 - i * 0.0016, 0.016, 0.09)})`;
-        ctx.lineWidth = 1;
-        ctx.moveTo(x - len * 0.5 - spread * Math.random() * 0.08 + jitter, yy);
-        ctx.lineTo(x + len * 0.5 + spread * Math.random() * 0.08 + jitter, yy + Math.sin(i) * 0.8);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawRipples(t) {
-      ctx.save();
-      for (let i = 0; i < 30; i++) {
-        const y = horizon + 10 + i * 10.5;
-        const amp = 0.8 + i * 0.035;
-        const alpha = clamp(0.028 + i * 0.001, 0.02, 0.065);
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(238, 230, 214, ${alpha})`;
-        ctx.lineWidth = 1;
-
-        for (let x = 0; x <= w; x += 10) {
-          const yy =
-            y
-            + Math.sin(x * 0.014 + t * 0.028 + i * 0.5) * amp
-            + Math.sin(x * 0.031 + t * 0.011) * 0.45;
-
-          if (x === 0) ctx.moveTo(x, yy);
-          else ctx.lineTo(x, yy);
-        }
-
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawRainRings(t) {
-      ctx.save();
-      ctx.lineWidth = 0.75;
-      for (let i = 0; i < 64; i++) {
-        const x = (i * 127.13 + t * 1.7) % (w + 120) - 60;
-        const y = horizon + 18 + ((i * 41.9) % Math.max(80, h - horizon - 28));
-        const pulse = (Math.sin(t * 0.08 + i) + 1) / 2;
-        const rx = 2 + pulse * 4.5;
-        const ry = 0.8 + pulse * 1.7;
-
-        ctx.beginPath();
-        ctx.strokeStyle = `rgba(255, 239, 220, ${0.035 + pulse * 0.035})`;
-        ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawShore() {
-      ctx.beginPath();
-      ctx.moveTo(0, horizon + 2);
-
-      for (let x = 0; x <= w; x += 16) {
-        const y = horizon + 3 + Math.sin(x * 0.016) * 2.3 + Math.sin(x * 0.047) * 1.1;
-        ctx.lineTo(x, y);
-      }
-
-      ctx.lineTo(w, horizon + 42);
-      ctx.lineTo(0, horizon + 42);
-      ctx.closePath();
-
-      const g = ctx.createLinearGradient(0, horizon - 10, 0, horizon + 52);
-      g.addColorStop(0, "rgba(28, 42, 39, 0.28)");
-      g.addColorStop(1, "rgba(24, 35, 33, 0)");
-      ctx.fillStyle = g;
-      ctx.fill();
-    }
-
-    // ---------------- Subtle mathematical atmosphere ----------------
-    function drawFaintGeometry(t) {
-      const cx = w * 0.79;
-      const cy = h * 0.34;
-      const r = Math.min(w, h) * 0.16;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(t * 0.0009);
-      ctx.globalAlpha = 0.055;
-      ctx.strokeStyle = "rgba(255, 225, 180, 0.55)";
+    function drawBackground() {
+      // 深空渐变
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#0a0a1f');
+      grad.addColorStop(1, '#1a0d2e');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+      
+      // 微弱网格
+      ctx.strokeStyle = 'rgba(0, 247, 255, 0.06)';
       ctx.lineWidth = 1;
-
-      for (let i = 0; i < 6; i++) {
-        ctx.beginPath();
-        ctx.ellipse(0, 0, r, r * (0.2 + i * 0.1), i * Math.PI / 6, 0, Math.PI * 2);
-        ctx.stroke();
+      for (let x = 0; x < w; x += 48) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
       }
+      for (let y = 0; y < h; y += 48) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+    }
 
-      ctx.beginPath();
-      ctx.arc(0, 0, r * 0.72, 0, Math.PI * 2);
-      ctx.stroke();
+    function drawRain() {
+      ctx.shadowBlur = 8;
+      for (let drop of rainDrops) {
+        ctx.strokeStyle = `rgba(0, 247, 255, ${drop.opacity})`;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(drop.x, drop.y);
+        ctx.lineTo(drop.x - 4, drop.y + drop.len);
+        ctx.stroke();
+        
+        drop.y += drop.speed;
+        if (drop.y > h) {
+          drop.y = -drop.len;
+          drop.x = Math.random() * w;
+        }
+      }
+    }
 
-      ctx.restore();
+    function drawParticles() {
+      for (let p of particles) {
+        p.update();
+        p.draw();
+      }
+    }
+
+    function drawGeometries() {
+      for (let g of geometries) {
+        g.update();
+        g.draw();
+      }
+    }
+
+    function drawConnections() {
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(199, 36, 255, 0.18)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < particles.length; i += 18) {
+        const p1 = particles[i];
+        for (let j = i + 1; j < i + 28 && j < particles.length; j++) {
+          const p2 = particles[j];
+          const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          if (d < 140) {
+            ctx.globalAlpha = (140 - d) / 140;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
     }
 
     function animate() {
-      frame += 1;
-
+      time++;
       ctx.clearRect(0, 0, w, h);
-
-      drawSky();
-      drawCloudVeil(frame);
-      drawSunGlow();
-      drawDistantHills();
-
-      drawTreeLine(backTrees, "rgba(36, 61, 58, 0.92)", 0.72, frame, 0.92);
-      drawTreeLine(middleTrees, "rgba(27, 48, 45, 0.96)", 0.88, frame, 1);
-
-      drawLakeBase();
-      drawForestReflection(frame);
-      drawLakeLight(frame);
-      drawRipples(frame);
-      drawRainRings(frame);
-      drawRainSparkles(frame);
-
-      drawShore();
-
-      drawTreeLine(frontTrees, "rgba(18, 32, 30, 1)", 0.95, frame, 1.08);
-
-      updateMist();
-      drawMist();
-
-      drawFaintGeometry(frame);
-
-      updateRain(rainFar);
-      updateRain(rainNear);
-      drawRain(rainFar, "220, 228, 230", 0.8);
-      drawRain(rainNear, "255, 246, 230", 1);
-
+      drawBackground();
+      drawParticles();
+      drawRain();
+      drawGeometries();
+      drawConnections();
       requestAnimationFrame(animate);
     }
 
-    generateTrees();
-    generateRain();
-    generateMist();
-    generateStarsOfRain();
+    init();
     animate();
   </script>
 </body>
