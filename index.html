@@ -9,7 +9,7 @@
       --math-gold: #f4d9a0;
       --math-ink: #0f1c22;
       --glow-cyan: #a8e6e6;
-      --paper: #f6edd7;
+      --paper: #fff7e8;
       --subtle: #d8c9a8;
     }
 
@@ -42,14 +42,16 @@
       justify-content: center;
       text-align: center;
       padding: 8vw 10vw;
+      pointer-events: none;
       background:
-        radial-gradient(circle at center, rgba(15,28,34,0.10), rgba(15,28,34,0.28) 55%, rgba(15,28,34,0.50) 100%);
+        radial-gradient(circle at center, rgba(15,28,34,0.08), rgba(15,28,34,0.22) 54%, rgba(15,28,34,0.50) 100%);
     }
 
     .content-wrapper {
       max-width: 860px;
       width: 100%;
       pointer-events: auto;
+      filter: drop-shadow(0 12px 22px rgba(0,0,0,0.42));
     }
 
     .eyebrow {
@@ -58,10 +60,10 @@
       text-transform: uppercase;
       color: var(--math-gold);
       margin-bottom: 18px;
-      opacity: 0.95;
+      opacity: 0.98;
       text-shadow:
-        2px 2px 0 rgba(0,0,0,0.55),
-        0 0 10px rgba(168, 230, 230, 0.18);
+        3px 3px 0 rgba(0,0,0,0.55),
+        0 0 12px rgba(168, 230, 230, 0.20);
     }
 
     h1 {
@@ -72,10 +74,10 @@
       color: #fff7e8;
       margin-bottom: 22px;
       text-shadow:
-        3px 0 0 rgba(0,0,0,0.60),
-        0 3px 0 rgba(0,0,0,0.60),
-        3px 3px 0 rgba(0,0,0,0.60),
-        0 0 18px rgba(168, 230, 230, 0.24);
+        4px 0 0 rgba(0,0,0,0.60),
+        0 4px 0 rgba(0,0,0,0.60),
+        4px 4px 0 rgba(0,0,0,0.60),
+        0 0 20px rgba(168, 230, 230, 0.30);
     }
 
     .subtitle {
@@ -85,7 +87,7 @@
       max-width: 660px;
       margin: 0 auto 40px;
       text-shadow:
-        2px 2px 0 rgba(0,0,0,0.45),
+        3px 3px 0 rgba(0,0,0,0.45),
         0 0 8px rgba(0,0,0,0.30);
     }
 
@@ -95,7 +97,7 @@
       color: #e8d9c0;
       margin-bottom: 22px;
       text-shadow:
-        2px 2px 0 rgba(0,0,0,0.42),
+        3px 3px 0 rgba(0,0,0,0.42),
         0 0 8px rgba(0,0,0,0.28);
     }
 
@@ -105,8 +107,7 @@
       letter-spacing: 0.08em;
       margin: 48px 0 16px;
       text-align: center;
-      text-shadow:
-        2px 2px 0 rgba(0,0,0,0.48);
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
     }
 
     .button-row {
@@ -125,13 +126,13 @@
       color: #f0e6d2;
       text-decoration: none;
       font-size: 1.05rem;
-      border: 2px solid rgba(244, 217, 160, 0.58);
+      border: 2px solid rgba(244, 217, 160, 0.62);
       border-radius: 0;
-      background: rgba(244, 217, 160, 0.04);
+      background: rgba(15, 28, 34, 0.34);
       box-shadow:
-        3px 3px 0 rgba(0,0,0,0.55),
-        0 0 16px rgba(168, 230, 230, 0.12),
-        inset 0 0 0 1px rgba(255,255,255,0.03);
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 18px rgba(168, 230, 230, 0.14),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
       transition: all 0.2s ease;
     }
 
@@ -140,17 +141,17 @@
       color: #fff7e8;
       transform: translate(2px, 2px);
       box-shadow:
-        1px 1px 0 rgba(0,0,0,0.65),
-        0 0 22px rgba(168, 230, 230, 0.24);
+        2px 2px 0 rgba(0,0,0,0.65),
+        0 0 24px rgba(168, 230, 230, 0.26);
     }
 
     .footer {
       margin-top: 64px;
       font-size: 1.02rem;
       color: #c8b68a;
-      opacity: 0.82;
+      opacity: 0.84;
       letter-spacing: 0.12em;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.42);
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
     }
 
     .lang-toggle {
@@ -169,15 +170,15 @@
       cursor: pointer;
       transition: all 0.2s ease;
       box-shadow:
-        3px 3px 0 rgba(0,0,0,0.55),
-        0 0 16px rgba(168,230,230,0.16);
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 18px rgba(168,230,230,0.18);
     }
 
     .lang-toggle:hover {
       transform: translate(2px, 2px);
       box-shadow:
-        1px 1px 0 rgba(0,0,0,0.65),
-        0 0 26px rgba(168,230,230,0.22);
+        2px 2px 0 rgba(0,0,0,0.65),
+        0 0 28px rgba(168,230,230,0.24);
     }
 
     .small-signature {
@@ -185,32 +186,20 @@
       bottom: 28px;
       left: 34px;
       z-index: 3;
-      color: rgba(168, 230, 230, 0.25);
+      color: rgba(168, 230, 230, 0.30);
       font-size: 0.84rem;
       letter-spacing: 3px;
       pointer-events: none;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
     }
 
-    a {
-      color: #a8e6e6;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-shadow: 0 0 10px rgba(168,230,230,0.4);
-    }
+    a { color: #a8e6e6; text-decoration: none; }
+    a:hover { text-shadow: 0 0 10px rgba(168,230,230,0.45); }
 
     @media (max-width: 760px) {
-      .lang-toggle {
-        top: 18px;
-        right: 18px;
-        padding: 10px 18px;
-      }
-      .small-signature {
-        left: 18px;
-        bottom: 18px;
-      }
+      .overlay-text { padding: 22vw 8vw 12vw; }
+      .lang-toggle { top: 18px; right: 18px; padding: 10px 18px; }
+      .small-signature { left: 18px; bottom: 18px; }
     }
   </style>
 </head>
@@ -254,7 +243,7 @@
     </div>
   </div>
 
-  <div class="small-signature">TORUS · KLEIN BOTTLE · PIXEL · GEOMETRY</div>
+  <div class="small-signature">TORUS · KLEIN BOTTLE · PIXEL GEOMETRY</div>
 
   <script>
     // ============== 语言切换 ==============
@@ -321,21 +310,23 @@
 
     toggleBtn.addEventListener("click", switchLanguage);
 
-    // ============== Pixel Math Background ==============
+    // ============== 大颗粒像素数学背景 ==============
     const canvas = document.getElementById("bg");
     const ctx = canvas.getContext("2d");
 
     const buffer = document.createElement("canvas");
     const bctx = buffer.getContext("2d");
 
-    let w = 0, h = 0;
-    let bw = 0, bh = 0;
+    let w = 0;
+    let h = 0;
+    let bw = 0;
+    let bh = 0;
     let pixelSize = 6;
     let time = 0;
     let mouse = { x: 0, y: 0 };
     let mathRain = [];
 
-    const mathSymbols = ["∫", "∂", "∇", "∑", "∏", "∞", "Δ", "Ω", "Φ", "Ψ"];
+    const mathSymbols = ["∫", "∂", "∇", "∑", "∞", "Δ", "Ω", "Φ", "Ψ", "π", "λ", "μ"];
 
     function resize() {
       w = window.innerWidth;
@@ -344,7 +335,8 @@
       canvas.width = w;
       canvas.height = h;
 
-      pixelSize = Math.max(4, Math.floor(Math.min(w, h) / 150));
+      // 大颗粒像素，但不要低到看不清：几何体会用 2-3 个 buffer 像素粗线绘制。
+      pixelSize = Math.max(3, Math.min(5, Math.floor(Math.min(w, h) / 210)));
       bw = Math.ceil(w / pixelSize);
       bh = Math.ceil(h / pixelSize);
 
@@ -364,69 +356,74 @@
     });
 
     function initMathRain() {
-      mathRain = Array.from({ length: 75 }, () => ({
+      // 数量减少，尺寸变大，避免一片糊。
+      mathRain = Array.from({ length: 34 }, () => ({
         x: Math.random() * bw,
         y: Math.random() * bh,
-        speed: 0.10 + Math.random() * 0.25,
-        size: 2 + Math.floor(Math.random() * 3),
+        speed: 0.07 + Math.random() * 0.15,
+        size: 6 + Math.floor(Math.random() * 4),
         symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
-        drift: (Math.random() - 0.5) * 0.08,
-        phase: Math.random() * Math.PI * 2
+        drift: (Math.random() - 0.5) * 0.05,
+        phase: Math.random() * Math.PI * 2,
+        alpha: 0.28 + Math.random() * 0.25
       }));
     }
 
-    function drawPixelRect(x, y, ww, hh, color) {
+    function px(x, y, ww, hh, color) {
       bctx.fillStyle = color;
-      bctx.fillRect(Math.round(x), Math.round(y), Math.round(ww), Math.round(hh));
+      bctx.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(ww)), Math.max(1, Math.round(hh)));
     }
 
     function drawBackground() {
       const grad = bctx.createLinearGradient(0, 0, 0, bh);
-      grad.addColorStop(0, "#0f1c22");
-      grad.addColorStop(1, "#182b34");
+      grad.addColorStop(0, "#0d1b22");
+      grad.addColorStop(0.55, "#132832");
+      grad.addColorStop(1, "#1b3038");
       bctx.fillStyle = grad;
       bctx.fillRect(0, 0, bw, bh);
 
-      // 粗像素网格
-      bctx.strokeStyle = "rgba(168,230,230,0.08)";
+      // 大格子，保留像素感，但降低透明度，避免抢几何体。
+      bctx.strokeStyle = "rgba(168,230,230,0.055)";
       bctx.lineWidth = 1;
-      for (let x = 0; x < bw; x += 8) {
+      for (let x = 0; x < bw; x += 12) {
         bctx.beginPath();
         bctx.moveTo(x + 0.5, 0);
         bctx.lineTo(x + 0.5, bh);
         bctx.stroke();
       }
-      for (let y = 0; y < bh; y += 8) {
+      for (let y = 0; y < bh; y += 12) {
         bctx.beginPath();
         bctx.moveTo(0, y + 0.5);
         bctx.lineTo(bw, y + 0.5);
         bctx.stroke();
       }
 
-      // 微光粒子
-      for (let i = 0; i < 55; i++) {
-        const x = (i * 17 + Math.floor(time * 0.08)) % bw;
-        const y = ((i * 11) % bh);
-        drawPixelRect(x, y, 1, 1, "rgba(168,230,230,0.22)");
+      // 稀疏像素星点
+      for (let i = 0; i < 45; i++) {
+        const x = (i * 31 + Math.floor(time * 0.035)) % bw;
+        const y = (i * 19) % bh;
+        px(x, y, 1, 1, "rgba(168,230,230,0.16)");
       }
     }
 
-    function rotate3D(x, y, z, ax, ay) {
-      // rotate x-axis
-      let cy = Math.cos(ax), sy = Math.sin(ax);
-      let y1 = y * cy - z * sy;
-      let z1 = y * sy + z * cy;
+    function rotate3D(x, y, z, ax, ay, az = 0) {
+      let c = Math.cos(ax), s = Math.sin(ax);
+      let y1 = y * c - z * s;
+      let z1 = y * s + z * c;
 
-      // rotate y-axis
-      let cx = Math.cos(ay), sx = Math.sin(ay);
-      let x2 = x * cx + z1 * sx;
-      let z2 = -x * sx + z1 * cx;
+      c = Math.cos(ay); s = Math.sin(ay);
+      let x2 = x * c + z1 * s;
+      let z2 = -x * s + z1 * c;
 
-      return { x: x2, y: y1, z: z2 };
+      c = Math.cos(az); s = Math.sin(az);
+      let x3 = x2 * c - y1 * s;
+      let y3 = x2 * s + y1 * c;
+
+      return { x: x3, y: y3, z: z2 };
     }
 
     function project(pt, scale, ox, oy) {
-      const d = 6;
+      const d = 7.5;
       const k = scale / (d - pt.z);
       return {
         x: ox + pt.x * k,
@@ -435,11 +432,12 @@
       };
     }
 
-    function drawPixelPoint(x, y, size, color) {
-      drawPixelRect(x - size / 2, y - size / 2, size, size, color);
+    function drawThickPixel(x, y, size, color) {
+      const s = Math.max(1, Math.round(size));
+      px(x - Math.floor(s / 2), y - Math.floor(s / 2), s, s, color);
     }
 
-    function drawPixelLine(x1, y1, x2, y2, color) {
+    function drawPixelLine(x1, y1, x2, y2, color, thickness = 2) {
       x1 = Math.round(x1); y1 = Math.round(y1);
       x2 = Math.round(x2); y2 = Math.round(y2);
       let dx = Math.abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
@@ -447,7 +445,7 @@
       let err = dx + dy;
 
       while (true) {
-        drawPixelRect(x1, y1, 1, 1, color);
+        drawThickPixel(x1, y1, thickness, color);
         if (x1 === x2 && y1 === y2) break;
         const e2 = 2 * err;
         if (e2 >= dy) { err += dy; x1 += sx; }
@@ -455,9 +453,21 @@
       }
     }
 
-    function drawTorus(cx, cy, scale, t) {
-      const U = 22, V = 16;
-      const R = 1.7, r = 0.72;
+    function drawPixelLabel(text, x, y, color) {
+      bctx.font = "bold 6px Georgia";
+      bctx.textAlign = "center";
+      bctx.textBaseline = "middle";
+      bctx.fillStyle = "rgba(0,0,0,0.50)";
+      bctx.fillText(text, Math.round(x + 1), Math.round(y + 1));
+      bctx.fillStyle = color;
+      bctx.fillText(text, Math.round(x), Math.round(y));
+    }
+
+    function drawTorus(cx, cy, scale, t, label = "TORUS") {
+      const U = 28;
+      const V = 18;
+      const R = 1.85;
+      const r = 0.72;
       const grid = [];
 
       for (let i = 0; i <= U; i++) {
@@ -468,8 +478,7 @@
           const x = (R + r * Math.cos(v)) * Math.cos(u);
           const y = (R + r * Math.cos(v)) * Math.sin(u);
           const z = r * Math.sin(v);
-
-          const rot = rotate3D(x, y, z, 0.75 + t * 0.01, 0.7 + t * 0.012);
+          const rot = rotate3D(x, y, z, 0.72 + t * 0.006, 0.55 + t * 0.008, 0.08);
           grid[i][j] = project(rot, scale, cx, cy);
         }
       }
@@ -479,20 +488,23 @@
           const p = grid[i][j];
           const pu = grid[i + 1][j];
           const pv = grid[i][j + 1];
-
-          const alpha = 0.20 + (p.depth + 2) / 8 * 0.45;
+          const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.16));
           const lineColor = `rgba(168,230,230,${alpha})`;
-          const pointColor = `rgba(244,217,160,${0.35 + alpha})`;
+          const pointColor = `rgba(244,217,160,${Math.min(0.95, alpha + 0.10)})`;
 
-          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor);
-          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor);
-          drawPixelPoint(p.x, p.y, 1.2, pointColor);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.3);
+
+          if ((i + j) % 4 === 0) drawThickPixel(p.x, p.y, 2, pointColor);
         }
       }
+
+      drawPixelLabel(label, cx, cy + scale * 0.45, "rgba(244,217,160,0.62)");
     }
 
     function drawKlein(cx, cy, scale, t) {
-      const U = 20, V = 14;
+      const U = 28;
+      const V = 18;
       const grid = [];
 
       for (let i = 0; i <= U; i++) {
@@ -511,11 +523,11 @@
           }
           y = -2 * (1 - Math.cos(u) / 2) * Math.sin(v);
 
-          x *= 0.18;
-          y *= 0.18;
-          z *= 0.18;
+          x *= 0.19;
+          y *= 0.19;
+          z *= 0.19;
 
-          const rot = rotate3D(x, y, z, 0.35 + t * 0.009, -0.9 + t * 0.006);
+          const rot = rotate3D(x, y, z, 0.34 + t * 0.007, -0.78 + t * 0.006, -0.18);
           grid[i][j] = project(rot, scale, cx, cy);
         }
       }
@@ -525,22 +537,23 @@
           const p = grid[i][j];
           const pu = grid[i + 1][j];
           const pv = grid[i][j + 1];
-
-          const alpha = 0.18 + (p.depth + 2) / 8 * 0.42;
+          const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.15));
           const lineColor = `rgba(244,217,160,${alpha})`;
-          const pointColor = `rgba(168,230,230,${0.25 + alpha})`;
+          const pointColor = `rgba(168,230,230,${Math.min(0.92, alpha + 0.08)})`;
 
-          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor);
-          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor);
-          drawPixelPoint(p.x, p.y, 1.1, pointColor);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.3);
+
+          if ((i + j) % 4 === 0) drawThickPixel(p.x, p.y, 2, pointColor);
         }
       }
+
+      drawPixelLabel("KLEIN", cx, cy + scale * 0.46, "rgba(168,230,230,0.64)");
     }
 
-    function drawMathRain() {
+    function drawLargePixelSymbols() {
       const mx = mouse.x / pixelSize;
       const my = mouse.y / pixelSize;
-
       bctx.textAlign = "center";
       bctx.textBaseline = "middle";
 
@@ -548,55 +561,55 @@
         const dx = mx - r.x;
         const dy = my - r.y;
         const dist = Math.hypot(dx, dy);
-
-        if (dist < 14) {
-          r.x -= dx * 0.01;
-        }
+        if (dist < 18) r.x -= dx * 0.008;
 
         r.y += r.speed;
-        r.x += Math.sin(time * 0.02 + r.phase) * r.drift;
+        r.x += Math.sin(time * 0.018 + r.phase) * r.drift;
 
-        if (r.y > bh + 3) {
-          r.y = -2;
+        if (r.y > bh + 8) {
+          r.y = -8;
           r.x = Math.random() * bw;
         }
 
-        const alpha = 0.26 + Math.sin(time * 0.03 + r.phase) * 0.12;
+        const alpha = r.alpha + Math.sin(time * 0.025 + r.phase) * 0.10;
+        const x = Math.round(r.x);
+        const y = Math.round(r.y);
 
-        bctx.font = `${r.size}px Georgia`;
+        bctx.font = `bold ${r.size}px Georgia`;
+        bctx.fillStyle = "rgba(0,0,0,0.40)";
+        bctx.fillText(r.symbol, x + 1, y + 1);
         bctx.fillStyle = `rgba(244,217,160,${alpha})`;
-        bctx.fillText(r.symbol, Math.round(r.x), Math.round(r.y));
+        bctx.fillText(r.symbol, x, y);
       }
     }
 
-    function drawFormulaStrips() {
-      const formulas = [
-        "∫ω", "ΣV", "∂̄", "Δφ", "π₁", "H⁰", "GLₙ", "Ω"
+    function drawBigFormulaBlocks() {
+      const items = [
+        { text: "∂² = 0", x: 0.16, y: 0.18, c: "rgba(244,217,160,0.30)" },
+        { text: "∇×F", x: 0.83, y: 0.18, c: "rgba(168,230,230,0.30)" },
+        { text: "H⁰(X,L)", x: 0.17, y: 0.78, c: "rgba(168,230,230,0.24)" },
+        { text: "GLₙ", x: 0.83, y: 0.78, c: "rgba(244,217,160,0.25)" }
       ];
 
-      for (let i = 0; i < formulas.length; i++) {
-        const x = 4 + i * 10;
-        const y = 4 + (i % 2) * 4;
-        bctx.font = "3px Georgia";
-        bctx.fillStyle = "rgba(168,230,230,0.13)";
-        bctx.fillText(formulas[i], x, y);
-      }
-
-      for (let i = 0; i < formulas.length; i++) {
-        const x = bw - 10 - i * 9;
-        const y = bh - 4 - (i % 2) * 4;
-        bctx.font = "3px Georgia";
-        bctx.fillStyle = "rgba(244,217,160,0.10)";
-        bctx.fillText(formulas[i], x, y);
+      bctx.textAlign = "center";
+      bctx.textBaseline = "middle";
+      for (const item of items) {
+        const x = bw * item.x;
+        const y = bh * item.y;
+        bctx.font = "bold 8px Georgia";
+        bctx.fillStyle = "rgba(0,0,0,0.34)";
+        bctx.fillText(item.text, Math.round(x + 1), Math.round(y + 1));
+        bctx.fillStyle = item.c;
+        bctx.fillText(item.text, Math.round(x), Math.round(y));
       }
     }
 
     function drawCenterGlow() {
       const g = bctx.createRadialGradient(
-        bw * 0.5, bh * 0.45, 2,
-        bw * 0.5, bh * 0.45, Math.min(bw, bh) * 0.28
+        bw * 0.5, bh * 0.46, 2,
+        bw * 0.5, bh * 0.46, Math.min(bw, bh) * 0.34
       );
-      g.addColorStop(0, "rgba(168,230,230,0.11)");
+      g.addColorStop(0, "rgba(168,230,230,0.12)");
       g.addColorStop(1, "rgba(168,230,230,0)");
       bctx.fillStyle = g;
       bctx.fillRect(0, 0, bw, bh);
@@ -608,7 +621,7 @@
         bw * 0.5, bh * 0.5, Math.max(bw, bh) * 0.7
       );
       g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(1, "rgba(0,0,0,0.55)");
+      g.addColorStop(1, "rgba(0,0,0,0.56)");
       bctx.fillStyle = g;
       bctx.fillRect(0, 0, bw, bh);
     }
@@ -619,15 +632,14 @@
 
       drawBackground();
       drawCenterGlow();
-      drawFormulaStrips();
+      drawBigFormulaBlocks();
 
-      drawTorus(bw * 0.29, bh * 0.37, 9.5, time);
-      drawKlein(bw * 0.73, bh * 0.38, 10.5, time);
+      const s = Math.min(bw, bh);
+      drawTorus(bw * 0.22, bh * 0.40, s * 0.92, time, "TORUS");
+      drawKlein(bw * 0.78, bh * 0.39, s * 0.96, time);
+      drawTorus(bw * 0.50, bh * 0.77, s * 0.58, -time * 0.75, "T²");
 
-      // 额外一个小环面，增强数学感
-      drawTorus(bw * 0.50, bh * 0.73, 6.4, -time * 0.7);
-
-      drawMathRain();
+      drawLargePixelSymbols();
       drawVignette();
 
       ctx.clearRect(0, 0, w, h);
