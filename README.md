@@ -1,33 +1,30 @@
-# 吕康禾(Kanghe Lyu)
+# Kanghe Lyu
 
-> Geometry, Algebra and Mathematical Physics
+I am an undergraduate student in mathematics at Sichuan University.
 
-I am interested in the way mathematical objects organize themselves through maps, invariants, and universal properties.
+My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics. I am particularly interested in the structures that arise from symmetries, invariants, and categorical viewpoints.
 
-## Areas
+I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.
 
+## Interests
+
+- Geometry and topology
 - Algebra and representation theory
-- Number theory and arithmetic geometry
-- Algebraic geometry
-- Topology and homotopy theory
-- Category theory
-- Logic, type theory, and foundations
+- Lie algebras and related structures
+- Algebraic and categorical methods
+- Mathematical physics
 
-## Notes and Projects
+## Academic Experience
 
-- [`notes`](https://github.com/your-username/notes) — mathematical notes
-- [`seminar`](https://github.com/your-username/seminar) — seminar notes and talks
-- [`formalization`](https://github.com/your-username/formalization) — Lean / Coq experiments
-- [`examples`](https://github.com/your-username/examples) — examples and counterexamples
+I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.
 
-## Style
+I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.
 
-- definitions before notation
-- examples before generality
-- functoriality when possible
-- invariants when useful
-- diagrams when they clarify
+## Notes
+
+This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.
 
 ## Contact
 
-your.email@example.com
+Email: kanghelyu@foxmail.com  
+GitHub: [lv7074916](https://github.com/lv7074916)
