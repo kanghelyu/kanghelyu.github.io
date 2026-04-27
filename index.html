@@ -466,7 +466,7 @@
       bctx.fillText(text, Math.round(x), Math.round(y));
     }
 
-    function drawTorus(cx, cy, scale, t, label = "TORUS") {
+    function drawTorus(cx, cy, scale, t) {
       const U = 28;
       const V = 18;
       const R = 1.85;
@@ -666,7 +666,7 @@
 
       const s = Math.min(bw, bh);
 
-      drawTorus(bw * 0.22, bh * 0.40, s * 0.92, time, "TORUS");
+      drawTorus(bw * 0.22, bh * 0.40, s * 0.92, time);
       drawKlein(bw * 0.78, bh * 0.39, s * 0.96, time);
       drawTorus(bw * 0.50, bh * 0.77, s * 0.58, -time * 0.75, "T²");
 
