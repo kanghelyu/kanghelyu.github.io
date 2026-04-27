@@ -6,116 +6,114 @@
   <title>Kanghe Lyu</title>
   <style>
     :root {
-      --neon-cyan: #00f7ff;
-      --neon-purple: #c724ff;
-      --neon-gold: #ffd700;
-      --glass: rgba(15, 15, 35, 0.75);
-      --text: #e0f8ff;
+      --math-gold: #f4d9a0;
+      --math-ink: #0f1c22;
+      --glow-cyan: #a8e6e6;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
-      width: 100%; min-height: 100%; overflow-x: hidden;
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      color: var(--text); background: #0a0a1f;
+      width: 100%; min-height: 100vh; overflow-x: hidden;
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #f0e6d2; background: var(--math-ink);
     }
     #bg { position: fixed; inset: 0; z-index: 0; }
-    .overlay {
-      position: fixed; inset: 0; z-index: 1; pointer-events: none;
-      background: radial-gradient(circle at 30% 20%, rgba(199, 36, 255, 0.15) 0%, transparent 50%),
-                  radial-gradient(circle at 70% 80%, rgba(0, 247, 255, 0.15) 0%, transparent 50%);
+    .overlay-text {
+      position: absolute; z-index: 2; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; padding: 8vw 10vw;
+      pointer-events: none;
     }
-    .page {
-      position: relative; z-index: 2; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 60px 5vw;
+    .content-wrapper {
+      max-width: 820px; width: 100%; pointer-events: auto;
     }
-    .content {
-      max-width: 820px; width: 100%;
-      background: var(--glass);
-      backdrop-filter: blur(22px);
-      border: 1px solid rgba(0, 247, 255, 0.3);
-      border-radius: 24px;
-      padding: 58px 52px;
-      box-shadow: 0 0 80px -10px var(--neon-cyan),
-                  0 0 40px -10px var(--neon-purple),
-                  inset 0 1px 0 rgba(255,255,255,0.1);
-      position: relative;
+    .eyebrow {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem); letter-spacing: 0.25em;
+      text-transform: uppercase; color: var(--math-gold); margin-bottom: 18px;
+      opacity: 0.85;
     }
-    .content::before {
-      content: ''; position: absolute; inset: 0; border-radius: 24px;
-      background: linear-gradient(90deg, transparent, rgba(255,215,0,0.08), transparent);
-      pointer-events: none; animation: scan 8s linear infinite;
+    h1 {
+      font-size: clamp(3.2rem, 7vw, 5.8rem); line-height: 1.05;
+      font-weight: 400; letter-spacing: -0.04em; color: #fff7e8;
+      text-shadow: 0 0 32px var(--glow-cyan), 0 4px 12px rgba(0,0,0,0.6);
+      margin-bottom: 22px;
     }
-    @keyframes scan { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
-    .lang-toggle {
-      position: fixed; top: 30px; right: 40px; z-index: 10;
-      padding: 10px 24px; border-radius: 9999px;
-      background: rgba(15,15,35,0.9); border: 2px solid var(--neon-cyan);
-      color: var(--neon-cyan); font-weight: 600; letter-spacing: 1px;
-      cursor: pointer; transition: all 0.3s ease;
-      box-shadow: 0 0 25px var(--neon-cyan);
+    .subtitle {
+      font-size: clamp(1.15rem, 2.2vw, 1.45rem); line-height: 1.55;
+      color: #d8c9a8; max-width: 620px; margin: 0 auto 42px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
-    .lang-toggle:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--neon-cyan); }
-    .eyebrow { font-size: 0.95rem; letter-spacing: 4px; text-transform: uppercase; 
-               color: var(--neon-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
-    .eyebrow::before { content: ''; width: 48px; height: 2px; background: var(--neon-gold); }
-    h1 { font-size: clamp(2.8rem, 6vw, 5.2rem); line-height: 1; margin-bottom: 16px; 
-         background: linear-gradient(90deg, #00f7ff, #c724ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .subtitle { font-size: 1.25rem; color: #b0f0ff; margin-bottom: 32px; }
-    p { line-height: 1.85; margin-bottom: 18px; font-size: 1.1rem; color: #d0f8ff; }
-    h2 { color: var(--neon-purple); font-size: 1.35rem; margin: 42px 0 14px; letter-spacing: 1px; }
-    .button-row { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 40px; }
+    p {
+      font-size: clamp(1.05rem, 1.8vw, 1.22rem); line-height: 1.92;
+      color: #e8d9c0; margin-bottom: 22px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    }
+    h2 {
+      font-size: 1.35rem; color: var(--math-gold); letter-spacing: 0.08em;
+      margin: 48px 0 16px; text-align: center;
+    }
+    .button-row {
+      display: flex; flex-wrap: wrap; gap: 18px; justify-content: center;
+      margin-top: 52px;
+    }
     .button {
-      padding: 14px 28px; border: 2px solid var(--neon-cyan); border-radius: 9999px;
-      color: var(--neon-cyan); text-decoration: none; font-weight: 500;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: 0 0 20px rgba(0,247,255,0.4);
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 14px 32px; color: #f0e6d2; text-decoration: none;
+      font-size: 1.05rem; border: 1px solid rgba(244, 217, 160, 0.55);
+      border-radius: 9999px; background: rgba(244, 217, 160, 0.06);
+      box-shadow: 0 0 24px rgba(168, 230, 230, 0.3);
+      transition: all 0.3s ease;
     }
-    .button:hover { background: var(--neon-cyan); color: #0a0a1f; transform: translateY(-3px); }
-    .footer { margin-top: 48px; text-align: center; font-size: 0.95rem; color: #88c8ff; opacity: 0.7; }
+    .button:hover {
+      border-color: var(--math-gold); color: #fff7e8;
+      transform: translateY(-2px); box-shadow: 0 0 32px var(--glow-cyan);
+    }
+    .footer {
+      margin-top: 68px; font-size: 1.05rem; color: #c8b68a; opacity: 0.75;
+      letter-spacing: 0.12em;
+    }
+    .lang-toggle {
+      position: fixed; top: 36px; right: 48px; z-index: 10;
+      padding: 12px 28px; border-radius: 9999px;
+      background: rgba(15, 28, 34, 0.85); border: 2px solid #a8e6e6;
+      color: #a8e6e6; font-size: 1rem; font-weight: 500; letter-spacing: 2px;
+      cursor: pointer; transition: all 0.3s ease; box-shadow: 0 0 20px #a8e6e6;
+    }
+    .lang-toggle:hover { transform: scale(1.08); box-shadow: 0 0 36px #a8e6e6; }
     .small-signature {
-      position: fixed; bottom: 24px; left: 40px; color: rgba(0,247,255,0.3);
-      font-size: 0.8rem; letter-spacing: 2px; pointer-events: none;
+      position: fixed; bottom: 32px; left: 48px; z-index: 3;
+      color: rgba(168, 230, 230, 0.25); font-size: 0.85rem; letter-spacing: 3px;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
   <canvas id="bg"></canvas>
-  <div class="overlay"></div>
   
   <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
   
-  <div class="page">
-    <div class="content">
-      <div id="eyebrow" class="eyebrow">Mathematics · Geometry · Representation Theory</div>
+  <div class="overlay-text">
+    <div class="content-wrapper">
+      <div id="eyebrow" class="eyebrow">MATHEMATICS · GEOMETRY · REPRESENTATION THEORY</div>
       
       <h1 id="name">Kanghe Lyu</h1>
       
       <div id="subtitle" class="subtitle">Undergraduate student in mathematics at Sichuan University.</div>
       
-      <div class="intro">
-        <p id="intro-p1">My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.</p>
-        <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.</p>
-      </div>
+      <p id="intro-p1">My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.</p>
+      <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.</p>
       
-      <div class="section">
-        <h2 id="exp-title">Academic Experience</h2>
-        <p id="exp-p1">I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.</p>
-        <p id="exp-p2">I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.</p>
-      </div>
+      <h2 id="exp-title">Academic Experience</h2>
+      <p id="exp-p1">I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.</p>
+      <p id="exp-p2">I have also worked on undergraduate research and modeling projects involving mathematical abstraction, geometric modeling, optimization, and algorithmic methods.</p>
       
-      <div class="section">
-        <h2 id="notes-title">Notes</h2>
-        <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
-      </div>
+      <h2 id="notes-title">Notes</h2>
+      <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
       
-      <div class="section">
-        <h2 id="contact-title">Contact</h2>
-        <p>
-          Email: <a href="mailto:kanghelyu@foxmail.com" style="color:var(--neon-cyan); text-decoration:none;">kanghelyu@foxmail.com</a><br>
-          GitHub: <a href="https://github.com/lv7074916" target="_blank" style="color:var(--neon-cyan); text-decoration:none;">lv7074916</a>
-        </p>
-      </div>
+      <h2 id="contact-title">Contact</h2>
+      <p style="text-align:center; font-size:1.15rem;">
+        Email: <a href="mailto:kanghelyu@foxmail.com" style="color:#a8e6e6; text-decoration:none;">kanghelyu@foxmail.com</a><br>
+        GitHub: <a href="https://github.com/lv7074916" target="_blank" style="color:#a8e6e6; text-decoration:none;">lv7074916</a>
+      </p>
       
       <nav class="button-row">
         <a id="btn-email" href="mailto:kanghelyu@foxmail.com" class="button">Email</a>
@@ -124,19 +122,19 @@
         <a id="btn-cv" href="#" class="button">CV</a>
       </nav>
       
-      <div id="footer" class="footer">Geometry · Algebra · Representation Theory · Mathematical Physics</div>
+      <div id="footer" class="footer">GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
     </div>
   </div>
   
-  <div class="small-signature">QUANTUM · RAIN · VOID · ECHO</div>
+  <div class="small-signature">KLEIN · CALABI-YAU · RAIN · VOID</div>
 
   <script>
     // ============== 语言切换 ==============
     const translations = {
       en: {
-        eyebrow: "Mathematics · Geometry · Representation Theory",
+        eyebrow: "MATHEMATICS · GEOMETRY · REPRESENTATION THEORY",
         subtitle: "Undergraduate student in mathematics at Sichuan University.",
-        introP1: "My interests are in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.",
+        introP1: "My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.",
         introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, under the supervision of Prof. Vyacheslav Futorny.",
         expTitle: "Academic Experience",
         expP1: "I have participated in several mathematical programs and research activities, including summer schools at New Uzbekistan University and Westlake University.",
@@ -144,11 +142,8 @@
         notesTitle: "Notes",
         notesP: "This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.",
         contactTitle: "Contact",
-        footer: "Geometry · Algebra · Representation Theory · Mathematical Physics",
-        btnEmail: "Email",
-        btnGithub: "GitHub",
-        btnNotes: "Notes",
-        btnCv: "CV"
+        footer: "GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
+        btnEmail: "Email", btnGithub: "GitHub", btnNotes: "Notes", btnCv: "CV"
       },
       zh: {
         eyebrow: "数学 · 几何 · 表示论",
@@ -162,20 +157,15 @@
         notesP: "此GitHub页面旨在收集数学笔记、阅读材料和小规模研究相关项目。",
         contactTitle: "联系方式",
         footer: "几何 · 代数 · 表示论 · 数学物理",
-        btnEmail: "邮件",
-        btnGithub: "GitHub",
-        btnNotes: "笔记",
-        btnCv: "简历"
+        btnEmail: "邮件", btnGithub: "GitHub", btnNotes: "笔记", btnCv: "简历"
       }
     };
 
     let currentLang = 'en';
     const toggleBtn = document.getElementById('lang-toggle');
-    
     function switchLanguage() {
       currentLang = currentLang === 'en' ? 'zh' : 'en';
       const t = translations[currentLang];
-      
       document.getElementById('eyebrow').textContent = t.eyebrow;
       document.getElementById('subtitle').textContent = t.subtitle;
       document.getElementById('intro-p1').textContent = t.introP1;
@@ -191,18 +181,15 @@
       document.getElementById('btn-github').textContent = t.btnGithub;
       document.getElementById('btn-notes').textContent = t.btnNotes;
       document.getElementById('btn-cv').textContent = t.btnCv;
-      
       toggleBtn.textContent = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
     }
-    
     toggleBtn.addEventListener('click', switchLanguage);
 
-    // ============== 复杂科幻Canvas动画 ==============
+    // ============== 纯数学Canvas动画 ==============
     const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d');
-    let w, h, particles = [], rainDrops = [], geometries = [], connections = [];
-    let time = 0;
-    let mouse = { x: 0, y: 0 };
+    let w, h, time = 0, mouse = {x: 0, y: 0};
+    let particles = [], mathRain = [], kleinPoints = [], calabiTori = [];
 
     function resize() {
       w = canvas.width = window.innerWidth;
@@ -211,153 +198,145 @@
     window.addEventListener('resize', resize);
     window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-    // 粒子系统
-    class Particle {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = Math.random() * w;
-        this.y = Math.random() * h;
-        this.size = Math.random() * 2.8 + 0.6;
-        this.speed = Math.random() * 3.5 + 1.5;
-        this.hue = Math.random() * 60 + 180; // 青紫色系
-      }
-      update() {
-        this.y += this.speed;
-        this.x += Math.sin(time * 0.001 + this.y * 0.01) * 1.2; // 轻微波浪
-        if (this.y > h) this.reset();
-        // 鼠标吸引/排斥
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < 220) {
-          this.x += dx * 0.008;
-          this.y += dy * 0.008;
+    // 数学符号雨
+    const mathSymbols = ['∫', '∂', '∇', '∑', '∏', '∞', 'Δ', 'Ω', 'Φ', 'Ψ'];
+    function initMathRain() {
+      mathRain = Array.from({length: 85}, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        size: Math.random() * 18 + 12,
+        speed: Math.random() * 6 + 3.5,
+        symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
+        angle: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.04
+      }));
+    }
+
+    // 旋转克莱因瓶参数化投影（4D→2D）
+    function generateKlein(uSteps = 36, vSteps = 24) {
+      kleinPoints = [];
+      for (let i = 0; i <= uSteps; i++) {
+        for (let j = 0; j <= vSteps; j++) {
+          const u = i * Math.PI * 2 / uSteps;
+          const v = j * Math.PI * 2 / vSteps;
+          // Klein bottle parametric equations (simplified projection)
+          const x = (2 + Math.cos(v)) * Math.cos(u) * 120 + w * 0.68;
+          const y = (2 + Math.cos(v)) * Math.sin(u) * 120 + h * 0.42;
+          const z = Math.sin(v) * 80 + Math.sin(u) * 40;
+          const projX = x + z * 0.6;
+          const projY = y + z * 0.3;
+          kleinPoints.push({projX, projY, u, v});
         }
-      }
-      draw() {
-        ctx.fillStyle = `hsla(${this.hue}, 100%, 88%, 0.9)`;
-        ctx.shadowBlur = 12;
-        ctx.shadowColor = `hsl(${this.hue}, 100%, 88%)`;
-        ctx.fillRect(this.x, this.y, this.size, this.size * 4); // 雨滴状
       }
     }
 
-    // 浮动几何体
-    class Geometry {
-      constructor() {
-        this.x = Math.random() * w;
-        this.y = Math.random() * h * 0.6;
-        this.radius = Math.random() * 48 + 22;
-        this.angle = Math.random() * Math.PI * 2;
-        this.rotSpeed = (Math.random() - 0.5) * 0.015;
-        this.type = Math.random() > 0.5 ? 'torus' : 'poly';
-      }
-      update() {
-        this.angle += this.rotSpeed;
-        this.x += Math.sin(time * 0.0008) * 0.8;
-      }
-      draw() {
+    // Calabi-Yau近似：多层旋转环面
+    function initCalabiTori() {
+      calabiTori = Array.from({length: 9}, (_, i) => ({
+        cx: w * (0.28 + i * 0.08),
+        cy: h * (0.32 + Math.sin(i) * 0.12),
+        radius: 42 + i * 11,
+        tube: 9 + i * 2,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: 0.008 + i * 0.003
+      }));
+    }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, '#0f1c22');
+      grad.addColorStop(1, '#1a2a32');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, w, h);
+
+      // 微弱数学网格
+      ctx.strokeStyle = 'rgba(168, 230, 230, 0.07)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 64) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+      for (let y = 0; y < h; y += 64) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+    }
+
+    function drawMathRain() {
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = '#a8e6e6';
+      for (let r of mathRain) {
         ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
-        ctx.strokeStyle = 'rgba(255, 215, 0, 0.65)';
-        ctx.lineWidth = 2.5;
-        ctx.shadowBlur = 25;
-        ctx.shadowColor = '#ffd700';
-        if (this.type === 'torus') {
-          ctx.beginPath();
-          ctx.ellipse(0, 0, this.radius, this.radius * 0.35, 0, 0, Math.PI * 2);
-          ctx.stroke();
-        } else {
-          ctx.beginPath();
-          for (let i = 0; i < 6; i++) {
-            const a = i * Math.PI / 3;
-            ctx.lineTo(Math.cos(a) * this.radius, Math.sin(a) * this.radius);
-          }
-          ctx.closePath();
-          ctx.stroke();
+        ctx.translate(r.x, r.y);
+        ctx.rotate(r.angle);
+        ctx.font = `${r.size}px Georgia`;
+        ctx.fillStyle = `rgba(244, 217, 160, ${0.75 + Math.sin(time * 0.1) * 0.25})`;
+        ctx.fillText(r.symbol, 0, 0);
+        ctx.restore();
+
+        r.y += r.speed;
+        r.angle += r.rotSpeed;
+        if (r.y > h + 60) {
+          r.y = -40;
+          r.x = Math.random() * w;
         }
+        // 鼠标轻微吸引
+        const dx = mouse.x - r.x;
+        const dy = mouse.y - r.y;
+        if (Math.hypot(dx, dy) < 180) r.x += dx * 0.012;
+      }
+    }
+
+    function drawKleinBottle() {
+      ctx.strokeStyle = 'rgba(244, 217, 160, 0.65)';
+      ctx.lineWidth = 1.8;
+      ctx.shadowBlur = 22;
+      ctx.shadowColor = '#f4d9a0';
+      const phase = time * 0.0008;
+
+      for (let i = 0; i < kleinPoints.length - 1; i++) {
+        const p1 = kleinPoints[i];
+        const p2 = kleinPoints[i + 1];
+        const offset1 = Math.sin(p1.u * 4 + phase) * 8;
+        const offset2 = Math.sin(p2.u * 4 + phase) * 8;
+        ctx.beginPath();
+        ctx.moveTo(p1.projX + offset1, p1.projY + offset1 * 0.6);
+        ctx.lineTo(p2.projX + offset2, p2.projY + offset2 * 0.6);
+        ctx.stroke();
+      }
+      // 轻微旋转整体
+      generateKlein(36, 24); // 每帧微调参数实现旋转
+    }
+
+    function drawCalabiYau() {
+      ctx.shadowBlur = 28;
+      ctx.shadowColor = '#a8e6e6';
+      for (let t of calabiTori) {
+        t.rot += t.rotSpeed;
+        ctx.save();
+        ctx.translate(t.cx + Math.sin(time * 0.001) * 12, t.cy);
+        ctx.rotate(t.rot);
+
+        ctx.strokeStyle = 'rgba(168, 230, 230, 0.75)';
+        ctx.lineWidth = 1.6;
+        // 外环
+        ctx.beginPath();
+        ctx.ellipse(0, 0, t.radius, t.radius * 0.38, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        // 内管
+        ctx.beginPath();
+        ctx.ellipse(0, 0, t.tube, t.tube * 1.8, Math.PI / 3, 0, Math.PI * 2);
+        ctx.stroke();
+
         ctx.restore();
       }
     }
 
-    function init() {
-      resize();
-      particles = Array.from({ length: 380 }, () => new Particle());
-      rainDrops = Array.from({ length: 120 }, () => ({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        len: Math.random() * 28 + 14,
-        speed: Math.random() * 18 + 9,
-        opacity: Math.random() * 0.7 + 0.3
-      }));
-      geometries = Array.from({ length: 14 }, () => new Geometry());
-    }
-
-    function drawBackground() {
-      // 深空渐变
-      const grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, '#0a0a1f');
-      grad.addColorStop(1, '#1a0d2e');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, w, h);
-      
-      // 微弱网格
-      ctx.strokeStyle = 'rgba(0, 247, 255, 0.06)';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 48) {
-        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
-      }
-      for (let y = 0; y < h; y += 48) {
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-    }
-
-    function drawRain() {
-      ctx.shadowBlur = 8;
-      for (let drop of rainDrops) {
-        ctx.strokeStyle = `rgba(0, 247, 255, ${drop.opacity})`;
-        ctx.lineWidth = 2.2;
-        ctx.beginPath();
-        ctx.moveTo(drop.x, drop.y);
-        ctx.lineTo(drop.x - 4, drop.y + drop.len);
-        ctx.stroke();
-        
-        drop.y += drop.speed;
-        if (drop.y > h) {
-          drop.y = -drop.len;
-          drop.x = Math.random() * w;
-        }
-      }
-    }
-
-    function drawParticles() {
-      for (let p of particles) {
-        p.update();
-        p.draw();
-      }
-    }
-
-    function drawGeometries() {
-      for (let g of geometries) {
-        g.update();
-        g.draw();
-      }
-    }
-
-    function drawConnections() {
+    function drawParticleConnections() {
       ctx.shadowBlur = 0;
-      ctx.strokeStyle = 'rgba(199, 36, 255, 0.18)';
-      ctx.lineWidth = 1;
-      for (let i = 0; i < particles.length; i += 18) {
-        const p1 = particles[i];
-        for (let j = i + 1; j < i + 28 && j < particles.length; j++) {
-          const p2 = particles[j];
+      ctx.strokeStyle = 'rgba(168, 230, 230, 0.12)';
+      ctx.lineWidth = 0.9;
+      for (let i = 0; i < mathRain.length; i += 7) {
+        const p1 = mathRain[i];
+        for (let j = i + 1; j < i + 14 && j < mathRain.length; j++) {
+          const p2 = mathRain[j];
           const d = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-          if (d < 140) {
-            ctx.globalAlpha = (140 - d) / 140;
+          if (d < 135) {
+            ctx.globalAlpha = (135 - d) / 135 * 0.6;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -372,14 +351,18 @@
       time++;
       ctx.clearRect(0, 0, w, h);
       drawBackground();
-      drawParticles();
-      drawRain();
-      drawGeometries();
-      drawConnections();
+      drawMathRain();
+      drawKleinBottle();
+      drawCalabiYau();
+      drawParticleConnections();
       requestAnimationFrame(animate);
     }
 
-    init();
+    // 初始化
+    resize();
+    initMathRain();
+    generateKlein();
+    initCalabiTori();
     animate();
   </script>
 </body>
