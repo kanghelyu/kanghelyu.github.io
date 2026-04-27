@@ -415,7 +415,6 @@
     function project(pt, scale, ox, oy) {
       const d = 7.5;
       const k = scale / (d - pt.z);
-
       return {
         x: ox + pt.x * k,
         y: oy + pt.y * k,
@@ -550,6 +549,49 @@
       }
     }
 
+    function drawMobius(cx, cy, scale, t) {
+      const U = 34;
+      const V = 10;
+      const grid = [];
+      const R = 1.8;
+      const W = 0.55;
+
+      for (let i = 0; i <= U; i++) {
+        grid[i] = [];
+        const u = i / U * Math.PI * 2;
+
+        for (let j = 0; j <= V; j++) {
+          const v = -W + (2 * W * j / V);
+
+          const x = (R + v * Math.cos(u / 2)) * Math.cos(u);
+          const y = (R + v * Math.cos(u / 2)) * Math.sin(u);
+          const z = v * Math.sin(u / 2);
+
+          const rot = rotate3D(x, y, z, 1.05, -0.25 + t * 0.004, 0.12);
+          grid[i][j] = project(rot, scale, cx, cy);
+        }
+      }
+
+      for (let i = 0; i < U; i++) {
+        for (let j = 0; j < V; j++) {
+          const p = grid[i][j];
+          const pu = grid[i + 1][j];
+          const pv = grid[i][j + 1];
+
+          const alpha = Math.max(0.28, Math.min(0.82, 0.46 + p.depth * 0.15));
+          const lineColor = `rgba(168,230,230,${alpha})`;
+          const pointColor = `rgba(244,217,160,${Math.min(0.9, alpha + 0.08)})`;
+
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.25);
+
+          if ((i + j) % 3 === 0) {
+            drawThickPixel(p.x, p.y, 2, pointColor);
+          }
+        }
+      }
+    }
+
     function drawLargePixelSymbols() {
       const mx = mouse.x / pixelSize;
       const my = mouse.y / pixelSize;
@@ -652,7 +694,7 @@
 
       drawTorus(bw * 0.22, bh * 0.40, s * 0.92, time);
       drawKlein(bw * 0.78, bh * 0.39, s * 0.96, time);
-      drawTorus(bw * 0.50, bh * 0.77, s * 0.58, -time * 0.75);
+      drawMobius(bw * 0.50, bh * 0.77, s * 0.64, -time * 0.7);
 
       drawLargePixelSymbols();
       drawVignette();
