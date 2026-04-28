@@ -611,8 +611,8 @@
           const lineColor = `rgba(244,217,160,${alpha})`;
           const pointColor = `rgba(168,230,230,${Math.min(0.92, alpha + 0.08)})`;
 
-          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
-          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.3);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
 
           if ((i + j) % 4 === 0) {
             drawThickPixel(p.x, p.y, 2, pointColor);
@@ -654,8 +654,8 @@
           const lineColor = `rgba(168,230,230,${alpha})`;
           const pointColor = `rgba(244,217,160,${Math.min(0.9, alpha + 0.08)})`;
 
-          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
-          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.25);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
 
           if ((i + j) % 3 === 0) {
             drawThickPixel(p.x, p.y, 2, pointColor);
