@@ -127,7 +127,7 @@
     }
 
     .page {
-      width: min(980px, 84vw);
+      width: min(980px, 92vw);
       margin: 0 auto;
       padding: 96px 0 80px;
     }
@@ -184,6 +184,8 @@
       text-shadow:
         3px 3px 0 rgba(0,0,0,0.42),
         0 0 8px rgba(0,0,0,0.28);
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     h2 {
@@ -196,15 +198,20 @@
 
     .notes-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
       gap: 22px;
       margin-top: 20px;
+      width: 100%;
     }
 
     .note {
+      min-width: 0;
+      max-width: 100%;
       padding: 24px 24px 22px;
       border: 2px solid rgba(244,217,160,0.46);
       background: rgba(15,28,34,0.34);
+      overflow-wrap: anywhere;
+      word-break: break-word;
       box-shadow:
         5px 5px 0 rgba(0,0,0,0.50),
         0 0 20px rgba(168,230,230,0.10),
@@ -212,25 +219,32 @@
     }
 
     .note-title {
+      min-width: 0;
       font-size: 1.22rem;
       color: #fff7e8;
       margin-bottom: 12px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       text-shadow:
         3px 3px 0 rgba(0,0,0,0.42),
         0 0 8px rgba(0,0,0,0.28);
     }
 
     .note-desc {
+      min-width: 0;
       color: var(--subtle);
       font-size: 1rem;
       line-height: 1.7;
       margin-bottom: 20px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .note-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
+      min-width: 0;
     }
 
     .button {
@@ -243,6 +257,9 @@
       font-size: 0.98rem;
       border: 2px solid rgba(244,217,160,0.62);
       background: rgba(15,28,34,0.38);
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-break: break-word;
       box-shadow:
         3px 3px 0 rgba(0,0,0,0.55),
         0 0 14px rgba(168,230,230,0.12);
@@ -265,6 +282,14 @@
       letter-spacing: 0.12em;
       font-size: 0.98rem;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    @media (min-width: 761px) {
+      .notes-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
     }
 
     @media (max-width: 760px) {
@@ -291,12 +316,48 @@
       }
 
       .page {
-        width: 84vw;
+        width: min(92vw, 980px);
         padding: 180px 0 58px;
       }
 
       .notes-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .note {
+        padding: 22px 18px 20px;
+      }
+
+      .note-actions {
+        gap: 10px;
+      }
+
+      .button {
+        padding: 10px 16px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .page {
+        width: 94vw;
+      }
+
+      .note {
+        padding: 20px 14px 18px;
+      }
+
+      .lang-toggle,
+      .music-toggle {
+        right: 12px;
+      }
+
+      .track-controls {
+        right: 12px;
+      }
+
+      .track-btn {
+        width: 40px;
+        height: 36px;
       }
     }
   </style>
@@ -495,7 +556,9 @@
       "music/music10.mp3",
       "music/music11.mp3",
       "music/music12.mp3",
-      "music/music13.mp3"
+      "music/music13.mp3",
+      "music/music14.mp3",
+      "music/music15.mp3"
     ];
 
     const audio = document.getElementById("bg-music");
