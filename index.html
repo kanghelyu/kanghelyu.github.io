@@ -233,8 +233,8 @@
     <div class="content-wrapper">
       <div id="eyebrow" class="eyebrow">MATHEMATICS · GEOMETRY · REPRESENTATION THEORY</div>
 
-      <h1 id="name">吕康禾</h1>
-      <h2 id="name">Kanghe Lyu</h2>
+      <h1 id="name">Kanghe Lyu</h1>
+
       <div id="subtitle" class="subtitle">
         Undergraduate student in mathematics at Sichuan University.
       </div>
@@ -277,9 +277,10 @@
   </div>
 
   <script>
-    // ============== 语言切换 ==============
+    // ============== Language switch ==============
     const translations = {
       en: {
+        name: "Kanghe Lyu",
         eyebrow: "MATHEMATICS · GEOMETRY · REPRESENTATION THEORY",
         subtitle: "Undergraduate student in mathematics at Sichuan University.",
         introP1: "My interests lie in geometry, algebra, representation theory, and mathematical physics.",
@@ -303,6 +304,7 @@
         btnCV: "CV"
       },
       zh: {
+        name: "吕康禾",
         eyebrow: "数学 · 几何 · 表示论",
         subtitle: "四川大学数学学院本科生",
         introP1: "我的兴趣方向是几何、代数、表示论以及数学物理。",
@@ -334,6 +336,10 @@
       currentLang = currentLang === "en" ? "zh" : "en";
       const t = translations[currentLang];
 
+      document.documentElement.lang = currentLang === "en" ? "en" : "zh";
+      document.title = t.name;
+
+      document.getElementById("name").textContent = t.name;
       document.getElementById("eyebrow").textContent = t.eyebrow;
       document.getElementById("subtitle").textContent = t.subtitle;
       document.getElementById("intro-p1").textContent = t.introP1;
@@ -361,7 +367,7 @@
 
     toggleBtn.addEventListener("click", switchLanguage);
 
-    // ============== 大颗粒像素数学背景 ==============
+    // ============== Pixel mathematical background ==============
     const canvas = document.getElementById("bg");
     const ctx = canvas.getContext("2d");
 
