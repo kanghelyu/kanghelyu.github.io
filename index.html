@@ -235,10 +235,21 @@
 
       <h1 id="name">吕康禾/Kanghe Lyu</h1>
 
-      <div id="subtitle" class="subtitle">Undergraduate student in mathematics at Sichuan University.</div>
+      <div id="subtitle" class="subtitle">
+        Undergraduate student in mathematics at Sichuan University.
+      </div>
 
-      <p id="intro-p1">My interests lie in pure mathematics, especially geometry, algebra, representation theory, and mathematical physics.</p>
-      <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026.</p>
+      <p id="intro-p1">
+        My interests lie in geometry, algebra, representation theory, and mathematical physics.
+      </p>
+
+      <p id="intro-p2">
+        I will begin my Ph.D. study at the Southern University of Science and Technology in 2026.
+      </p>
+
+      <p id="intro-p3">
+        This page contains my personal information, curriculum vitae, and mathematical notes or surveys.
+      </p>
 
       <h2 id="exp-title">Experience</h2>
       <p id="exp-p1">Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), from 01/07/2024 to 15/07/2024.</p>
@@ -249,9 +260,6 @@
       <h2 id="awards-title">Awards</h2>
       <p id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</p>
       <p id="awards-p2">College Students' Innovative Entrepreneurial Training Plan Program, National Level.</p>
-
-      <h2 id="notes-title">Notes</h2>
-      <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
 
       <h2 id="contact-title">Contact</h2>
       <p class="contact">
@@ -273,9 +281,10 @@
     const translations = {
       en: {
         eyebrow: "MATHEMATICS · GEOMETRY · REPRESENTATION THEORY",
-        subtitle: "Undergraduate student in school of mathematics at Sichuan University.",
+        subtitle: "Undergraduate student in mathematics at Sichuan University.",
         introP1: "My interests lie in geometry, algebra, representation theory, and mathematical physics.",
         introP2: "I will begin my Ph.D. study at the Southern University of Science and Technology in 2026.",
+        introP3: "This page contains my personal information, curriculum vitae, and mathematical notes or surveys.",
 
         expTitle: "Experience",
         expP1: "Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), from 01/07/2024 to 15/07/2024.",
@@ -287,8 +296,6 @@
         awardsP1: "Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.",
         awardsP2: "College Students' Innovative Entrepreneurial Training Plan Program, National Level.",
 
-        notesTitle: "Notes",
-        notesP: "This GitHub page is intended to launch personal information and mathematical notes/surveys.",
         contactTitle: "Contact",
         footer: "GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
         btnEmail: "Email",
@@ -300,6 +307,7 @@
         subtitle: "四川大学数学学院本科生",
         introP1: "我的兴趣方向是几何、代数、表示论以及数学物理。",
         introP2: "我将于2026年开始在南方科技大学攻读博士学位。",
+        introP3: "此页面用于发布我的个人信息、简历以及数学笔记或综述。",
 
         expTitle: "经历",
         expP1: "2024年7月1日至2024年7月15日，新乌兹别克斯坦大学暑期学校（讲者：Pavel Etingof、Yuri Berest）。",
@@ -311,8 +319,6 @@
         awardsP1: "全国大学生数学建模竞赛国家二等奖。",
         awardsP2: "大学生创新创业训练计划项目国家级结项。",
 
-        notesTitle: "笔记",
-        notesP: "此 GitHub 页面旨在发布个人信息和数学笔记/综述。",
         contactTitle: "联系方式",
         footer: "几何 · 代数 · 表示论 · 数学物理",
         btnEmail: "邮件",
@@ -332,6 +338,7 @@
       document.getElementById("subtitle").textContent = t.subtitle;
       document.getElementById("intro-p1").textContent = t.introP1;
       document.getElementById("intro-p2").textContent = t.introP2;
+      document.getElementById("intro-p3").textContent = t.introP3;
 
       document.getElementById("exp-title").textContent = t.expTitle;
       document.getElementById("exp-p1").textContent = t.expP1;
@@ -343,14 +350,11 @@
       document.getElementById("awards-p1").textContent = t.awardsP1;
       document.getElementById("awards-p2").textContent = t.awardsP2;
 
-      document.getElementById("notes-title").textContent = t.notesTitle;
-      document.getElementById("notes-p").textContent = t.notesP;
       document.getElementById("contact-title").textContent = t.contactTitle;
       document.getElementById("footer").textContent = t.footer;
       document.getElementById("btn-email").textContent = t.btnEmail;
-      document.getElementById("btn-github").textContent = t.btnGithub;
       document.getElementById("btn-notes").textContent = t.btnNotes;
-      document.getElementById("btn-cv").textContent = t.btnCv;
+      document.getElementById("btn-cv").textContent = t.btnCV;
 
       toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
     }
