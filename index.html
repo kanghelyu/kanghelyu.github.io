@@ -196,12 +196,47 @@
         0 0 28px rgba(168,230,230,0.24);
     }
 
+    .music-toggle {
+      position: fixed;
+      top: 82px;
+      right: 34px;
+      z-index: 10;
+      padding: 11px 24px;
+      border-radius: 0;
+      background: rgba(15, 28, 34, 0.82);
+      border: 2px solid rgba(244, 217, 160, 0.72);
+      color: #f4d9a0;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 18px rgba(244,217,160,0.16);
+    }
+
+    .music-toggle:hover {
+      transform: translate(2px, 2px);
+      box-shadow:
+        2px 2px 0 rgba(0,0,0,0.65),
+        0 0 28px rgba(244,217,160,0.24);
+    }
+
+    .music-toggle.playing {
+      border-color: #a8e6e6;
+      color: #a8e6e6;
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 22px rgba(168,230,230,0.22);
+    }
+
     a { color: #a8e6e6; text-decoration: none; }
     a:hover { text-shadow: 0 0 10px rgba(168,230,230,0.45); }
 
     @media (max-width: 760px) {
       .overlay-text {
-        padding: 96px 8vw 52px;
+        padding: 128px 8vw 52px;
       }
 
       .content-wrapper {
@@ -210,6 +245,12 @@
 
       .lang-toggle {
         top: 18px;
+        right: 18px;
+        padding: 10px 18px;
+      }
+
+      .music-toggle {
+        top: 70px;
         right: 18px;
         padding: 10px 18px;
       }
@@ -228,6 +269,8 @@
   <canvas id="bg"></canvas>
 
   <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+  <button id="music-toggle" class="music-toggle">♪ Music</button>
+  <audio id="bg-music" preload="auto"></audio>
 
   <div class="overlay-text">
     <div class="content-wrapper">
@@ -366,6 +409,63 @@
     }
 
     toggleBtn.addEventListener("click", switchLanguage);
+
+    // ============== Background music ==============
+    const musicList = [
+      "music/song1.mp3",
+      "music/song2.mp3",
+      "music/song3.mp3",
+      "music/song4.mp3",
+      "music/song5.mp3"
+    ];
+
+    const audio = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-toggle");
+
+    let isMusicPlaying = false;
+    let currentTrackIndex = -1;
+
+    function getRandomTrackIndex() {
+      if (musicList.length === 1) return 0;
+
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * musicList.length);
+      } while (nextIndex === currentTrackIndex);
+
+      return nextIndex;
+    }
+
+    function playRandomTrack() {
+      currentTrackIndex = getRandomTrackIndex();
+      audio.src = musicList[currentTrackIndex];
+      audio.volume = 0.42;
+      audio.play();
+    }
+
+    musicBtn.addEventListener("click", async () => {
+      try {
+        if (!isMusicPlaying) {
+          playRandomTrack();
+          isMusicPlaying = true;
+          musicBtn.textContent = "♪ Playing";
+          musicBtn.classList.add("playing");
+        } else {
+          audio.pause();
+          isMusicPlaying = false;
+          musicBtn.textContent = "♪ Music";
+          musicBtn.classList.remove("playing");
+        }
+      } catch (error) {
+        console.log("Music playback was blocked by the browser:", error);
+      }
+    });
+
+    audio.addEventListener("ended", () => {
+      if (isMusicPlaying) {
+        playRandomTrack();
+      }
+    });
 
     // ============== Pixel mathematical background ==============
     const canvas = document.getElementById("bg");
@@ -525,49 +625,48 @@
       }
     }
 
-   function drawTorus(cx, cy, scale, t) {
-  const U = 28;
-  const V = 18;
-  const R = 1.85;
-  const r = 0.72;
-  const grid = [];
+    function drawTorus(cx, cy, scale, t) {
+      const U = 28;
+      const V = 18;
+      const R = 1.85;
+      const r = 0.72;
+      const grid = [];
 
-  for (let i = 0; i <= U; i++) {
-    grid[i] = [];
-    const u = i / U * Math.PI * 2;
+      for (let i = 0; i <= U; i++) {
+        grid[i] = [];
+        const u = i / U * Math.PI * 2;
 
-    for (let j = 0; j <= V; j++) {
-      const v = j / V * Math.PI * 2;
+        for (let j = 0; j <= V; j++) {
+          const v = j / V * Math.PI * 2;
 
-      const x = (R + r * Math.cos(v)) * Math.cos(u);
-      const y = (R + r * Math.cos(v)) * Math.sin(u);
-      const z = r * Math.sin(v);
+          const x = (R + r * Math.cos(v)) * Math.cos(u);
+          const y = (R + r * Math.cos(v)) * Math.sin(u);
+          const z = r * Math.sin(v);
 
-      const rot = rotate3D(x, y, z, 0.72 + t * 0.006, 0.55 + t * 0.008, 0.08);
-      grid[i][j] = project(rot, scale, cx, cy);
-    }
-  }
+          const rot = rotate3D(x, y, z, 0.72 + t * 0.006, 0.55 + t * 0.008, 0.08);
+          grid[i][j] = project(rot, scale, cx, cy);
+        }
+      }
 
-  for (let i = 0; i < U; i++) {
-    for (let j = 0; j < V; j++) {
-      const p = grid[i][j];
-      const pu = grid[i + 1][j];
-      const pv = grid[i][j + 1];
+      for (let i = 0; i < U; i++) {
+        for (let j = 0; j < V; j++) {
+          const p = grid[i][j];
+          const pu = grid[i + 1][j];
+          const pv = grid[i][j + 1];
 
-      const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.16));
-      const lineColor = `rgba(168,230,230,${alpha})`;
-      const pointColor = `rgba(244,217,160,${Math.min(0.95, alpha + 0.10)})`;
+          const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.16));
+          const lineColor = `rgba(168,230,230,${alpha})`;
+          const pointColor = `rgba(244,217,160,${Math.min(0.95, alpha + 0.10)})`;
 
-      drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
-      drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
 
-      if ((i + j) % 4 === 0) {
-        drawThickPixel(p.x, p.y, 2, pointColor);
+          if ((i + j) % 4 === 0) {
+            drawThickPixel(p.x, p.y, 2, pointColor);
+          }
+        }
       }
     }
-  }
-}
-
 
     function drawKlein(cx, cy, scale, t) {
       const U = 28;
@@ -622,66 +721,65 @@
       }
     }
 
-function drawMobius(cx, cy, scale, t) {
-  const U = 34;
-  const V = 10;
-  const grid = [];
-  const R = 1.8;
-  const W = 0.55;
+    function drawMobius(cx, cy, scale, t) {
+      const U = 34;
+      const V = 10;
+      const grid = [];
+      const R = 1.8;
+      const W = 0.55;
 
-  for (let i = 0; i <= U; i++) {
-    grid[i] = [];
-    const u = i / U * Math.PI * 2;
+      for (let i = 0; i <= U; i++) {
+        grid[i] = [];
+        const u = i / U * Math.PI * 2;
 
-    for (let j = 0; j <= V; j++) {
-      const v = -W + (2 * W * j / V);
+        for (let j = 0; j <= V; j++) {
+          const v = -W + (2 * W * j / V);
 
-      const x = (R + v * Math.cos(u / 2)) * Math.cos(u);
-      const y = (R + v * Math.cos(u / 2)) * Math.sin(u);
-      const z = v * Math.sin(u / 2);
+          const x = (R + v * Math.cos(u / 2)) * Math.cos(u);
+          const y = (R + v * Math.cos(u / 2)) * Math.sin(u);
+          const z = v * Math.sin(u / 2);
 
-      const rot = rotate3D(x, y, z, 1.05, -0.25 + t * 0.004, 0.12);
-      grid[i][j] = project(rot, scale, cx, cy);
-    }
-  }
+          const rot = rotate3D(x, y, z, 1.05, -0.25 + t * 0.004, 0.12);
+          grid[i][j] = project(rot, scale, cx, cy);
+        }
+      }
 
-  for (let i = 0; i < U; i++) {
-    for (let j = 0; j < V; j++) {
-      const p = grid[i][j];
-      const pu = grid[i + 1][j];
-      const pv = grid[i][j + 1];
+      for (let i = 0; i < U; i++) {
+        for (let j = 0; j < V; j++) {
+          const p = grid[i][j];
+          const pu = grid[i + 1][j];
+          const pv = grid[i][j + 1];
 
-      const alpha = Math.max(0.28, Math.min(0.82, 0.46 + p.depth * 0.15));
-      const lineColor = `rgba(168,230,230,${alpha})`;
-      const pointColor = `rgba(244,217,160,${Math.min(0.9, alpha + 0.08)})`;
+          const alpha = Math.max(0.28, Math.min(0.82, 0.46 + p.depth * 0.15));
+          const lineColor = `rgba(168,230,230,${alpha})`;
+          const pointColor = `rgba(244,217,160,${Math.min(0.9, alpha + 0.08)})`;
 
-      drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
-      drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
+          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
 
-      if ((i + j) % 3 === 0) {
-        drawThickPixel(p.x, p.y, 2, pointColor);
+          if ((i + j) % 3 === 0) {
+            drawThickPixel(p.x, p.y, 2, pointColor);
+          }
+        }
+      }
+
+      for (let i = 0; i < U; i++) {
+        const pTop = grid[i][0];
+        const pTopNext = grid[i + 1][0];
+
+        const pBottom = grid[i][V];
+        const pBottomNext = grid[i + 1][V];
+
+        const alphaTop = Math.max(0.28, Math.min(0.82, 0.46 + pTop.depth * 0.15));
+        const alphaBottom = Math.max(0.28, Math.min(0.82, 0.46 + pBottom.depth * 0.15));
+
+        const topColor = `rgba(168,230,230,${alphaTop})`;
+        const bottomColor = `rgba(168,230,230,${alphaBottom})`;
+
+        drawPixelLine(pTop.x, pTop.y, pTopNext.x, pTopNext.y, topColor, 1.6);
+        drawPixelLine(pBottom.x, pBottom.y, pBottomNext.x, pBottomNext.y, bottomColor, 1.6);
       }
     }
-  }
-
-  for (let i = 0; i < U; i++) {
-    const pTop = grid[i][0];
-    const pTopNext = grid[i + 1][0];
-
-    const pBottom = grid[i][V];
-    const pBottomNext = grid[i + 1][V];
-
-    const alphaTop = Math.max(0.28, Math.min(0.82, 0.46 + pTop.depth * 0.15));
-    const alphaBottom = Math.max(0.28, Math.min(0.82, 0.46 + pBottom.depth * 0.15));
-
-    const topColor = `rgba(168,230,230,${alphaTop})`;
-    const bottomColor = `rgba(168,230,230,${alphaBottom})`;
-
-    drawPixelLine(pTop.x, pTop.y, pTopNext.x, pTopNext.y, topColor, 1.6);
-    drawPixelLine(pBottom.x, pBottom.y, pBottomNext.x, pBottomNext.y, bottomColor, 1.6);
-  }
-}
-
 
     function drawLargePixelSymbols() {
       const mx = mouse.x / pixelSize;
