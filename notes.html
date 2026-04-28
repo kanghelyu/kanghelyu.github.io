@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -34,6 +34,62 @@
         radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
         radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
         linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+    }
+
+    .lang-toggle {
+      position: fixed;
+      top: 28px;
+      right: 34px;
+      z-index: 10;
+      padding: 11px 24px;
+      border-radius: 0;
+      background: rgba(15, 28, 34, 0.82);
+      border: 2px solid #a8e6e6;
+      color: #a8e6e6;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 18px rgba(168,230,230,0.18);
+    }
+
+    .music-toggle {
+      position: fixed;
+      top: 82px;
+      right: 34px;
+      z-index: 10;
+      padding: 11px 24px;
+      border-radius: 0;
+      background: rgba(15, 28, 34, 0.82);
+      border: 2px solid rgba(244, 217, 160, 0.72);
+      color: #f4d9a0;
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 18px rgba(244,217,160,0.16);
+    }
+
+    .lang-toggle:hover,
+    .music-toggle:hover {
+      transform: translate(2px, 2px);
+      box-shadow:
+        2px 2px 0 rgba(0,0,0,0.65),
+        0 0 28px rgba(168,230,230,0.24);
+    }
+
+    .music-toggle.playing {
+      border-color: #a8e6e6;
+      color: #a8e6e6;
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 22px rgba(168,230,230,0.22);
     }
 
     .page {
@@ -178,9 +234,21 @@
     }
 
     @media (max-width: 760px) {
+      .lang-toggle {
+        top: 18px;
+        right: 18px;
+        padding: 10px 18px;
+      }
+
+      .music-toggle {
+        top: 70px;
+        right: 18px;
+        padding: 10px 18px;
+      }
+
       .page {
         width: 84vw;
-        padding: 72px 0 58px;
+        padding: 132px 0 58px;
       }
 
       .notes-grid {
@@ -190,92 +258,368 @@
   </style>
 </head>
 <body>
+  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+  <button id="music-toggle" class="music-toggle">♪ Music</button>
+  <audio id="bg-music" preload="auto"></audio>
+
   <main class="page">
-    <a class="back" href="index.html">← Back to Home</a>
+    <a id="back-link" class="back" href="index.html">← Back to Home</a>
 
-    <div class="eyebrow">MATHEMATICAL NOTES</div>
-    <h1>Notes</h1>
+    <div id="eyebrow" class="eyebrow">MATHEMATICAL NOTES</div>
+    <h1 id="title">Notes</h1>
 
-    <p class="intro">
+    <p id="intro" class="intro">
       This page collects mathematical notes/surveys.
       Each item can be viewed directly in the browser or downloaded as a PDF.
     </p>
 
-    <h2>Geometry and Algebra</h2>
+    <h2 id="section-title">Geometry and Algebra</h2>
 
     <section class="notes-grid">
       <article class="note">
         <div class="note-title">Slodowy Slices and Their Quantization</div>
-        <div class="note-desc">
+        <div class="note-desc" id="desc-1">
           Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.
         </div>
         <div class="note-actions">
-          <a class="button" href="notes/Slodowy Slices and Their Quantization.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/Slodowy Slices and Their Quantization.pdf" download>Download</a>
+          <a class="button view-btn" href="notes/Slodowy Slices and Their Quantization.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/Slodowy Slices and Their Quantization.pdf" download>Download</a>
         </div>
       </article>
 
       <article class="note">
         <div class="note-title">A Note on Algebraic Groups and Related Topics</div>
-        <div class="note-desc">
-          This is a on-going note.
+        <div class="note-desc" id="desc-2">
+          This is an on-going note.
         </div>
         <div class="note-actions">
-          <a class="button" href="notes/a note on algebraic groups and related topics.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/a note on algebraic groups and related topics.pdf" download>Download</a>
+          <a class="button view-btn" href="notes/a note on algebraic groups and related topics.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/a note on algebraic groups and related topics.pdf" download>Download</a>
         </div>
       </article>
 
       <article class="note">
         <div class="note-title">A Note on Lie Algebras</div>
-        <div class="note-desc">
-          This is a hand-writing Chinese note taking while learning Zhexian Wan's and Humphreys's book.
+        <div class="note-desc" id="desc-3">
+          This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.
         </div>
         <div class="note-actions">
-          <a class="button" href="notes/liealgebra.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/liealgebra.pdf" download>Download</a>
-        </div>
-      </article>
-      
-     <article class="note">
-        <div class="note-title">A Lecture on Highest Weight Rep of Infinite Dim Lie Alg</div>
-        <div class="note-desc">
-          This is a hand-writing lecture note taking while given seminars in New Uzbekistan University, original knowledge comes from a course taught by Li Ren in Sichuan University.
-        </div>
-        <div class="note-actions">
-          <a class="button" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" download>Download</a>
-        </div>
-      </article>
-            
-     <article class="note">
-        <div class="note-title">A Note on Quiver Varieties Slodowy Slices and Affine Grassmannians</div>
-        <div class="note-desc">
-          This is a on-going note.
-        </div>
-        <div class="note-actions">
-          <a class="button" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" download>Download</a>
+          <a class="button view-btn" href="notes/liealgebra.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/liealgebra.pdf" download>Download</a>
         </div>
       </article>
 
-                  
-     <article class="note">
-        <div class="note-title">A Note on Gelfand-Naimark Theorem</div>
-        <div class="note-desc">
-          This note was taken while learning from https://zhuanlan.zhihu.com
-          /p/550302234.
+      <article class="note">
+        <div class="note-title">A Lecture on Highest Weight Rep of Infinite Dim Lie Alg</div>
+        <div class="note-desc" id="desc-4">
+          This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.
         </div>
         <div class="note-actions">
-          <a class="button" href="notes/GelfandNaimark.pdf" target="_blank">View PDF</a>
-          <a class="button" href="notes/GelfandNaimark.pdf" download>Download</a>
+          <a class="button view-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" download>Download</a>
+        </div>
+      </article>
+
+      <article class="note">
+        <div class="note-title">A Note on Quiver Varieties Slodowy Slices and Affine Grassmannians</div>
+        <div class="note-desc" id="desc-5">
+          This is an on-going note.
+        </div>
+        <div class="note-actions">
+          <a class="button view-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" download>Download</a>
+        </div>
+      </article>
+
+      <article class="note">
+        <div class="note-title">A Note on Gelfand-Naimark Theorem</div>
+        <div class="note-desc" id="desc-6">
+          This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234.
+        </div>
+        <div class="note-actions">
+          <a class="button view-btn" href="notes/GelfandNaimark.pdf" target="_blank">View PDF</a>
+          <a class="button download-btn" href="notes/GelfandNaimark.pdf" download>Download</a>
         </div>
       </article>
     </section>
 
-    
-
-    <div class="footer">GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
+    <div id="footer" class="footer">GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
   </main>
+
+  <script>
+    // ============== Shared language state ==============
+    const LANG_STATE_KEY = "kanghe-site-lang";
+
+    const translations = {
+      en: {
+        pageTitle: "Notes | Kanghe Lyu",
+        back: "← Back to Home",
+        eyebrow: "MATHEMATICAL NOTES",
+        title: "Notes",
+        intro: "This page collects mathematical notes/surveys. Each item can be viewed directly in the browser or downloaded as a PDF.",
+        sectionTitle: "Geometry and Algebra",
+        viewPDF: "View PDF",
+        download: "Download",
+        footer: "GEOMETRY · ALGEBRA · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
+        desc1: "Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.",
+        desc2: "This is an on-going note.",
+        desc3: "This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.",
+        desc4: "This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.",
+        desc5: "This is an on-going note.",
+        desc6: "This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234."
+      },
+      zh: {
+        pageTitle: "笔记 | 吕康禾",
+        back: "← 返回主页",
+        eyebrow: "数学笔记",
+        title: "笔记",
+        intro: "此页面收集我的数学笔记或综述。每个条目都可以直接在浏览器中查看，也可以下载 PDF。",
+        sectionTitle: "几何与代数",
+        viewPDF: "查看 PDF",
+        download: "下载",
+        footer: "几何 · 代数 · 表示论 · 数学物理",
+        desc1: "关于 Slodowy slices、Hamiltonian reduction 与 BRST cohomology 的笔记。",
+        desc2: "这是一份仍在更新中的笔记。",
+        desc3: "这是一份学习万哲先与 Humphreys 相关教材时写下的中文手写笔记。",
+        desc4: "这是我在新乌兹别克斯坦大学做讨论班时写下的手写讲义，主要内容来自四川大学任理老师的课程。",
+        desc5: "这是一份仍在更新中的笔记。",
+        desc6: "这份笔记是在学习 https://zhuanlan.zhihu.com/p/550302234 时写下的。"
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_STATE_KEY) || "en";
+    const toggleBtn = document.getElementById("lang-toggle");
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem(LANG_STATE_KEY, currentLang);
+
+      const t = translations[currentLang];
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "zh";
+      document.title = t.pageTitle;
+
+      document.getElementById("back-link").textContent = t.back;
+      document.getElementById("eyebrow").textContent = t.eyebrow;
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("intro").textContent = t.intro;
+      document.getElementById("section-title").textContent = t.sectionTitle;
+      document.getElementById("footer").textContent = t.footer;
+
+      document.getElementById("desc-1").textContent = t.desc1;
+      document.getElementById("desc-2").textContent = t.desc2;
+      document.getElementById("desc-3").textContent = t.desc3;
+      document.getElementById("desc-4").textContent = t.desc4;
+      document.getElementById("desc-5").textContent = t.desc5;
+      document.getElementById("desc-6").textContent = t.desc6;
+
+      document.querySelectorAll(".view-btn").forEach(btn => {
+        btn.textContent = t.viewPDF;
+      });
+
+      document.querySelectorAll(".download-btn").forEach(btn => {
+        btn.textContent = t.download;
+      });
+
+      toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
+      updateMusicButton();
+    }
+
+    function switchLanguage() {
+      applyLanguage(currentLang === "en" ? "zh" : "en");
+    }
+
+    toggleBtn.addEventListener("click", switchLanguage);
+
+    // ============== Background music with cross-page state ==============
+    const musicList = [
+      "music/music1.mp3",
+      "music/music2.mp3",
+      "music/music3.mp3",
+      "music/music4.mp3",
+      "music/music5.mp3",
+      "music/music6.mp3",
+      "music/music7.mp3",
+      "music/music8.mp3",
+      "music/music9.mp3",
+      "music/music10.mp3",
+      "music/music11.mp3"
+    ];
+
+    const audio = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-toggle");
+    const MUSIC_STATE_KEY = "kanghe-site-music-state";
+
+    let isMusicPlaying = false;
+    let currentTrackIndex = -1;
+
+    function getMusicButtonText() {
+      if (currentLang === "zh") {
+        return isMusicPlaying ? "♪ 播放中" : "♪ 音乐";
+      }
+      return isMusicPlaying ? "♪ Playing" : "♪ Music";
+    }
+
+    function updateMusicButton() {
+      if (!musicBtn) return;
+      musicBtn.textContent = getMusicButtonText();
+
+      if (isMusicPlaying) {
+        musicBtn.classList.add("playing");
+      } else {
+        musicBtn.classList.remove("playing");
+      }
+    }
+
+    function saveMusicState() {
+      const state = {
+        isPlaying: isMusicPlaying,
+        trackIndex: currentTrackIndex,
+        currentTime: audio.currentTime || 0,
+        volume: audio.volume || 0.42,
+        savedAt: Date.now()
+      };
+
+      localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(state));
+    }
+
+    function loadMusicState() {
+      try {
+        const raw = localStorage.getItem(MUSIC_STATE_KEY);
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch (error) {
+        console.log("Could not load music state:", error);
+        return null;
+      }
+    }
+
+    function getRandomTrackIndex() {
+      if (musicList.length === 1) return 0;
+
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * musicList.length);
+      } while (nextIndex === currentTrackIndex);
+
+      return nextIndex;
+    }
+
+    async function playTrack(trackIndex, startTime = 0) {
+      currentTrackIndex = trackIndex;
+      audio.src = musicList[currentTrackIndex];
+      audio.volume = 0.42;
+
+      audio.addEventListener(
+        "loadedmetadata",
+        () => {
+          if (startTime > 0 && startTime < audio.duration) {
+            audio.currentTime = startTime;
+          }
+        },
+        { once: true }
+      );
+
+      await audio.play();
+
+      isMusicPlaying = true;
+      updateMusicButton();
+      saveMusicState();
+    }
+
+    async function playRandomTrack() {
+      const nextIndex = getRandomTrackIndex();
+      await playTrack(nextIndex, 0);
+    }
+
+    async function restoreMusicFromPreviousPage() {
+      const state = loadMusicState();
+
+      if (!state || !state.isPlaying) {
+        isMusicPlaying = false;
+        updateMusicButton();
+        return;
+      }
+
+      if (
+        typeof state.trackIndex !== "number" ||
+        state.trackIndex < 0 ||
+        state.trackIndex >= musicList.length
+      ) {
+        isMusicPlaying = false;
+        updateMusicButton();
+        return;
+      }
+
+      const elapsedSeconds = (Date.now() - state.savedAt) / 1000;
+      const restoredTime = Math.max(0, (state.currentTime || 0) + elapsedSeconds);
+
+      try {
+        await playTrack(state.trackIndex, restoredTime);
+      } catch (error) {
+        isMusicPlaying = false;
+        currentTrackIndex = state.trackIndex;
+        audio.src = musicList[currentTrackIndex];
+        audio.volume = state.volume || 0.42;
+
+        audio.addEventListener(
+          "loadedmetadata",
+          () => {
+            if (restoredTime > 0 && restoredTime < audio.duration) {
+              audio.currentTime = restoredTime;
+            }
+          },
+          { once: true }
+        );
+
+        updateMusicButton();
+        console.log("Music restore was blocked by the browser:", error);
+      }
+    }
+
+    musicBtn.addEventListener("click", async () => {
+      try {
+        if (!isMusicPlaying) {
+          const state = loadMusicState();
+
+          if (
+            state &&
+            typeof state.trackIndex === "number" &&
+            state.trackIndex >= 0 &&
+            state.trackIndex < musicList.length
+          ) {
+            await playTrack(state.trackIndex, state.currentTime || 0);
+          } else {
+            await playRandomTrack();
+          }
+        } else {
+          audio.pause();
+          isMusicPlaying = false;
+          updateMusicButton();
+          saveMusicState();
+        }
+      } catch (error) {
+        console.log("Music playback was blocked by the browser:", error);
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (isMusicPlaying) saveMusicState();
+    });
+
+    audio.addEventListener("pause", () => {
+      if (!audio.ended) saveMusicState();
+    });
+
+    audio.addEventListener("ended", async () => {
+      if (isMusicPlaying) await playRandomTrack();
+    });
+
+    window.addEventListener("beforeunload", saveMusicState);
+
+    applyLanguage(currentLang);
+    restoreMusicFromPreviousPage();
+  </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"7939e04a4baf43c8b86a560f74aac60e","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
