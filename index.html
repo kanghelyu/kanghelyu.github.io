@@ -807,12 +807,6 @@
         bctx.lineTo(bw, y + 0.5);
         bctx.stroke();
       }
-
-      for (let i = 0; i < 45; i++) {
-        const x = (i * 31 + Math.floor(time * 0.035)) % bw;
-        const y = (i * 19) % bh;
-        px(x, y, 1, 1, "rgba(168,230,230,0.16)");
-      }
     }
 
     function rotate3D(x, y, z, ax, ay, az = 0) {
