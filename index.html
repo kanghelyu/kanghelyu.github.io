@@ -17,11 +17,18 @@
 
     html, body {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
       background: var(--math-ink);
       color: var(--paper);
       font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+      touch-action: pan-y;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body {
+      min-height: 100vh;
     }
 
     #bg {
@@ -31,35 +38,21 @@
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       background: #0f1c22;
+      pointer-events: none;
+      touch-action: none;
     }
 
     .overlay-text {
-      position: fixed;
-      inset: 0;
+      position: relative;
       z-index: 2;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
-      text-align: center;
+      justify-content: flex-start;
+      text-align: left;
       padding: 112px 10vw 72px;
       pointer-events: none;
-      overflow-y: auto;
-      overflow-x: hidden;
-      scroll-behavior: smooth;
       background:
         radial-gradient(circle at center, rgba(15,28,34,0.08), rgba(15,28,34,0.22) 54%, rgba(15,28,34,0.50) 100%);
-    }
-
-    .overlay-text::-webkit-scrollbar {
-      width: 10px;
-    }
-
-    .overlay-text::-webkit-scrollbar-track {
-      background: rgba(15, 28, 34, 0.45);
-    }
-
-    .overlay-text::-webkit-scrollbar-thumb {
-      background: rgba(244, 217, 160, 0.58);
-      border: 2px solid rgba(15, 28, 34, 0.65);
     }
 
     .content-wrapper {
@@ -101,7 +94,7 @@
       line-height: 1.55;
       color: var(--subtle);
       max-width: 660px;
-      margin: 0 auto 40px;
+      margin: 0 0 40px;
       text-shadow:
         3px 3px 0 rgba(0,0,0,0.45),
         0 0 8px rgba(0,0,0,0.30);
@@ -122,15 +115,20 @@
       color: var(--math-gold);
       letter-spacing: 0.08em;
       margin: 48px 0 16px;
-      text-align: center;
+      text-align: left;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
+    }
+
+    .contact {
+      text-align: left;
+      font-size: 1.15rem;
     }
 
     .button-row {
       display: flex;
       flex-wrap: wrap;
       gap: 18px;
-      justify-content: center;
+      justify-content: flex-start;
       margin-top: 50px;
     }
 
@@ -202,9 +200,27 @@
     a:hover { text-shadow: 0 0 10px rgba(168,230,230,0.45); }
 
     @media (max-width: 760px) {
-      .overlay-text { padding: 96px 8vw 52px; }
-      .content-wrapper { margin: 0; }
-      .lang-toggle { top: 18px; right: 18px; padding: 10px 18px; }
+      .overlay-text {
+        padding: 96px 8vw 52px;
+      }
+
+      .content-wrapper {
+        margin: 0;
+      }
+
+      .lang-toggle {
+        top: 18px;
+        right: 18px;
+        padding: 10px 18px;
+      }
+
+      .button-row {
+        gap: 14px;
+      }
+
+      .button {
+        padding: 12px 24px;
+      }
     }
   </style>
 </head>
@@ -238,7 +254,7 @@
       <p id="notes-p">This GitHub page is intended to collect mathematical notes, reading materials, and small research-related projects.</p>
 
       <h2 id="contact-title">Contact</h2>
-      <p style="text-align:center; font-size:1.15rem;">
+      <p class="contact">
         Email: <a href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a><br>
         GitHub: <a href="https://github.com/lv7074916" target="_blank">lv7074916</a>
       </p>
@@ -388,6 +404,8 @@
       mouse.x = e.clientX;
       mouse.y = e.clientY;
     });
+
+    window.addEventListener("touchmove", () => {}, { passive: true });
 
     function initMathRain() {
       mathRain = Array.from({ length: 34 }, () => ({
