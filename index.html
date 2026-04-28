@@ -525,48 +525,49 @@
       }
     }
 
-    function drawTorus(cx, cy, scale, t) {
-      const U = 28;
-      const V = 18;
-      const R = 1.85;
-      const r = 0.72;
-      const grid = [];
+   function drawTorus(cx, cy, scale, t) {
+  const U = 28;
+  const V = 18;
+  const R = 1.85;
+  const r = 0.72;
+  const grid = [];
 
-      for (let i = 0; i <= U; i++) {
-        grid[i] = [];
-        const u = i / U * Math.PI * 2;
+  for (let i = 0; i <= U; i++) {
+    grid[i] = [];
+    const u = i / U * Math.PI * 2;
 
-        for (let j = 0; j <= V; j++) {
-          const v = j / V * Math.PI * 2;
+    for (let j = 0; j <= V; j++) {
+      const v = j / V * Math.PI * 2;
 
-          const x = (R + r * Math.cos(v)) * Math.cos(u);
-          const y = (R + r * Math.cos(v)) * Math.sin(u);
-          const z = r * Math.sin(v);
+      const x = (R + r * Math.cos(v)) * Math.cos(u);
+      const y = (R + r * Math.cos(v)) * Math.sin(u);
+      const z = r * Math.sin(v);
 
-          const rot = rotate3D(x, y, z, 0.72 + t * 0.006, 0.55 + t * 0.008, 0.08);
-          grid[i][j] = project(rot, scale, cx, cy);
-        }
-      }
+      const rot = rotate3D(x, y, z, 0.72 + t * 0.006, 0.55 + t * 0.008, 0.08);
+      grid[i][j] = project(rot, scale, cx, cy);
+    }
+  }
 
-      for (let i = 0; i < U; i++) {
-        for (let j = 0; j < V; j++) {
-          const p = grid[i][j];
-          const pu = grid[i + 1][j];
-          const pv = grid[i][j + 1];
+  for (let i = 0; i < U; i++) {
+    for (let j = 0; j < V; j++) {
+      const p = grid[i][j];
+      const pu = grid[i + 1][j];
+      const pv = grid[i][j + 1];
 
-          const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.16));
-          const lineColor = `rgba(168,230,230,${alpha})`;
-          const pointColor = `rgba(244,217,160,${Math.min(0.95, alpha + 0.10)})`;
+      const alpha = Math.max(0.30, Math.min(0.86, 0.48 + p.depth * 0.16));
+      const lineColor = `rgba(168,230,230,${alpha})`;
+      const pointColor = `rgba(244,217,160,${Math.min(0.95, alpha + 0.10)})`;
 
-          drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1.6);
-          drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1.3);
+      drawPixelLine(p.x, p.y, pu.x, pu.y, lineColor, 1);
+      drawPixelLine(p.x, p.y, pv.x, pv.y, lineColor, 1);
 
-          if ((i + j) % 4 === 0) {
-            drawThickPixel(p.x, p.y, 2, pointColor);
-          }
-        }
+      if ((i + j) % 4 === 0) {
+        drawThickPixel(p.x, p.y, 2, pointColor);
       }
     }
+  }
+}
+
 
     function drawKlein(cx, cy, scale, t) {
       const U = 28;
@@ -782,7 +783,7 @@ function drawMobius(cx, cy, scale, t) {
 
       const s = Math.min(bw, bh);
 
-      drawTorus(bw * 0.22, bh * 0.50, s * 0.8, time);
+      drawTorus(bw * 0.22, bh * 0.3, s * 0.8, time);
       drawKlein(bw * 0.78, bh * 0.39, s * 0.96, time);
       drawMobius(bw * 0.50, bh * 0.77, s * 0.768, -time * 1.0);
 
