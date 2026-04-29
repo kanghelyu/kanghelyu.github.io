@@ -126,6 +126,95 @@
         0 0 24px rgba(168,230,230,0.24);
     }
 
+    .playlist-panel {
+      position: fixed;
+      top: 188px;
+      right: 34px;
+      z-index: 10;
+      width: 230px;
+      background: rgba(15, 28, 34, 0.86);
+      border: 2px solid rgba(168, 230, 230, 0.72);
+      box-shadow:
+        4px 4px 0 rgba(0,0,0,0.55),
+        0 0 22px rgba(168,230,230,0.16);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .playlist-toggle {
+      width: 100%;
+      padding: 11px 14px;
+      border: none;
+      border-bottom: 2px solid rgba(168, 230, 230, 0.42);
+      background: rgba(15, 28, 34, 0.92);
+      color: #a8e6e6;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      text-align: left;
+      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+    }
+
+    .playlist-toggle:hover {
+      color: #fff7e8;
+      text-shadow: 0 0 10px rgba(168,230,230,0.45);
+    }
+
+    .playlist-list {
+      max-height: 210px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(244,217,160,0.65) rgba(15,28,34,0.6);
+    }
+
+    .playlist-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .playlist-list::-webkit-scrollbar-track {
+      background: rgba(15,28,34,0.6);
+    }
+
+    .playlist-list::-webkit-scrollbar-thumb {
+      background: rgba(244,217,160,0.65);
+    }
+
+    .playlist-panel.collapsed .playlist-list {
+      display: none;
+    }
+
+    .playlist-panel.collapsed .playlist-toggle {
+      border-bottom: none;
+    }
+
+    .playlist-item {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 14px;
+      border: none;
+      border-bottom: 1px solid rgba(244,217,160,0.18);
+      background: rgba(15, 28, 34, 0.38);
+      color: #e8d9c0;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+      transition: all 0.18s ease;
+    }
+
+    .playlist-item:hover {
+      background: rgba(168, 230, 230, 0.10);
+      color: #fff7e8;
+    }
+
+    .playlist-item.active {
+      color: #a8e6e6;
+      background: rgba(168, 230, 230, 0.14);
+      text-shadow: 0 0 8px rgba(168,230,230,0.35);
+    }
+
     .page {
       width: min(980px, 92vw);
       margin: 0 auto;
@@ -315,6 +404,16 @@
         height: 38px;
       }
 
+      .playlist-panel {
+        top: 174px;
+        right: 18px;
+        width: 210px;
+      }
+
+      .playlist-list {
+        max-height: 210px;
+      }
+
       .page {
         width: min(92vw, 980px);
         padding: 180px 0 58px;
@@ -359,6 +458,11 @@
         width: 40px;
         height: 36px;
       }
+
+      .playlist-panel {
+        right: 12px;
+        width: 200px;
+      }
     }
   </style>
 </head>
@@ -369,6 +473,11 @@
   <div class="track-controls">
     <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
     <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
+  </div>
+
+  <div id="playlist-panel" class="playlist-panel collapsed">
+    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
+    <div id="playlist-list" class="playlist-list"></div>
   </div>
 
   <audio id="bg-music" preload="auto"></audio>
@@ -534,6 +643,7 @@
 
       toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
       updateMusicButton();
+      updatePlaylistUI();
     }
 
     function switchLanguage() {
@@ -544,42 +654,45 @@
 
     // ============== Background music with cross-page state ==============
     const musicList = [
-"music/music1.mp3",
-"music/music2.mp3",
-"music/music3.mp3",
-"music/music4.mp3",
-"music/music5.mp3",
-"music/music6.mp3",
-"music/music7.mp3",
-"music/music8.mp3",
-"music/music9.mp3",
-"music/music10.mp3",
-"music/music11.mp3",
-"music/music12.mp3",
-"music/music13.mp3",
-"music/music14.mp3",
-"music/music15.mp3",
-"music/music16.mp3",
-"music/music17.mp3",
-"music/music18.mp3",
-"music/music19.mp3",
-"music/music20.mp3",
-"music/music21.mp3",
-"music/music22.mp3",
-"music/music23.mp3",
-"music/music24.mp3",
-"music/music25.mp3",
-"music/music26.mp3",
-"music/music27.mp3",
-"music/music28.mp3",
-"music/music29.mp3",
-"music/music30.mp3"
+      "music/music1.mp3",
+      "music/music2.mp3",
+      "music/music3.mp3",
+      "music/music4.mp3",
+      "music/music5.mp3",
+      "music/music6.mp3",
+      "music/music7.mp3",
+      "music/music8.mp3",
+      "music/music9.mp3",
+      "music/music10.mp3",
+      "music/music11.mp3",
+      "music/music12.mp3",
+      "music/music13.mp3",
+      "music/music14.mp3",
+      "music/music15.mp3",
+      "music/music16.mp3",
+      "music/music17.mp3",
+      "music/music18.mp3",
+      "music/music19.mp3",
+      "music/music20.mp3",
+      "music/music21.mp3",
+      "music/music22.mp3",
+      "music/music23.mp3",
+      "music/music24.mp3",
+      "music/music25.mp3",
+      "music/music26.mp3",
+      "music/music27.mp3",
+      "music/music28.mp3",
+      "music/music29.mp3",
+      "music/music30.mp3"
     ];
 
     const audio = document.getElementById("bg-music");
     const musicBtn = document.getElementById("music-toggle");
     const prevTrackBtn = document.getElementById("prev-track");
     const nextTrackBtn = document.getElementById("next-track");
+    const playlistPanel = document.getElementById("playlist-panel");
+    const playlistToggle = document.getElementById("playlist-toggle");
+    const playlistList = document.getElementById("playlist-list");
     const MUSIC_STATE_KEY = "kanghe-site-music-state";
 
     let isMusicPlaying = false;
@@ -592,8 +705,19 @@
       return isMusicPlaying ? "♪ Playing" : "♪ Music";
     }
 
+    function getPlaylistToggleText() {
+      const isCollapsed = playlistPanel.classList.contains("collapsed");
+
+      if (currentLang === "zh") {
+        return isCollapsed ? "播放列表 ▾" : "播放列表 ▴";
+      }
+
+      return isCollapsed ? "Playlist ▾" : "Playlist ▴";
+    }
+
     function updateMusicButton() {
       if (!musicBtn) return;
+
       musicBtn.textContent = getMusicButtonText();
 
       if (isMusicPlaying) {
@@ -601,6 +725,58 @@
       } else {
         musicBtn.classList.remove("playing");
       }
+
+      updatePlaylistUI();
+    }
+
+    function getTrackName(index) {
+      if (currentLang === "zh") {
+        return `第 ${index + 1} 首`;
+      }
+
+      return `Track ${index + 1}`;
+    }
+
+    function buildPlaylist() {
+      playlistList.innerHTML = "";
+
+      musicList.forEach((src, index) => {
+        const item = document.createElement("button");
+        item.className = "playlist-item";
+        item.type = "button";
+        item.dataset.index = index;
+        item.textContent = getTrackName(index);
+
+        item.addEventListener("click", async () => {
+          try {
+            await playTrack(index, 0);
+          } catch (error) {
+            console.log("Playlist track playback was blocked by the browser:", error);
+          }
+        });
+
+        playlistList.appendChild(item);
+      });
+
+      updatePlaylistUI();
+    }
+
+    function updatePlaylistUI() {
+      if (!playlistList || !playlistToggle || !playlistPanel) return;
+
+      playlistToggle.textContent = getPlaylistToggleText();
+
+      const items = playlistList.querySelectorAll(".playlist-item");
+
+      items.forEach((item, index) => {
+        item.textContent = getTrackName(index);
+
+        if (index === currentTrackIndex) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
     }
 
     function saveMusicState() {
@@ -783,6 +959,11 @@
       }
     });
 
+    playlistToggle.addEventListener("click", () => {
+      playlistPanel.classList.toggle("collapsed");
+      updatePlaylistUI();
+    });
+
     audio.addEventListener("timeupdate", () => {
       if (isMusicPlaying) saveMusicState();
     });
@@ -798,6 +979,7 @@
     window.addEventListener("beforeunload", saveMusicState);
 
     applyLanguage(currentLang);
+    buildPlaylist();
     restoreMusicFromPreviousPage();
   </script>
 </body>
