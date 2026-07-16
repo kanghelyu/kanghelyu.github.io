@@ -1,997 +1,1001 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Notes | Kanghe Lyu</title>
-  <style>
-    :root {
-      --math-gold: #f4d9a0;
-      --math-ink: #0f1c22;
-      --glow-cyan: #a8e6e6;
-      --paper: #fff7e8;
-      --subtle: #d8c9a8;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      width: 100%;
-      min-height: 100%;
-      background: var(--math-ink);
-      color: var(--paper);
-      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
-      overflow-x: hidden;
-    }
-
-    body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
-        radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
-        linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
-    }
-
-    .lang-toggle {
-      position: fixed;
-      top: 28px;
-      right: 34px;
-      z-index: 10;
-      padding: 11px 24px;
-      border-radius: 0;
-      background: rgba(15, 28, 34, 0.82);
-      border: 2px solid #a8e6e6;
-      color: #a8e6e6;
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: 2px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow:
-        4px 4px 0 rgba(0,0,0,0.55),
-        0 0 18px rgba(168,230,230,0.18);
-    }
-
-    .music-toggle {
-      position: fixed;
-      top: 82px;
-      right: 34px;
-      z-index: 10;
-      padding: 11px 24px;
-      border-radius: 0;
-      background: rgba(15, 28, 34, 0.82);
-      border: 2px solid rgba(244, 217, 160, 0.72);
-      color: #f4d9a0;
-      font-size: 1rem;
-      font-weight: 500;
-      letter-spacing: 2px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow:
-        4px 4px 0 rgba(0,0,0,0.55),
-        0 0 18px rgba(244,217,160,0.16);
-    }
-
-    .lang-toggle:hover,
-    .music-toggle:hover {
-      transform: translate(2px, 2px);
-      box-shadow:
-        2px 2px 0 rgba(0,0,0,0.65),
-        0 0 28px rgba(168,230,230,0.24);
-    }
-
-    .music-toggle.playing {
-      border-color: #a8e6e6;
-      color: #a8e6e6;
-      box-shadow:
-        4px 4px 0 rgba(0,0,0,0.55),
-        0 0 22px rgba(168,230,230,0.22);
-    }
-
-    .track-controls {
-      position: fixed;
-      top: 136px;
-      right: 34px;
-      z-index: 10;
-      display: flex;
-      gap: 10px;
-    }
-
-    .track-btn {
-      width: 48px;
-      height: 40px;
-      border-radius: 0;
-      background: rgba(15, 28, 34, 0.82);
-      border: 2px solid rgba(244, 217, 160, 0.72);
-      color: #f4d9a0;
-      font-size: 1.05rem;
-      line-height: 1;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow:
-        4px 4px 0 rgba(0,0,0,0.55),
-        0 0 18px rgba(244,217,160,0.16);
-    }
-
-    .track-btn:hover {
-      transform: translate(2px, 2px);
-      border-color: #a8e6e6;
-      color: #a8e6e6;
-      box-shadow:
-        2px 2px 0 rgba(0,0,0,0.65),
-        0 0 24px rgba(168,230,230,0.24);
-    }
-
-    .playlist-panel {
-      position: fixed;
-      top: 188px;
-      right: 34px;
-      z-index: 10;
-      width: 130px;
-      background: rgba(15, 28, 34, 0.86);
-      border: 2px solid rgba(168, 230, 230, 0.72);
-      box-shadow:
-        4px 4px 0 rgba(0,0,0,0.55),
-        0 0 22px rgba(168,230,230,0.16);
-      overflow: hidden;
-      transition: all 0.2s ease;
-    }
-
-    .playlist-toggle {
-      width: 100%;
-      padding: 11px 14px;
-      border: none;
-      border-bottom: 2px solid rgba(168, 230, 230, 0.42);
-      background: rgba(15, 28, 34, 0.92);
-      color: #a8e6e6;
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      cursor: pointer;
-      text-align: left;
-      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
-    }
-
-    .playlist-toggle:hover {
-      color: #fff7e8;
-      text-shadow: 0 0 10px rgba(168,230,230,0.45);
-    }
-
-    .playlist-list {
-      max-height: 210px;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(244,217,160,0.65) rgba(15,28,34,0.6);
-    }
-
-    .playlist-list::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .playlist-list::-webkit-scrollbar-track {
-      background: rgba(15,28,34,0.6);
-    }
-
-    .playlist-list::-webkit-scrollbar-thumb {
-      background: rgba(244,217,160,0.65);
-    }
-
-    .playlist-panel.collapsed .playlist-list {
-      display: none;
-    }
-
-    .playlist-panel.collapsed .playlist-toggle {
-      border-bottom: none;
-    }
-
-    .playlist-item {
-      width: 100%;
-      min-height: 42px;
-      padding: 10px 14px;
-      border: none;
-      border-bottom: 1px solid rgba(244,217,160,0.18);
-      background: rgba(15, 28, 34, 0.38);
-      color: #e8d9c0;
-      cursor: pointer;
-      text-align: left;
-      font-size: 0.95rem;
-      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
-      transition: all 0.18s ease;
-    }
-
-    .playlist-item:hover {
-      background: rgba(168, 230, 230, 0.10);
-      color: #fff7e8;
-    }
-
-    .playlist-item.active {
-      color: #a8e6e6;
-      background: rgba(168, 230, 230, 0.14);
-      text-shadow: 0 0 8px rgba(168,230,230,0.35);
-    }
-
-    .page {
-      width: min(980px, 92vw);
-      margin: 0 auto;
-      padding: 96px 0 80px;
-    }
-
-    .back {
-      display: inline-flex;
-      margin-bottom: 42px;
-      color: var(--glow-cyan);
-      text-decoration: none;
-      font-size: 1rem;
-      letter-spacing: 0.08em;
-      text-shadow:
-        3px 3px 0 rgba(0,0,0,0.45),
-        0 0 10px rgba(168,230,230,0.28);
-    }
-
-    .back:hover {
-      text-shadow:
-        3px 3px 0 rgba(0,0,0,0.45),
-        0 0 18px rgba(168,230,230,0.55);
-    }
-
-    .eyebrow {
-      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--math-gold);
-      margin-bottom: 18px;
-      text-shadow:
-        3px 3px 0 rgba(0,0,0,0.55),
-        0 0 12px rgba(168,230,230,0.20);
-    }
-
-    h1 {
-      font-size: clamp(3rem, 7vw, 5.2rem);
-      line-height: 1.05;
-      font-weight: 400;
-      letter-spacing: -0.04em;
-      color: #fff7e8;
-      margin-bottom: 24px;
-      text-shadow:
-        4px 0 0 rgba(0,0,0,0.60),
-        0 4px 0 rgba(0,0,0,0.60),
-        4px 4px 0 rgba(0,0,0,0.60),
-        0 0 20px rgba(168,230,230,0.30);
-    }
-
-    .intro {
-      max-width: 720px;
-      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
-      line-height: 1.85;
-      color: #e8d9c0;
-      margin-bottom: 54px;
-      text-shadow:
-        3px 3px 0 rgba(0,0,0,0.42),
-        0 0 8px rgba(0,0,0,0.28);
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    h2 {
-      font-size: 1.35rem;
-      color: var(--math-gold);
-      letter-spacing: 0.08em;
-      margin: 46px 0 18px;
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
-    }
-
-    .notes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-      gap: 22px;
-      margin-top: 20px;
-      width: 100%;
-    }
-
-    .note {
-      min-width: 0;
-      max-width: 100%;
-      padding: 24px 24px 22px;
-      border: 2px solid rgba(244,217,160,0.46);
-      background: rgba(15,28,34,0.34);
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      box-shadow:
-        5px 5px 0 rgba(0,0,0,0.50),
-        0 0 20px rgba(168,230,230,0.10),
-        inset 0 0 0 1px rgba(255,255,255,0.035);
-    }
-
-    .note-title {
-      min-width: 0;
-      font-size: 1.22rem;
-      color: #fff7e8;
-      margin-bottom: 12px;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      text-shadow:
-        3px 3px 0 rgba(0,0,0,0.42),
-        0 0 8px rgba(0,0,0,0.28);
-    }
-
-    .note-desc {
-      min-width: 0;
-      color: var(--subtle);
-      font-size: 1rem;
-      line-height: 1.7;
-      margin-bottom: 20px;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .note-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 18px;
-      color: #f0e6d2;
-      text-decoration: none;
-      font-size: 0.98rem;
-      border: 2px solid rgba(244,217,160,0.62);
-      background: rgba(15,28,34,0.38);
-      max-width: 100%;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-      box-shadow:
-        3px 3px 0 rgba(0,0,0,0.55),
-        0 0 14px rgba(168,230,230,0.12);
-      transition: all 0.2s ease;
-    }
-
-    .button:hover {
-      border-color: var(--math-gold);
-      color: #fff7e8;
-      transform: translate(2px, 2px);
-      box-shadow:
-        1px 1px 0 rgba(0,0,0,0.65),
-        0 0 20px rgba(168,230,230,0.24);
-    }
-
-    .footer {
-      margin-top: 70px;
-      color: #c8b68a;
-      opacity: 0.82;
-      letter-spacing: 0.12em;
-      font-size: 0.98rem;
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    @media (min-width: 761px) {
-      .notes-grid {
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      }
-    }
-
-    @media (max-width: 760px) {
-      .lang-toggle {
-        top: 18px;
-        right: 18px;
-        padding: 10px 18px;
-      }
-
-      .music-toggle {
-        top: 70px;
-        right: 18px;
-        padding: 10px 18px;
-      }
-
-      .track-controls {
-        top: 122px;
-        right: 18px;
-      }
-
-      .track-btn {
-        width: 44px;
-        height: 38px;
-      }
-
-      .playlist-panel {
-        top: 174px;
-        right: 18px;
-        width: 120px;
-      }
-
-      .playlist-list {
-        max-height: 210px;
-      }
-
-      .page {
-        width: min(92vw, 980px);
-        padding: 180px 0 58px;
-      }
-
-      .notes-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-
-      .note {
-        padding: 22px 18px 20px;
-      }
-
-      .note-actions {
-        gap: 10px;
-      }
-
-      .button {
-        padding: 10px 16px;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .page {
-        width: 94vw;
-      }
-
-      .note {
-        padding: 20px 14px 18px;
-      }
-
-      .lang-toggle,
-      .music-toggle {
-        right: 12px;
-      }
-
-      .track-controls {
-        right: 12px;
-      }
-
-      .track-btn {
-        width: 40px;
-        height: 36px;
-      }
-
-      .playlist-panel {
-        right: 12px;
-        width: 120px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
-  <button id="music-toggle" class="music-toggle">♪ Music</button>
-
-  <div class="track-controls">
-    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
-    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
-  </div>
-
-  <div id="playlist-panel" class="playlist-panel collapsed">
-    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
-    <div id="playlist-list" class="playlist-list"></div>
-  </div>
-
-  <audio id="bg-music" preload="auto"></audio>
-
-  <main class="page">
-    <a id="back-link" class="back" href="index.html">← Back to Home</a>
-
-    <div id="eyebrow" class="eyebrow">MATHEMATICAL NOTES</div>
-    <h1 id="title">Notes</h1>
-
-    <p id="intro" class="intro">
-      This page collects mathematical notes/surveys.
-      Each item can be viewed directly in the browser or downloaded as a PDF.
-    </p>
-
-    <h2 id="section-title">Geometry and Algebra</h2>
-
-    <section class="notes-grid">
-      <article class="note">
-        <div class="note-title">Slodowy Slices and Their Quantization</div>
-        <div class="note-desc" id="desc-1">
-          Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/Slodowy Slices and Their Quantization.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/Slodowy Slices and Their Quantization.pdf" download>Download</a>
-        </div>
-      </article>
-
-      <article class="note">
-        <div class="note-title">A Note on Algebraic Groups and Related Topics</div>
-        <div class="note-desc" id="desc-2">
-          This is an on-going note.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/a note on algebraic groups and related topics.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/a note on algebraic groups and related topics.pdf" download>Download</a>
-        </div>
-      </article>
-
-      <article class="note">
-        <div class="note-title">A Note on Lie Algebras</div>
-        <div class="note-desc" id="desc-3">
-          This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/liealgebra.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/liealgebra.pdf" download>Download</a>
-        </div>
-      </article>
-
-      <article class="note">
-        <div class="note-title">A Lecture on Highest Weight Rep of Infinite Dim Lie Alg</div>
-        <div class="note-desc" id="desc-4">
-          This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" download>Download</a>
-        </div>
-      </article>
-
-      <article class="note">
-        <div class="note-title">A Note on Quiver Varieties Slodowy Slices and Affine Grassmannians</div>
-        <div class="note-desc" id="desc-5">
-          This is an on-going note.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" download>Download</a>
-        </div>
-      </article>
-
-      <article class="note">
-        <div class="note-title">A Note on Gelfand-Naimark Theorem</div>
-        <div class="note-desc" id="desc-6">
-          This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234.
-        </div>
-        <div class="note-actions">
-          <a class="button view-btn" href="notes/GelfandNaimark.pdf" target="_blank">View PDF</a>
-          <a class="button download-btn" href="notes/GelfandNaimark.pdf" download>Download</a>
-        </div>
-      </article>
-    </section>
-
-    <div id="footer" class="footer">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
-  </main>
-
-  <script>
-    // ============== Shared language state ==============
-    const LANG_STATE_KEY = "kanghe-site-lang";
-
-    const translations = {
-      en: {
-        pageTitle: "Notes | Kanghe Lyu",
-        back: "← Back to Home",
-        eyebrow: "MATHEMATICAL NOTES",
-        title: "Notes",
-        intro: "This page collects mathematical notes/surveys. Each item can be viewed directly in the browser or downloaded as a PDF.",
-        sectionTitle: "Geometry and Algebra",
-        viewPDF: "View PDF",
-        download: "Download",
-        footer: "GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
-        desc1: "Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.",
-        desc2: "This is an on-going note.",
-        desc3: "This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.",
-        desc4: "This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.",
-        desc5: "This is an on-going note.",
-        desc6: "This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234."
-      },
-      zh: {
-        pageTitle: "笔记 | 吕康禾",
-        back: "← 返回主页",
-        eyebrow: "数学笔记",
-        title: "笔记",
-        intro: "此页面收集我的数学笔记或综述。每个条目都可以直接在浏览器中查看，也可以下载 PDF。",
-        sectionTitle: "几何与代数",
-        viewPDF: "查看 PDF",
-        download: "下载",
-        footer: "几何 · 表示论 · 数学物理",
-        desc1: "关于 Slodowy slices、Hamiltonian reduction 与 BRST cohomology 的笔记。",
-        desc2: "这是一份仍在更新中的笔记。",
-        desc3: "这是一份学习万哲先与 Humphreys 相关教材时写下的中文手写笔记。",
-        desc4: "这是我在新乌兹别克斯坦大学做讨论班时写下的手写讲义，主要内容来自四川大学任丽老师的课程。",
-        desc5: "这是一份仍在更新中的笔记。",
-        desc6: "这份笔记是在学习 https://zhuanlan.zhihu.com/p/550302234 时写下的。"
-      }
-    };
-
-    let currentLang = localStorage.getItem(LANG_STATE_KEY) || "en";
-    const toggleBtn = document.getElementById("lang-toggle");
-
-    function applyLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem(LANG_STATE_KEY, currentLang);
-
-      const t = translations[currentLang];
-
-      document.documentElement.lang = currentLang === "en" ? "en" : "zh";
-      document.title = t.pageTitle;
-
-      document.getElementById("back-link").textContent = t.back;
-      document.getElementById("eyebrow").textContent = t.eyebrow;
-      document.getElementById("title").textContent = t.title;
-      document.getElementById("intro").textContent = t.intro;
-      document.getElementById("section-title").textContent = t.sectionTitle;
-      document.getElementById("footer").textContent = t.footer;
-
-      document.getElementById("desc-1").textContent = t.desc1;
-      document.getElementById("desc-2").textContent = t.desc2;
-      document.getElementById("desc-3").textContent = t.desc3;
-      document.getElementById("desc-4").textContent = t.desc4;
-      document.getElementById("desc-5").textContent = t.desc5;
-      document.getElementById("desc-6").textContent = t.desc6;
-
-      document.querySelectorAll(".view-btn").forEach(btn => {
-        btn.textContent = t.viewPDF;
-      });
-
-      document.querySelectorAll(".download-btn").forEach(btn => {
-        btn.textContent = t.download;
-      });
-
-      toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
-      updateMusicButton();
-      updatePlaylistUI();
-    }
-
-    function switchLanguage() {
-      applyLanguage(currentLang === "en" ? "zh" : "en");
-    }
-
-    toggleBtn.addEventListener("click", switchLanguage);
-
-    // ============== Background music with cross-page state ==============
-    const musicList = [
-"music/music1.mp3",
-      "music/music2.mp3",
-      "music/music3.mp3",
-      "music/music4.mp3",
-      "music/music5.mp3",
-      "music/music6.mp3",
-      "music/music7.mp3",
-      "music/music8.mp3",
-      "music/music9.mp3",
-      "music/music10.mp3",
-      "music/music11.mp3",
-      "music/music12.mp3",
-      "music/music13.mp3",
-      "music/music14.mp3",
-      "music/music15.mp3",
-      "music/music16.mp3",
-      "music/music17.mp3",
-      "music/music18.mp3",
-      "music/music19.mp3",
-      "music/music20.mp3",
-      "music/music21.mp3",
-      "music/music22.mp3",
-"music/music23.mp3",
-"music/music24.mp3",
-"music/music25.mp3",
-"music/music26.mp3",
-"music/music27.mp3",
-"music/music28.mp3",
-"music/music29.mp3",
-"music/music30.mp3",
-"music/music31.mp3",
-"music/music32.mp3",
-"music/music33.mp3",
-"music/music34.mp3",
-"music/music35.mp3",
-"music/music36.mp3",
-"music/music37.mp3",
-"music/music38.mp3",
-"music/music39.mp3",
-"music/music40.mp3",
-"music/music41.mp3"
-    ];
-
-    const audio = document.getElementById("bg-music");
-    const musicBtn = document.getElementById("music-toggle");
-    const prevTrackBtn = document.getElementById("prev-track");
-    const nextTrackBtn = document.getElementById("next-track");
-    const playlistPanel = document.getElementById("playlist-panel");
-    const playlistToggle = document.getElementById("playlist-toggle");
-    const playlistList = document.getElementById("playlist-list");
-    const MUSIC_STATE_KEY = "kanghe-site-music-state";
-
-    let isMusicPlaying = false;
-    let currentTrackIndex = -1;
-
-    function getMusicButtonText() {
-      if (currentLang === "zh") {
-        return isMusicPlaying ? "♪ 播放中" : "♪ 音乐";
-      }
-      return isMusicPlaying ? "♪ Playing" : "♪ Music";
-    }
-
-    function getPlaylistToggleText() {
-      const isCollapsed = playlistPanel.classList.contains("collapsed");
-
-      if (currentLang === "zh") {
-        return isCollapsed ? "播放列表 ▾" : "播放列表 ▴";
-      }
-
-      return isCollapsed ? "Playlist ▾" : "Playlist ▴";
-    }
-
-    function updateMusicButton() {
-      if (!musicBtn) return;
-
-      musicBtn.textContent = getMusicButtonText();
-
-      if (isMusicPlaying) {
-        musicBtn.classList.add("playing");
-      } else {
-        musicBtn.classList.remove("playing");
-      }
-
-      updatePlaylistUI();
-    }
-
-    function getTrackName(index) {
-      if (currentLang === "zh") {
-        return `第 ${index + 1} 首`;
-      }
-
-      return `Track ${index + 1}`;
-    }
-
-    function buildPlaylist() {
-      playlistList.innerHTML = "";
-
-      musicList.forEach((src, index) => {
-        const item = document.createElement("button");
-        item.className = "playlist-item";
-        item.type = "button";
-        item.dataset.index = index;
-        item.textContent = getTrackName(index);
-
-        item.addEventListener("click", async () => {
-          try {
-            await playTrack(index, 0);
-          } catch (error) {
-            console.log("Playlist track playback was blocked by the browser:", error);
-          }
-        });
-
-        playlistList.appendChild(item);
-      });
-
-      updatePlaylistUI();
-    }
-
-    function updatePlaylistUI() {
-      if (!playlistList || !playlistToggle || !playlistPanel) return;
-
-      playlistToggle.textContent = getPlaylistToggleText();
-
-      const items = playlistList.querySelectorAll(".playlist-item");
-
-      items.forEach((item, index) => {
-        item.textContent = getTrackName(index);
-
-        if (index === currentTrackIndex) {
-          item.classList.add("active");
-        } else {
-          item.classList.remove("active");
-        }
-      });
-    }
-
-    function saveMusicState() {
-      const state = {
-        isPlaying: isMusicPlaying,
-        trackIndex: currentTrackIndex,
-        currentTime: audio.currentTime || 0,
-        volume: audio.volume || 0.42,
-        savedAt: Date.now()
-      };
-
-      localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(state));
-    }
-
-    function loadMusicState() {
-      try {
-        const raw = localStorage.getItem(MUSIC_STATE_KEY);
-        if (!raw) return null;
-        return JSON.parse(raw);
-      } catch (error) {
-        console.log("Could not load music state:", error);
-        return null;
-      }
-    }
-
-    function getRandomTrackIndex() {
-      if (musicList.length === 1) return 0;
-
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * musicList.length);
-      } while (nextIndex === currentTrackIndex);
-
-      return nextIndex;
-    }
-
-    async function playTrack(trackIndex, startTime = 0) {
-      if (trackIndex < 0 || trackIndex >= musicList.length) return;
-
-      currentTrackIndex = trackIndex;
-      audio.src = musicList[currentTrackIndex];
-      audio.volume = 0.42;
-
-      audio.addEventListener(
-        "loadedmetadata",
-        () => {
-          if (startTime > 0 && startTime < audio.duration) {
-            audio.currentTime = startTime;
-          }
-        },
-        { once: true }
-      );
-
-      await audio.play();
-
-      isMusicPlaying = true;
-      updateMusicButton();
-      saveMusicState();
-    }
-
-    async function playRandomTrack() {
-      const nextIndex = getRandomTrackIndex();
-      await playTrack(nextIndex, 0);
-    }
-
-    async function playNextTrack() {
-      const nextIndex =
-        currentTrackIndex < 0
-          ? getRandomTrackIndex()
-          : (currentTrackIndex + 1) % musicList.length;
-
-      await playTrack(nextIndex, 0);
-    }
-
-    async function playPreviousTrack() {
-      const prevIndex =
-        currentTrackIndex < 0
-          ? getRandomTrackIndex()
-          : (currentTrackIndex - 1 + musicList.length) % musicList.length;
-
-      await playTrack(prevIndex, 0);
-    }
-
-    async function restoreMusicFromPreviousPage() {
-      const state = loadMusicState();
-
-      if (!state || !state.isPlaying) {
-        isMusicPlaying = false;
-
-        if (
-          state &&
-          typeof state.trackIndex === "number" &&
-          state.trackIndex >= 0 &&
-          state.trackIndex < musicList.length
-        ) {
-          currentTrackIndex = state.trackIndex;
-          audio.src = musicList[currentTrackIndex];
-          audio.volume = state.volume || 0.42;
-        }
-
-        updateMusicButton();
-        return;
-      }
-
-      if (
-        typeof state.trackIndex !== "number" ||
-        state.trackIndex < 0 ||
-        state.trackIndex >= musicList.length
-      ) {
-        isMusicPlaying = false;
-        updateMusicButton();
-        return;
-      }
-
-      const elapsedSeconds = (Date.now() - state.savedAt) / 1000;
-      const restoredTime = Math.max(0, (state.currentTime || 0) + elapsedSeconds);
-
-      try {
-        await playTrack(state.trackIndex, restoredTime);
-      } catch (error) {
-        isMusicPlaying = false;
-        currentTrackIndex = state.trackIndex;
-        audio.src = musicList[currentTrackIndex];
-        audio.volume = state.volume || 0.42;
-
-        audio.addEventListener(
-          "loadedmetadata",
-          () => {
-            if (restoredTime > 0 && restoredTime < audio.duration) {
-              audio.currentTime = restoredTime;
-            }
-          },
-          { once: true }
-        );
-
-        updateMusicButton();
-        console.log("Music restore was blocked by the browser:", error);
-      }
-    }
-
-    musicBtn.addEventListener("click", async () => {
-      try {
-        if (!isMusicPlaying) {
-          const state = loadMusicState();
-
-          if (
-            state &&
-            typeof state.trackIndex === "number" &&
-            state.trackIndex >= 0 &&
-            state.trackIndex < musicList.length
-          ) {
-            await playTrack(state.trackIndex, state.currentTime || 0);
-          } else {
-            await playRandomTrack();
-          }
-        } else {
-          audio.pause();
-          isMusicPlaying = false;
-          updateMusicButton();
-          saveMusicState();
-        }
-      } catch (error) {
-        console.log("Music playback was blocked by the browser:", error);
-      }
-    });
-
-    prevTrackBtn.addEventListener("click", async () => {
-      try {
-        await playPreviousTrack();
-      } catch (error) {
-        console.log("Previous track playback was blocked by the browser:", error);
-      }
-    });
-
-    nextTrackBtn.addEventListener("click", async () => {
-      try {
-        await playNextTrack();
-      } catch (error) {
-        console.log("Next track playback was blocked by the browser:", error);
-      }
-    });
-
-    playlistToggle.addEventListener("click", () => {
-      playlistPanel.classList.toggle("collapsed");
-      updatePlaylistUI();
-    });
-
-    audio.addEventListener("timeupdate", () => {
-      if (isMusicPlaying) saveMusicState();
-    });
-
-    audio.addEventListener("pause", () => {
-      if (!audio.ended) saveMusicState();
-    });
-
-    audio.addEventListener("ended", async () => {
-      if (isMusicPlaying) await playNextTrack();
-    });
-
-    window.addEventListener("beforeunload", saveMusicState);
-
-    applyLanguage(currentLang);
-    buildPlaylist();
-    restoreMusicFromPreviousPage();
-  </script>
-</body>
-</html>
+1|<!DOCTYPE html>
+2|<html lang="en">
+3|<head>
+4|  <meta charset="UTF-8" />
+5|  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+6|  <title>Notes | Kanghe Lyu</title>
+7|  <style>
+8|    :root {
+9|      --math-gold: #f4d9a0;
+10|      --math-ink: #0f1c22;
+11|      --glow-cyan: #a8e6e6;
+12|      --paper: #fff7e8;
+13|      --subtle: #d8c9a8;
+14|    }
+15|
+16|    * {
+17|      margin: 0;
+18|      padding: 0;
+19|      box-sizing: border-box;
+20|    }
+21|
+22|    html, body {
+23|      width: 100%;
+24|      min-height: 100%;
+25|      background: var(--math-ink);
+26|      color: var(--paper);
+27|      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+28|      overflow-x: hidden;
+29|    }
+30|
+31|    body {
+32|      min-height: 100vh;
+33|      background:
+34|        radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
+35|        radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
+36|        linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+37|    }
+38|
+39|    .lang-toggle {
+40|      position: fixed;
+41|      top: 28px;
+42|      right: 34px;
+43|      z-index: 10;
+44|      padding: 11px 24px;
+45|      border-radius: 0;
+46|      background: rgba(15, 28, 34, 0.82);
+47|      border: 2px solid #a8e6e6;
+48|      color: #a8e6e6;
+49|      font-size: 1rem;
+50|      font-weight: 500;
+51|      letter-spacing: 2px;
+52|      cursor: pointer;
+53|      transition: all 0.2s ease;
+54|      box-shadow:
+55|        4px 4px 0 rgba(0,0,0,0.55),
+56|        0 0 18px rgba(168,230,230,0.18);
+57|    }
+58|
+59|    .music-toggle {
+60|      position: fixed;
+61|      top: 82px;
+62|      right: 34px;
+63|      z-index: 10;
+64|      padding: 11px 24px;
+65|      border-radius: 0;
+66|      background: rgba(15, 28, 34, 0.82);
+67|      border: 2px solid rgba(244, 217, 160, 0.72);
+68|      color: #f4d9a0;
+69|      font-size: 1rem;
+70|      font-weight: 500;
+71|      letter-spacing: 2px;
+72|      cursor: pointer;
+73|      transition: all 0.2s ease;
+74|      box-shadow:
+75|        4px 4px 0 rgba(0,0,0,0.55),
+76|        0 0 18px rgba(244,217,160,0.16);
+77|    }
+78|
+79|    .lang-toggle:hover,
+80|    .music-toggle:hover {
+81|      transform: translate(2px, 2px);
+82|      box-shadow:
+83|        2px 2px 0 rgba(0,0,0,0.65),
+84|        0 0 28px rgba(168,230,230,0.24);
+85|    }
+86|
+87|    .music-toggle.playing {
+88|      border-color: #a8e6e6;
+89|      color: #a8e6e6;
+90|      box-shadow:
+91|        4px 4px 0 rgba(0,0,0,0.55),
+92|        0 0 22px rgba(168,230,230,0.22);
+93|    }
+94|
+95|    .track-controls {
+96|      position: fixed;
+97|      top: 136px;
+98|      right: 34px;
+99|      z-index: 10;
+100|      display: flex;
+101|      gap: 10px;
+102|    }
+103|
+104|    .track-btn {
+105|      width: 48px;
+106|      height: 40px;
+107|      border-radius: 0;
+108|      background: rgba(15, 28, 34, 0.82);
+109|      border: 2px solid rgba(244, 217, 160, 0.72);
+110|      color: #f4d9a0;
+111|      font-size: 1.05rem;
+112|      line-height: 1;
+113|      cursor: pointer;
+114|      transition: all 0.2s ease;
+115|      box-shadow:
+116|        4px 4px 0 rgba(0,0,0,0.55),
+117|        0 0 18px rgba(244,217,160,0.16);
+118|    }
+119|
+120|    .track-btn:hover {
+121|      transform: translate(2px, 2px);
+122|      border-color: #a8e6e6;
+123|      color: #a8e6e6;
+124|      box-shadow:
+125|        2px 2px 0 rgba(0,0,0,0.65),
+126|        0 0 24px rgba(168,230,230,0.24);
+127|    }
+128|
+129|    .playlist-panel {
+130|      position: fixed;
+131|      top: 188px;
+132|      right: 34px;
+133|      z-index: 10;
+134|      width: 130px;
+135|      background: rgba(15, 28, 34, 0.86);
+136|      border: 2px solid rgba(168, 230, 230, 0.72);
+137|      box-shadow:
+138|        4px 4px 0 rgba(0,0,0,0.55),
+139|        0 0 22px rgba(168,230,230,0.16);
+140|      overflow: hidden;
+141|      transition: all 0.2s ease;
+142|    }
+143|
+144|    .playlist-toggle {
+145|      width: 100%;
+146|      padding: 11px 14px;
+147|      border: none;
+148|      border-bottom: 2px solid rgba(168, 230, 230, 0.42);
+149|      background: rgba(15, 28, 34, 0.92);
+150|      color: #a8e6e6;
+151|      font-size: 0.95rem;
+152|      font-weight: 500;
+153|      letter-spacing: 1.5px;
+154|      cursor: pointer;
+155|      text-align: left;
+156|      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+157|    }
+158|
+159|    .playlist-toggle:hover {
+160|      color: #fff7e8;
+161|      text-shadow: 0 0 10px rgba(168,230,230,0.45);
+162|    }
+163|
+164|    .playlist-list {
+165|      max-height: 210px;
+166|      overflow-y: auto;
+167|      overscroll-behavior: contain;
+168|      scrollbar-width: thin;
+169|      scrollbar-color: rgba(244,217,160,0.65) rgba(15,28,34,0.6);
+170|    }
+171|
+172|    .playlist-list::-webkit-scrollbar {
+173|      width: 8px;
+174|    }
+175|
+176|    .playlist-list::-webkit-scrollbar-track {
+177|      background: rgba(15,28,34,0.6);
+178|    }
+179|
+180|    .playlist-list::-webkit-scrollbar-thumb {
+181|      background: rgba(244,217,160,0.65);
+182|    }
+183|
+184|    .playlist-panel.collapsed .playlist-list {
+185|      display: none;
+186|    }
+187|
+188|    .playlist-panel.collapsed .playlist-toggle {
+189|      border-bottom: none;
+190|    }
+191|
+192|    .playlist-item {
+193|      width: 100%;
+194|      min-height: 42px;
+195|      padding: 10px 14px;
+196|      border: none;
+197|      border-bottom: 1px solid rgba(244,217,160,0.18);
+198|      background: rgba(15, 28, 34, 0.38);
+199|      color: #e8d9c0;
+200|      cursor: pointer;
+201|      text-align: left;
+202|      font-size: 0.95rem;
+203|      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+204|      transition: all 0.18s ease;
+205|    }
+206|
+207|    .playlist-item:hover {
+208|      background: rgba(168, 230, 230, 0.10);
+209|      color: #fff7e8;
+210|    }
+211|
+212|    .playlist-item.active {
+213|      color: #a8e6e6;
+214|      background: rgba(168, 230, 230, 0.14);
+215|      text-shadow: 0 0 8px rgba(168,230,230,0.35);
+216|    }
+217|
+218|    .page {
+219|      width: min(980px, 92vw);
+220|      margin: 0 auto;
+221|      padding: 96px 0 80px;
+222|    }
+223|
+224|    .back {
+225|      display: inline-flex;
+226|      margin-bottom: 42px;
+227|      color: var(--glow-cyan);
+228|      text-decoration: none;
+229|      font-size: 1rem;
+230|      letter-spacing: 0.08em;
+231|      text-shadow:
+232|        3px 3px 0 rgba(0,0,0,0.45),
+233|        0 0 10px rgba(168,230,230,0.28);
+234|    }
+235|
+236|    .back:hover {
+237|      text-shadow:
+238|        3px 3px 0 rgba(0,0,0,0.45),
+239|        0 0 18px rgba(168,230,230,0.55);
+240|    }
+241|
+242|    .eyebrow {
+243|      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+244|      letter-spacing: 0.25em;
+245|      text-transform: uppercase;
+246|      color: var(--math-gold);
+247|      margin-bottom: 18px;
+248|      text-shadow:
+249|        3px 3px 0 rgba(0,0,0,0.55),
+250|        0 0 12px rgba(168,230,230,0.20);
+251|    }
+252|
+253|    h1 {
+254|      font-size: clamp(3rem, 7vw, 5.2rem);
+255|      line-height: 1.05;
+256|      font-weight: 400;
+257|      letter-spacing: -0.04em;
+258|      color: #fff7e8;
+259|      margin-bottom: 24px;
+260|      text-shadow:
+261|        4px 0 0 rgba(0,0,0,0.60),
+262|        0 4px 0 rgba(0,0,0,0.60),
+263|        4px 4px 0 rgba(0,0,0,0.60),
+264|        0 0 20px rgba(168,230,230,0.30);
+265|    }
+266|
+267|    .intro {
+268|      max-width: 720px;
+269|      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+270|      line-height: 1.85;
+271|      color: #e8d9c0;
+272|      margin-bottom: 54px;
+273|      text-shadow:
+274|        3px 3px 0 rgba(0,0,0,0.42),
+275|        0 0 8px rgba(0,0,0,0.28);
+276|      overflow-wrap: anywhere;
+277|      word-break: break-word;
+278|    }
+279|
+280|    h2 {
+281|      font-size: 1.35rem;
+282|      color: var(--math-gold);
+283|      letter-spacing: 0.08em;
+284|      margin: 46px 0 18px;
+285|      text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
+286|    }
+287|
+288|    .notes-grid {
+289|      display: grid;
+290|      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+291|      gap: 22px;
+292|      margin-top: 20px;
+293|      width: 100%;
+294|    }
+295|
+296|    .note {
+297|      min-width: 0;
+298|      max-width: 100%;
+299|      padding: 24px 24px 22px;
+300|      border: 2px solid rgba(244,217,160,0.46);
+301|      background: rgba(15,28,34,0.34);
+302|      overflow-wrap: anywhere;
+303|      word-break: break-word;
+304|      box-shadow:
+305|        5px 5px 0 rgba(0,0,0,0.50),
+306|        0 0 20px rgba(168,230,230,0.10),
+307|        inset 0 0 0 1px rgba(255,255,255,0.035);
+308|    }
+309|
+310|    .note-title {
+311|      min-width: 0;
+312|      font-size: 1.22rem;
+313|      color: #fff7e8;
+314|      margin-bottom: 12px;
+315|      overflow-wrap: anywhere;
+316|      word-break: break-word;
+317|      text-shadow:
+318|        3px 3px 0 rgba(0,0,0,0.42),
+319|        0 0 8px rgba(0,0,0,0.28);
+320|    }
+321|
+322|    .note-desc {
+323|      min-width: 0;
+324|      color: var(--subtle);
+325|      font-size: 1rem;
+326|      line-height: 1.7;
+327|      margin-bottom: 20px;
+328|      overflow-wrap: anywhere;
+329|      word-break: break-word;
+330|    }
+331|
+332|    .note-actions {
+333|      display: flex;
+334|      flex-wrap: wrap;
+335|      gap: 12px;
+336|      min-width: 0;
+337|    }
+338|
+339|    .button {
+340|      display: inline-flex;
+341|      align-items: center;
+342|      justify-content: center;
+343|      padding: 10px 18px;
+344|      color: #f0e6d2;
+345|      text-decoration: none;
+346|      font-size: 0.98rem;
+347|      border: 2px solid rgba(244,217,160,0.62);
+348|      background: rgba(15,28,34,0.38);
+349|      max-width: 100%;
+350|      overflow-wrap: anywhere;
+351|      word-break: break-word;
+352|      box-shadow:
+353|        3px 3px 0 rgba(0,0,0,0.55),
+354|        0 0 14px rgba(168,230,230,0.12);
+355|      transition: all 0.2s ease;
+356|    }
+357|
+358|    .button:hover {
+359|      border-color: var(--math-gold);
+360|      color: #fff7e8;
+361|      transform: translate(2px, 2px);
+362|      box-shadow:
+363|        1px 1px 0 rgba(0,0,0,0.65),
+364|        0 0 20px rgba(168,230,230,0.24);
+365|    }
+366|
+367|    .footer {
+368|      margin-top: 70px;
+369|      color: #c8b68a;
+370|      opacity: 0.82;
+371|      letter-spacing: 0.12em;
+372|      font-size: 0.98rem;
+373|      text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
+374|      overflow-wrap: anywhere;
+375|      word-break: break-word;
+376|    }
+377|
+378|    @media (min-width: 761px) {
+379|      .notes-grid {
+380|        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+381|      }
+382|    }
+383|
+384|    @media (max-width: 760px) {
+385|      .lang-toggle {
+386|        top: 18px;
+387|        right: 18px;
+388|        padding: 10px 18px;
+389|      }
+390|
+391|      .music-toggle {
+392|        top: 70px;
+393|        right: 18px;
+394|        padding: 10px 18px;
+395|      }
+396|
+397|      .track-controls {
+398|        top: 122px;
+399|        right: 18px;
+400|      }
+401|
+402|      .track-btn {
+403|        width: 44px;
+404|        height: 38px;
+405|      }
+406|
+407|      .playlist-panel {
+408|        top: 174px;
+409|        right: 18px;
+410|        width: 120px;
+411|      }
+412|
+413|      .playlist-list {
+414|        max-height: 210px;
+415|      }
+416|
+417|      .page {
+418|        width: min(92vw, 980px);
+419|        padding: 180px 0 58px;
+420|      }
+421|
+422|      .notes-grid {
+423|        grid-template-columns: minmax(0, 1fr);
+424|      }
+425|
+426|      .note {
+427|        padding: 22px 18px 20px;
+428|      }
+429|
+430|      .note-actions {
+431|        gap: 10px;
+432|      }
+433|
+434|      .button {
+435|        padding: 10px 16px;
+436|      }
+437|    }
+438|
+439|    @media (max-width: 360px) {
+440|      .page {
+441|        width: 94vw;
+442|      }
+443|
+444|      .note {
+445|        padding: 20px 14px 18px;
+446|      }
+447|
+448|      .lang-toggle,
+449|      .music-toggle {
+450|        right: 12px;
+451|      }
+452|
+453|      .track-controls {
+454|        right: 12px;
+455|      }
+456|
+457|      .track-btn {
+458|        width: 40px;
+459|        height: 36px;
+460|      }
+461|
+462|      .playlist-panel {
+463|        right: 12px;
+464|        width: 120px;
+465|      }
+466|    }
+467|  </style>
+468|</head>
+469|<body>
+470|  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+471|  <button id="music-toggle" class="music-toggle">♪ Music</button>
+472|
+473|  <div class="track-controls">
+474|    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
+475|    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
+476|  </div>
+477|
+478|  <div id="playlist-panel" class="playlist-panel collapsed">
+479|    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
+480|    <div id="playlist-list" class="playlist-list"></div>
+481|  </div>
+482|
+483|  <audio id="bg-music" preload="auto"></audio>
+484|
+485|  <main class="page">
+486|    <a id="back-link" class="back" href="index.html">← Back to Home</a>
+487|
+488|    <div id="eyebrow" class="eyebrow">MATHEMATICAL NOTES</div>
+489|    <h1 id="title">Notes</h1>
+490|
+491|    <p id="intro" class="intro">
+492|      This page collects mathematical notes/surveys.
+493|      Each item can be viewed directly in the browser or downloaded as a PDF.
+494|    </p>
+495|
+496|    <h2 id="section-title">Geometry and Algebra</h2>
+497|
+498|    <section class="notes-grid">
+499|      <article class="note">
+500|        <div class="note-title">Slodowy Slices and Their Quantization</div>
+501|        <div class="note-desc" id="desc-1">
+502|          Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.
+503|        </div>
+504|        <div class="note-actions">
+505|          <a class="button view-btn" href="notes/Slodowy Slices and Their Quantization.pdf" target="_blank">View PDF</a>
+506|          <a class="button download-btn" href="notes/Slodowy Slices and Their Quantization.pdf" download>Download</a>
+507|        </div>
+508|      </article>
+509|
+510|      <article class="note">
+511|        <div class="note-title">A Note on Algebraic Groups and Related Topics</div>
+512|        <div class="note-desc" id="desc-2">
+513|          This is an on-going note.
+514|        </div>
+515|        <div class="note-actions">
+516|          <a class="button view-btn" href="notes/a note on algebraic groups and related topics.pdf" target="_blank">View PDF</a>
+517|          <a class="button download-btn" href="notes/a note on algebraic groups and related topics.pdf" download>Download</a>
+518|        </div>
+519|      </article>
+520|
+521|      <article class="note">
+522|        <div class="note-title">A Note on Lie Algebras</div>
+523|        <div class="note-desc" id="desc-3">
+524|          This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.
+525|        </div>
+526|        <div class="note-actions">
+527|          <a class="button view-btn" href="notes/liealgebra.pdf" target="_blank">View PDF</a>
+528|          <a class="button download-btn" href="notes/liealgebra.pdf" download>Download</a>
+529|        </div>
+530|      </article>
+531|
+532|      <article class="note">
+533|        <div class="note-title">A Lecture on Highest Weight Rep of Infinite Dim Lie Alg</div>
+534|        <div class="note-desc" id="desc-4">
+535|          This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.
+536|        </div>
+537|        <div class="note-actions">
+538|          <a class="button view-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" target="_blank">View PDF</a>
+539|          <a class="button download-btn" href="notes/Highestweightrepresentationsofinfinitedimensional.pdf" download>Download</a>
+540|        </div>
+541|      </article>
+542|
+543|      <article class="note">
+544|        <div class="note-title">A Note on Quiver Varieties Slodowy Slices and Affine Grassmannians</div>
+545|        <div class="note-desc" id="desc-5">
+546|          This is an on-going note.
+547|        </div>
+548|        <div class="note-actions">
+549|          <a class="button view-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" target="_blank">View PDF</a>
+550|          <a class="button download-btn" href="notes/Quiver_varieties__slodowy_slices_and_affine_grassmannians.pdf" download>Download</a>
+551|        </div>
+552|      </article>
+553|
+554|      <article class="note">
+555|        <div class="note-title">A Note on Gelfand-Naimark Theorem</div>
+556|        <div class="note-desc" id="desc-6">
+557|          This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234.
+558|        </div>
+559|        <div class="note-actions">
+560|          <a class="button view-btn" href="notes/GelfandNaimark.pdf" target="_blank">View PDF</a>
+561|          <a class="button download-btn" href="notes/GelfandNaimark.pdf" download>Download</a>
+562|        </div>
+563|      </article>
+564|    </section>
+565|
+566|    <div id="footer" class="footer">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
+567|  </main>
+568|
+569|  <script>
+570|    // ============== Shared language state ==============
+571|    const LANG_STATE_KEY = "kanghe-site-lang";
+572|
+573|    const translations = {
+574|      en: {
+575|        pageTitle: "Notes | Kanghe Lyu",
+576|        back: "← Back to Home",
+577|        eyebrow: "MATHEMATICAL NOTES",
+578|        title: "Notes",
+579|        intro: "This page collects mathematical notes/surveys. Each item can be viewed directly in the browser or downloaded as a PDF.",
+580|        sectionTitle: "Geometry and Algebra",
+581|        viewPDF: "View PDF",
+582|        download: "Download",
+583|        footer: "GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS",
+584|        desc1: "Notes on Slodowy slices, Hamiltonian reduction and BRST cohomology.",
+585|        desc2: "This is an on-going note.",
+586|        desc3: "This is a hand-written Chinese note taken while learning Zhexian Wan's and Humphreys's books.",
+587|        desc4: "This is a hand-written lecture note taken while giving seminars at New Uzbekistan University. The original knowledge comes from a course taught by Li Ren at Sichuan University.",
+588|        desc5: "This is an on-going note.",
+589|        desc6: "This note was taken while learning from https://zhuanlan.zhihu.com/p/550302234.",
+        desc7: "A talk on Double Affine Hecke Algebras, prepared under the guidance of Dr. Bishler (Lebedev Institute) for the summer camp."
+590|      },
+591|      zh: {
+592|        pageTitle: "笔记 | 吕康禾",
+593|        back: "← 返回主页",
+594|        eyebrow: "数学笔记",
+595|        title: "笔记",
+596|        intro: "此页面收集我的数学笔记或综述。每个条目都可以直接在浏览器中查看，也可以下载 PDF。",
+597|        sectionTitle: "几何与代数",
+598|        viewPDF: "查看 PDF",
+599|        download: "下载",
+600|        footer: "几何 · 表示论 · 数学物理",
+601|        desc1: "关于 Slodowy slices、Hamiltonian reduction 与 BRST cohomology 的笔记。",
+602|        desc2: "这是一份仍在更新中的笔记。",
+603|        desc3: "这是一份学习万哲先与 Humphreys 相关教材时写下的中文手写笔记。",
+604|        desc4: "这是我在新乌兹别克斯坦大学做讨论班时写下的手写讲义，主要内容来自四川大学任丽老师的课程。",
+605|        desc5: "这是一份仍在更新中的笔记。",
+606|        desc6: "这份笔记是在学习 https://zhuanlan.zhihu.com/p/550302234 时写下的。",
+        desc7: "关于 Double Affine Hecke Algebras 的讲座笔记，在 Bishler 博士（Lebedev Institute）指导下为夏令营准备。"
+607|      }
+608|    };
+609|
+610|    let currentLang = localStorage.getItem(LANG_STATE_KEY) || "en";
+611|    const toggleBtn = document.getElementById("lang-toggle");
+612|
+613|    function applyLanguage(lang) {
+614|      currentLang = lang;
+615|      localStorage.setItem(LANG_STATE_KEY, currentLang);
+616|
+617|      const t = translations[currentLang];
+618|
+619|      document.documentElement.lang = currentLang === "en" ? "en" : "zh";
+620|      document.title = t.pageTitle;
+621|
+622|      document.getElementById("back-link").textContent = t.back;
+623|      document.getElementById("eyebrow").textContent = t.eyebrow;
+624|      document.getElementById("title").textContent = t.title;
+625|      document.getElementById("intro").textContent = t.intro;
+626|      document.getElementById("section-title").textContent = t.sectionTitle;
+627|      document.getElementById("footer").textContent = t.footer;
+628|
+629|      document.getElementById("desc-1").textContent = t.desc1;
+630|      document.getElementById("desc-2").textContent = t.desc2;
+631|      document.getElementById("desc-3").textContent = t.desc3;
+632|      document.getElementById("desc-4").textContent = t.desc4;
+633|      document.getElementById("desc-5").textContent = t.desc5;
+634|      document.getElementById("desc-6").textContent = t.desc6;
+      document.getElementById("desc-7").textContent = t.desc7;
+635|
+636|      document.querySelectorAll(".view-btn").forEach(btn => {
+637|        btn.textContent = t.viewPDF;
+638|      });
+639|
+640|      document.querySelectorAll(".download-btn").forEach(btn => {
+641|        btn.textContent = t.download;
+642|      });
+643|
+644|      toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
+645|      updateMusicButton();
+646|      updatePlaylistUI();
+647|    }
+648|
+649|    function switchLanguage() {
+650|      applyLanguage(currentLang === "en" ? "zh" : "en");
+651|    }
+652|
+653|    toggleBtn.addEventListener("click", switchLanguage);
+654|
+655|    // ============== Background music with cross-page state ==============
+656|    const musicList = [
+657|"music/music1.mp3",
+658|      "music/music2.mp3",
+659|      "music/music3.mp3",
+660|      "music/music4.mp3",
+661|      "music/music5.mp3",
+662|      "music/music6.mp3",
+663|      "music/music7.mp3",
+664|      "music/music8.mp3",
+665|      "music/music9.mp3",
+666|      "music/music10.mp3",
+667|      "music/music11.mp3",
+668|      "music/music12.mp3",
+669|      "music/music13.mp3",
+670|      "music/music14.mp3",
+671|      "music/music15.mp3",
+672|      "music/music16.mp3",
+673|      "music/music17.mp3",
+674|      "music/music18.mp3",
+675|      "music/music19.mp3",
+676|      "music/music20.mp3",
+677|      "music/music21.mp3",
+678|      "music/music22.mp3",
+679|"music/music23.mp3",
+680|"music/music24.mp3",
+681|"music/music25.mp3",
+682|"music/music26.mp3",
+683|"music/music27.mp3",
+684|"music/music28.mp3",
+685|"music/music29.mp3",
+686|"music/music30.mp3",
+687|"music/music31.mp3",
+688|"music/music32.mp3",
+689|"music/music33.mp3",
+690|"music/music34.mp3",
+691|"music/music35.mp3",
+692|"music/music36.mp3",
+693|"music/music37.mp3",
+694|"music/music38.mp3",
+695|"music/music39.mp3",
+696|"music/music40.mp3",
+697|"music/music41.mp3"
+698|    ];
+699|
+700|    const audio = document.getElementById("bg-music");
+701|    const musicBtn = document.getElementById("music-toggle");
+702|    const prevTrackBtn = document.getElementById("prev-track");
+703|    const nextTrackBtn = document.getElementById("next-track");
+704|    const playlistPanel = document.getElementById("playlist-panel");
+705|    const playlistToggle = document.getElementById("playlist-toggle");
+706|    const playlistList = document.getElementById("playlist-list");
+707|    const MUSIC_STATE_KEY = "kanghe-site-music-state";
+708|
+709|    let isMusicPlaying = false;
+710|    let currentTrackIndex = -1;
+711|
+712|    function getMusicButtonText() {
+713|      if (currentLang === "zh") {
+714|        return isMusicPlaying ? "♪ 播放中" : "♪ 音乐";
+715|      }
+716|      return isMusicPlaying ? "♪ Playing" : "♪ Music";
+717|    }
+718|
+719|    function getPlaylistToggleText() {
+720|      const isCollapsed = playlistPanel.classList.contains("collapsed");
+721|
+722|      if (currentLang === "zh") {
+723|        return isCollapsed ? "播放列表 ▾" : "播放列表 ▴";
+724|      }
+725|
+726|      return isCollapsed ? "Playlist ▾" : "Playlist ▴";
+727|    }
+728|
+729|    function updateMusicButton() {
+730|      if (!musicBtn) return;
+731|
+732|      musicBtn.textContent = getMusicButtonText();
+733|
+734|      if (isMusicPlaying) {
+735|        musicBtn.classList.add("playing");
+736|      } else {
+737|        musicBtn.classList.remove("playing");
+738|      }
+739|
+740|      updatePlaylistUI();
+741|    }
+742|
+743|    function getTrackName(index) {
+744|      if (currentLang === "zh") {
+745|        return `第 ${index + 1} 首`;
+746|      }
+747|
+748|      return `Track ${index + 1}`;
+749|    }
+750|
+751|    function buildPlaylist() {
+752|      playlistList.innerHTML = "";
+753|
+754|      musicList.forEach((src, index) => {
+755|        const item = document.createElement("button");
+756|        item.className = "playlist-item";
+757|        item.type = "button";
+758|        item.dataset.index = index;
+759|        item.textContent = getTrackName(index);
+760|
+761|        item.addEventListener("click", async () => {
+762|          try {
+763|            await playTrack(index, 0);
+764|          } catch (error) {
+765|            console.log("Playlist track playback was blocked by the browser:", error);
+766|          }
+767|        });
+768|
+769|        playlistList.appendChild(item);
+770|      });
+771|
+772|      updatePlaylistUI();
+773|    }
+774|
+775|    function updatePlaylistUI() {
+776|      if (!playlistList || !playlistToggle || !playlistPanel) return;
+777|
+778|      playlistToggle.textContent = getPlaylistToggleText();
+779|
+780|      const items = playlistList.querySelectorAll(".playlist-item");
+781|
+782|      items.forEach((item, index) => {
+783|        item.textContent = getTrackName(index);
+784|
+785|        if (index === currentTrackIndex) {
+786|          item.classList.add("active");
+787|        } else {
+788|          item.classList.remove("active");
+789|        }
+790|      });
+791|    }
+792|
+793|    function saveMusicState() {
+794|      const state = {
+795|        isPlaying: isMusicPlaying,
+796|        trackIndex: currentTrackIndex,
+797|        currentTime: audio.currentTime || 0,
+798|        volume: audio.volume || 0.42,
+799|        savedAt: Date.now()
+800|      };
+801|
+802|      localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify(state));
+803|    }
+804|
+805|    function loadMusicState() {
+806|      try {
+807|        const raw = localStorage.getItem(MUSIC_STATE_KEY);
+808|        if (!raw) return null;
+809|        return JSON.parse(raw);
+810|      } catch (error) {
+811|        console.log("Could not load music state:", error);
+812|        return null;
+813|      }
+814|    }
+815|
+816|    function getRandomTrackIndex() {
+817|      if (musicList.length === 1) return 0;
+818|
+819|      let nextIndex;
+820|      do {
+821|        nextIndex = Math.floor(Math.random() * musicList.length);
+822|      } while (nextIndex === currentTrackIndex);
+823|
+824|      return nextIndex;
+825|    }
+826|
+827|    async function playTrack(trackIndex, startTime = 0) {
+828|      if (trackIndex < 0 || trackIndex >= musicList.length) return;
+829|
+830|      currentTrackIndex = trackIndex;
+831|      audio.src = musicList[currentTrackIndex];
+832|      audio.volume = 0.42;
+833|
+834|      audio.addEventListener(
+835|        "loadedmetadata",
+836|        () => {
+837|          if (startTime > 0 && startTime < audio.duration) {
+838|            audio.currentTime = startTime;
+839|          }
+840|        },
+841|        { once: true }
+842|      );
+843|
+844|      await audio.play();
+845|
+846|      isMusicPlaying = true;
+847|      updateMusicButton();
+848|      saveMusicState();
+849|    }
+850|
+851|    async function playRandomTrack() {
+852|      const nextIndex = getRandomTrackIndex();
+853|      await playTrack(nextIndex, 0);
+854|    }
+855|
+856|    async function playNextTrack() {
+857|      const nextIndex =
+858|        currentTrackIndex < 0
+859|          ? getRandomTrackIndex()
+860|          : (currentTrackIndex + 1) % musicList.length;
+861|
+862|      await playTrack(nextIndex, 0);
+863|    }
+864|
+865|    async function playPreviousTrack() {
+866|      const prevIndex =
+867|        currentTrackIndex < 0
+868|          ? getRandomTrackIndex()
+869|          : (currentTrackIndex - 1 + musicList.length) % musicList.length;
+870|
+871|      await playTrack(prevIndex, 0);
+872|    }
+873|
+874|    async function restoreMusicFromPreviousPage() {
+875|      const state = loadMusicState();
+876|
+877|      if (!state || !state.isPlaying) {
+878|        isMusicPlaying = false;
+879|
+880|        if (
+881|          state &&
+882|          typeof state.trackIndex === "number" &&
+883|          state.trackIndex >= 0 &&
+884|          state.trackIndex < musicList.length
+885|        ) {
+886|          currentTrackIndex = state.trackIndex;
+887|          audio.src = musicList[currentTrackIndex];
+888|          audio.volume = state.volume || 0.42;
+889|        }
+890|
+891|        updateMusicButton();
+892|        return;
+893|      }
+894|
+895|      if (
+896|        typeof state.trackIndex !== "number" ||
+897|        state.trackIndex < 0 ||
+898|        state.trackIndex >= musicList.length
+899|      ) {
+900|        isMusicPlaying = false;
+901|        updateMusicButton();
+902|        return;
+903|      }
+904|
+905|      const elapsedSeconds = (Date.now() - state.savedAt) / 1000;
+906|      const restoredTime = Math.max(0, (state.currentTime || 0) + elapsedSeconds);
+907|
+908|      try {
+909|        await playTrack(state.trackIndex, restoredTime);
+910|      } catch (error) {
+911|        isMusicPlaying = false;
+912|        currentTrackIndex = state.trackIndex;
+913|        audio.src = musicList[currentTrackIndex];
+914|        audio.volume = state.volume || 0.42;
+915|
+916|        audio.addEventListener(
+917|          "loadedmetadata",
+918|          () => {
+919|            if (restoredTime > 0 && restoredTime < audio.duration) {
+920|              audio.currentTime = restoredTime;
+921|            }
+922|          },
+923|          { once: true }
+924|        );
+925|
+926|        updateMusicButton();
+927|        console.log("Music restore was blocked by the browser:", error);
+928|      }
+929|    }
+930|
+931|    musicBtn.addEventListener("click", async () => {
+932|      try {
+933|        if (!isMusicPlaying) {
+934|          const state = loadMusicState();
+935|
+936|          if (
+937|            state &&
+938|            typeof state.trackIndex === "number" &&
+939|            state.trackIndex >= 0 &&
+940|            state.trackIndex < musicList.length
+941|          ) {
+942|            await playTrack(state.trackIndex, state.currentTime || 0);
+943|          } else {
+944|            await playRandomTrack();
+945|          }
+946|        } else {
+947|          audio.pause();
+948|          isMusicPlaying = false;
+949|          updateMusicButton();
+950|          saveMusicState();
+951|        }
+952|      } catch (error) {
+953|        console.log("Music playback was blocked by the browser:", error);
+954|      }
+955|    });
+956|
+957|    prevTrackBtn.addEventListener("click", async () => {
+958|      try {
+959|        await playPreviousTrack();
+960|      } catch (error) {
+961|        console.log("Previous track playback was blocked by the browser:", error);
+962|      }
+963|    });
+964|
+965|    nextTrackBtn.addEventListener("click", async () => {
+966|      try {
+967|        await playNextTrack();
+968|      } catch (error) {
+969|        console.log("Next track playback was blocked by the browser:", error);
+970|      }
+971|    });
+972|
+973|    playlistToggle.addEventListener("click", () => {
+974|      playlistPanel.classList.toggle("collapsed");
+975|      updatePlaylistUI();
+976|    });
+977|
+978|    audio.addEventListener("timeupdate", () => {
+979|      if (isMusicPlaying) saveMusicState();
+980|    });
+981|
+982|    audio.addEventListener("pause", () => {
+983|      if (!audio.ended) saveMusicState();
+984|    });
+985|
+986|    audio.addEventListener("ended", async () => {
+987|      if (isMusicPlaying) await playNextTrack();
+988|    });
+989|
+990|    window.addEventListener("beforeunload", saveMusicState);
+991|
+992|    applyLanguage(currentLang);
+993|    buildPlaylist();
+994|    restoreMusicFromPreviousPage();
+995|  </script>
+996|</body>
+997|</html>
+998|
