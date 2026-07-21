@@ -1,6 +1,6 @@
 # Kanghe Lyu
 
-I am an PhD student in mathematics at SUSTech.
+I am a PhD student in mathematics at SUSTech.
 
 My interests are in pure mathematics, especially geometry, representation theory, and mathematical physics. 
 
