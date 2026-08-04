@@ -5,103 +5,121 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | Kanghe Lyu</title>
   <style>
-    :root {
-      --math-gold: #f4d9a0;
-      --math-ink: #0f1c22;
-      --glow-cyan: #a8e6e6;
-      --paper: #fff7e8;
-      --subtle: #d8c9a8;
-    }
-
+    :root { --math-gold: #f4d9a0; --math-ink: #0f1c22; --glow-cyan: #a8e6e6; --paper: #fff7e8; --subtle: #d8c9a8; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    html, body {
-      width: 100%; min-height: 100%;
-      background: var(--math-ink);
-      color: var(--paper);
-      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
-      overflow-x: hidden;
-    }
-
+    html, body { width: 100%; min-height: 100%; background: var(--math-ink); color: var(--paper); font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif; overflow-x: hidden; }
     body {
       min-height: 100vh;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
-        radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
-        linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+      background: radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
+                  radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
+                  linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
     }
-
-    .page {
-      width: min(980px, 92vw);
-      margin: 0 auto;
-      padding: 96px 0 80px;
+    .lang-toggle {
+      position: fixed; top: 28px; right: 34px; z-index: 10;
+      padding: 11px 24px; border-radius: 0;
+      background: rgba(15,28,34,0.82); border: 2px solid #a8e6e6; color: #a8e6e6;
+      font-size: 1rem; font-weight: 500; letter-spacing: 2px; cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.55), 0 0 18px rgba(168,230,230,0.18);
     }
+    .lang-toggle:hover {
+      transform: translate(2px,2px);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.65), 0 0 28px rgba(168,230,230,0.24);
+    }
+    .music-toggle {
+      position: fixed; top: 82px; right: 34px; z-index: 10;
+      padding: 11px 24px; border-radius: 0;
+      background: rgba(15,28,34,0.82);
+      border: 2px solid rgba(244,217,160,0.72); color: #f4d9a0;
+      font-size: 1rem; font-weight: 500; letter-spacing: 2px; cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.55), 0 0 18px rgba(244,217,160,0.16);
+    }
+    .lang-toggle:hover, .music-toggle:hover {
+      transform: translate(2px,2px);
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.65), 0 0 28px rgba(168,230,230,0.24);
+    }
+    .music-toggle.playing { border-color: #a8e6e6; color: #a8e6e6; box-shadow: 4px 4px 0 rgba(0,0,0,0.55), 0 0 22px rgba(168,230,230,0.22); }
+    .track-controls { position: fixed; top: 136px; right: 34px; z-index: 10; display: flex; gap: 10px; }
+    .track-btn {
+      width: 48px; height: 40px; border-radius: 0;
+      background: rgba(15,28,34,0.82);
+      border: 2px solid rgba(244,217,160,0.72); color: #f4d9a0;
+      font-size: 1.05rem; line-height: 1; cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.55), 0 0 18px rgba(244,217,160,0.16);
+    }
+    .track-btn:hover {
+      transform: translate(2px,2px); border-color: #a8e6e6; color: #a8e6e6;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.65), 0 0 24px rgba(168,230,230,0.24);
+    }
+    .playlist-panel {
+      position: fixed; top: 188px; right: 34px; z-index: 10; width: 130px;
+      background: rgba(15,28,34,0.86);
+      border: 2px solid rgba(168,230,230,0.72);
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.55), 0 0 22px rgba(168,230,230,0.16);
+      overflow: hidden; transition: all 0.2s ease;
+    }
+    .playlist-toggle {
+      width: 100%; padding: 11px 14px; border: none;
+      border-bottom: 2px solid rgba(168,230,230,0.42);
+      background: rgba(15,28,34,0.92); color: #a8e6e6;
+      font-size: 0.95rem; font-weight: 500; letter-spacing: 1.5px; cursor: pointer; text-align: left;
+      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+    }
+    .playlist-toggle:hover { color: #fff7e8; text-shadow: 0 0 10px rgba(168,230,230,0.45); }
+    .playlist-list { max-height: 210px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: rgba(244,217,160,0.65) rgba(15,28,34,0.6); }
+    .playlist-list::-webkit-scrollbar { width: 8px; }
+    .playlist-list::-webkit-scrollbar-track { background: rgba(15,28,34,0.6); }
+    .playlist-list::-webkit-scrollbar-thumb { background: rgba(244,217,160,0.65); }
+    .playlist-panel.collapsed .playlist-list { display: none; }
+    .playlist-panel.collapsed .playlist-toggle { border-bottom: none; }
+    .playlist-item {
+      width: 100%; min-height: 42px; padding: 10px 14px; border: none;
+      border-bottom: 1px solid rgba(244,217,160,0.18);
+      background: rgba(15,28,34,0.38); color: #e8d9c0; cursor: pointer; text-align: left;
+      font-size: 0.95rem; font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+      transition: all 0.18s ease;
+    }
+    .playlist-item:hover { background: rgba(168,230,230,0.10); color: #fff7e8; }
+    .playlist-item.active { color: #a8e6e6; background: rgba(168,230,230,0.14); text-shadow: 0 0 8px rgba(168,230,230,0.35); }
 
+    .page { width: min(980px, 92vw); margin: 0 auto; padding: 96px 0 80px; }
     .back {
-      display: inline-flex; margin-bottom: 42px;
-      color: var(--glow-cyan); text-decoration: none; font-size: 1rem;
+      display: inline-flex; margin-bottom: 42px; color: var(--glow-cyan); text-decoration: none; font-size: 1rem;
       letter-spacing: 0.08em;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.45), 0 0 10px rgba(168,230,230,0.28);
     }
     .back:hover { text-shadow: 3px 3px 0 rgba(0,0,0,0.45), 0 0 18px rgba(168,230,230,0.55); }
-
     .eyebrow {
-      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
-      letter-spacing: 0.25em; text-transform: uppercase;
+      font-size: clamp(0.95rem,1.8vw,1.15rem); letter-spacing: 0.25em; text-transform: uppercase;
       color: var(--math-gold); margin-bottom: 18px;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.55), 0 0 12px rgba(168,230,230,0.20);
     }
-
     h1 {
-      font-size: clamp(3rem, 7vw, 5.2rem);
-      line-height: 1.05; font-weight: 400; letter-spacing: -0.04em;
+      font-size: clamp(3rem,7vw,5.2rem); line-height: 1.05; font-weight: 400; letter-spacing: -0.04em;
       color: #fff7e8; margin-bottom: 24px;
       text-shadow: 4px 0 0 rgba(0,0,0,0.60), 0 4px 0 rgba(0,0,0,0.60), 4px 4px 0 rgba(0,0,0,0.60), 0 0 20px rgba(168,230,230,0.30);
     }
-
     .intro {
-      max-width: 720px;
-      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+      max-width: 720px; font-size: clamp(1.05rem,1.8vw,1.22rem);
       line-height: 1.85; color: #e8d9c0; margin-bottom: 54px;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.42), 0 0 8px rgba(0,0,0,0.28);
     }
-
-    h2 {
-      font-size: 1.35rem; color: var(--math-gold);
-      letter-spacing: 0.08em; margin: 46px 0 18px;
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
-    }
-
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-      gap: 22px; margin-top: 20px; width: 100%;
-    }
-
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 22px; margin-top: 20px; width: 100%; }
     .project {
-      min-width: 0; max-width: 100%;
-      padding: 24px 24px 22px;
+      min-width: 0; max-width: 100%; padding: 24px 24px 22px;
       border: 2px solid rgba(244,217,160,0.46);
       background: rgba(15,28,34,0.34);
       box-shadow: 5px 5px 0 rgba(0,0,0,0.50), 0 0 20px rgba(168,230,230,0.10), inset 0 0 0 1px rgba(255,255,255,0.035);
     }
-
-    .project-icon {
-      font-size: 2.2rem; margin-bottom: 6px;
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.50);
-    }
-
+    .project-icon { font-size: 2.2rem; margin-bottom: 6px; text-shadow: 3px 3px 0 rgba(0,0,0,0.50); }
     .project-title {
       font-size: 1.22rem; color: #fff7e8; margin-bottom: 12px;
       text-shadow: 3px 3px 0 rgba(0,0,0,0.42), 0 0 8px rgba(0,0,0,0.28);
     }
-
-    .project-desc {
-      color: var(--subtle); font-size: 1rem; line-height: 1.7; margin-bottom: 20px;
-    }
-
+    .project-desc { color: var(--subtle); font-size: 1rem; line-height: 1.7; margin-bottom: 20px; }
     .project-actions { display: flex; flex-wrap: wrap; gap: 12px; }
-
     .button {
       display: inline-flex; align-items: center; justify-content: center;
       padding: 10px 18px; color: #f0e6d2; text-decoration: none; font-size: 0.98rem;
@@ -110,24 +128,18 @@
       box-shadow: 3px 3px 0 rgba(0,0,0,0.55), 0 0 14px rgba(168,230,230,0.12);
       transition: all 0.2s ease;
     }
-    .button:hover {
-      border-color: var(--math-gold); color: #fff7e8;
-      transform: translate(2px, 2px);
-      box-shadow: 1px 1px 0 rgba(0,0,0,0.65), 0 0 20px rgba(168,230,230,0.24);
-    }
+    .button:hover { border-color: var(--math-gold); color: #fff7e8; transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,0.65), 0 0 20px rgba(168,230,230,0.24); }
+    .footer { margin-top: 70px; color: #c8b68a; opacity: 0.82; letter-spacing: 0.12em; font-size: 0.98rem; text-shadow: 3px 3px 0 rgba(0,0,0,0.42); }
 
-    .footer {
-      margin-top: 70px; color: #c8b68a; opacity: 0.82;
-      letter-spacing: 0.12em; font-size: 0.98rem;
-      text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
-    }
-
-    @media (min-width: 761px) {
-      .projects-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
-    }
-
+    @media (min-width: 761px) { .projects-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); } }
     @media (max-width: 760px) {
       .page { width: 92vw; padding: 180px 0 58px; }
+      .lang-toggle { top: 18px; right: 18px; padding: 10px 18px; }
+      .music-toggle { top: 70px; right: 18px; padding: 10px 18px; }
+      .track-controls { top: 122px; right: 18px; }
+      .track-btn { width: 44px; height: 38px; }
+      .playlist-panel { top: 174px; right: 18px; width: 120px; }
+      .playlist-list { max-height: 210px; }
       .projects-grid { grid-template-columns: minmax(0, 1fr); }
       .project { padding: 22px 18px 20px; }
       .project-actions { gap: 10px; }
@@ -136,14 +148,29 @@
   </style>
 </head>
 <body>
+  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+  <button id="music-toggle" class="music-toggle">♪ Music</button>
+
+  <div class="track-controls">
+    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
+    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
+  </div>
+
+  <div id="playlist-panel" class="playlist-panel collapsed">
+    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
+    <div id="playlist-list" class="playlist-list"></div>
+  </div>
+
+  <audio id="bg-music" preload="auto"></audio>
+
   <main class="page">
-    <a class="back" href="index.html">← Back to Home</a>
+    <a id="back-link" class="back" href="index.html">← Back to Home</a>
 
-    <div class="eyebrow">TOOLS &amp; PROJECTS</div>
-    <h1>Projects</h1>
+    <div id="eyebrow" class="eyebrow">TOOLS &amp; PROJECTS</div>
+    <h1 id="title">Projects</h1>
 
-    <p class="intro">
-      A collection of tools, web apps, and other things I have built.
+    <p id="intro" class="intro">
+      A collection of tools and web apps I have built.
     </p>
 
     <section class="projects-grid">
@@ -151,31 +178,242 @@
       <article class="project">
         <div class="project-icon">🌙</div>
         <div class="project-title">Stacks Project Dark Mode</div>
-        <div class="project-desc">
+        <div class="project-desc" id="desc-dark">
           A dark mode reader for The Stacks Project — the open-source textbook on algebraic geometry.
           Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.
         </div>
         <div class="project-actions">
-          <a class="button" href="stacks-dark/">Landing Page</a>
-          <a class="button" href="https://github.com/kanghelyu/stacks-project">GitHub</a>
+          <a id="btn-dark-landing" class="button" href="stacks-dark/">Landing Page</a>
+          <a id="btn-dark-gh" class="button" href="https://github.com/kanghelyu/stacks-project">GitHub</a>
         </div>
       </article>
 
       <article class="project">
         <div class="project-icon">📒</div>
         <div class="project-title">QingHe Ledger</div>
-        <div class="project-desc">
+        <div class="project-desc" id="desc-qinghe">
           青禾记账 — A local-first, privacy-focused bilingual (Chinese/English) ledger app.
           No ads, no network required. Built with SwiftUI.
         </div>
         <div class="project-actions">
-          <a class="button" href="https://github.com/kanghelyu/QingHeLedger">GitHub</a>
+          <a id="btn-qinghe-apk" class="button" href="https://github.com/kanghelyu/QingHeLedger/releases/download/v1.5.1/qinghe.apk">Download APK</a>
+          <a id="btn-qinghe-gh" class="button" href="https://github.com/kanghelyu/QingHeLedger">GitHub</a>
         </div>
       </article>
 
     </section>
 
-    <div class="footer">TOOLS · PROJECTS · SOFTWARE</div>
+    <div id="footer" class="footer">TOOLS · PROJECTS · SOFTWARE</div>
   </main>
+
+  <script>
+    // ============== Shared language state ==============
+    const LANG_STATE_KEY = "kanghe-site-lang";
+
+    const translations = {
+      en: {
+        pageTitle: "Projects | Kanghe Lyu",
+        back: "\u2190 Back to Home",
+        eyebrow: "TOOLS & PROJECTS",
+        title: "Projects",
+        intro: "A collection of tools and web apps I have built.",
+        descDark: "A dark mode reader for The Stacks Project \u2014 the open-source textbook on algebraic geometry. Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.",
+        descQinghe: "QingHe Ledger \u2014 A local-first, privacy-focused bilingual (Chinese/English) ledger app. No ads, no network required. Built with SwiftUI.",
+        btnDarkLanding: "Landing Page",
+        btnDarkGH: "GitHub",
+        btnQingheAPK: "Download APK",
+        btnQingheGH: "GitHub",
+        footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
+      },
+      zh: {
+        pageTitle: "项目 | 吕康禾",
+        back: "\u2190 返回主页",
+        eyebrow: "工具与项目",
+        title: "项目",
+        intro: "我开发的一些工具和网页应用。",
+        descDark: "Stacks Project 深色模式阅读器。一键切换、支持系统偏好、快捷键，跨页面保持状态。",
+        descQinghe: "青禾记账 — 本地优先、隐私友好的双语记账 App。无广告、无需网络，纯 SwiftUI 构建。",
+        btnDarkLanding: "入口页面",
+        btnDarkGH: "GitHub",
+        btnQingheAPK: "下载 APK",
+        btnQingheGH: "GitHub",
+        footer: "工具 · 项目 · 软件"
+      }
+    };
+
+    let currentLang = localStorage.getItem(LANG_STATE_KEY) || "en";
+    const toggleBtn = document.getElementById("lang-toggle");
+
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem(LANG_STATE_KEY, currentLang);
+
+      const t = translations[currentLang];
+
+      document.documentElement.lang = currentLang === "en" ? "en" : "zh";
+      document.title = t.pageTitle;
+
+      document.getElementById("back-link").textContent = t.back;
+      document.getElementById("eyebrow").textContent = t.eyebrow;
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("intro").textContent = t.intro;
+      document.getElementById("desc-dark").textContent = t.descDark;
+      document.getElementById("desc-qinghe").textContent = t.descQinghe;
+      document.getElementById("btn-dark-landing").textContent = t.btnDarkLanding;
+      document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
+      document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
+      document.getElementById("btn-qinghe-gh").textContent = t.btnQingheGH;
+      document.getElementById("footer").textContent = t.footer;
+
+      toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
+      updateMusicButton();
+      updatePlaylistUI();
+    }
+
+    function switchLanguage() { applyLanguage(currentLang === "en" ? "zh" : "en"); }
+    toggleBtn.addEventListener("click", switchLanguage);
+
+    // ============== Background music with cross-page state ==============
+    const musicList = [
+      "music/music1.mp3","music/music2.mp3","music/music3.mp3","music/music4.mp3","music/music5.mp3",
+      "music/music6.mp3","music/music7.mp3","music/music8.mp3","music/music9.mp3","music/music10.mp3",
+      "music/music11.mp3","music/music12.mp3","music/music13.mp3","music/music14.mp3","music/music15.mp3",
+      "music/music16.mp3","music/music17.mp3","music/music18.mp3","music/music19.mp3","music/music20.mp3",
+      "music/music21.mp3","music/music22.mp3","music/music23.mp3","music/music24.mp3","music/music25.mp3",
+      "music/music26.mp3","music/music27.mp3","music/music28.mp3","music/music29.mp3","music/music30.mp3",
+      "music/music31.mp3","music/music32.mp3","music/music33.mp3","music/music34.mp3","music/music35.mp3",
+      "music/music36.mp3","music/music37.mp3","music/music38.mp3","music/music39.mp3","music/music40.mp3",
+      "music/music41.mp3"
+    ];
+
+    const audio = document.getElementById("bg-music");
+    const musicBtn = document.getElementById("music-toggle");
+    const prevTrackBtn = document.getElementById("prev-track");
+    const nextTrackBtn = document.getElementById("next-track");
+    const playlistPanel = document.getElementById("playlist-panel");
+    const playlistToggle = document.getElementById("playlist-toggle");
+    const playlistList = document.getElementById("playlist-list");
+    const MUSIC_STATE_KEY = "kanghe-site-music-state";
+
+    let isMusicPlaying = false;
+    let currentTrackIndex = -1;
+
+    function getMusicButtonText() {
+      if (currentLang === "zh") return isMusicPlaying ? "♪ 播放中" : "♪ 音乐";
+      return isMusicPlaying ? "♪ Playing" : "♪ Music";
+    }
+    function getPlaylistToggleText() {
+      const collapsed = playlistPanel.classList.contains("collapsed");
+      if (currentLang === "zh") return collapsed ? "播放列表 ▾" : "播放列表 ▴";
+      return collapsed ? "Playlist ▾" : "Playlist ▴";
+    }
+    function updateMusicButton() {
+      if (!musicBtn) return;
+      musicBtn.textContent = getMusicButtonText();
+      musicBtn.classList.toggle("playing", isMusicPlaying);
+      updatePlaylistUI();
+    }
+    function getTrackName(index) {
+      return currentLang === "zh" ? `第 ${index + 1} 首` : `Track ${index + 1}`;
+    }
+    function buildPlaylist() {
+      playlistList.innerHTML = "";
+      musicList.forEach((src, index) => {
+        const item = document.createElement("button");
+        item.className = "playlist-item"; item.type = "button"; item.dataset.index = index;
+        item.textContent = getTrackName(index);
+        item.addEventListener("click", async () => {
+          try { await playTrack(index, 0); } catch (e) { console.log("Playback blocked:", e); }
+        });
+        playlistList.appendChild(item);
+      });
+      updatePlaylistUI();
+    }
+    function updatePlaylistUI() {
+      if (!playlistList || !playlistToggle || !playlistPanel) return;
+      playlistToggle.textContent = getPlaylistToggleText();
+      playlistList.querySelectorAll(".playlist-item").forEach((item, index) => {
+        item.textContent = getTrackName(index);
+        item.classList.toggle("active", index === currentTrackIndex);
+      });
+    }
+    function saveMusicState() {
+      localStorage.setItem(MUSIC_STATE_KEY, JSON.stringify({
+        isPlaying: isMusicPlaying, trackIndex: currentTrackIndex,
+        currentTime: audio.currentTime || 0, volume: audio.volume || 0.42, savedAt: Date.now()
+      }));
+    }
+    function loadMusicState() {
+      try { const r = localStorage.getItem(MUSIC_STATE_KEY); return r ? JSON.parse(r) : null; } catch (e) { return null; }
+    }
+    function getRandomTrackIndex() {
+      if (musicList.length === 1) return 0;
+      let n; do { n = Math.floor(Math.random() * musicList.length); } while (n === currentTrackIndex);
+      return n;
+    }
+    async function playTrack(trackIndex, startTime = 0) {
+      if (trackIndex < 0 || trackIndex >= musicList.length) return;
+      currentTrackIndex = trackIndex;
+      audio.src = musicList[currentTrackIndex];
+      audio.volume = 0.42;
+      audio.addEventListener("loadedmetadata", () => {
+        if (startTime > 0 && startTime < audio.duration) audio.currentTime = startTime;
+      }, { once: true });
+      await audio.play();
+      isMusicPlaying = true;
+      updateMusicButton();
+      saveMusicState();
+    }
+    async function playRandomTrack() { await playTrack(getRandomTrackIndex(), 0); }
+    async function playNextTrack() {
+      await playTrack(currentTrackIndex < 0 ? getRandomTrackIndex() : (currentTrackIndex + 1) % musicList.length, 0);
+    }
+    async function playPreviousTrack() {
+      await playTrack(currentTrackIndex < 0 ? getRandomTrackIndex() : (currentTrackIndex - 1 + musicList.length) % musicList.length, 0);
+    }
+    async function restoreMusicFromPreviousPage() {
+      const state = loadMusicState();
+      if (!state || !state.isPlaying) {
+        isMusicPlaying = false;
+        if (state && typeof state.trackIndex === "number" && state.trackIndex >= 0 && state.trackIndex < musicList.length) {
+          currentTrackIndex = state.trackIndex; audio.src = musicList[currentTrackIndex]; audio.volume = state.volume || 0.42;
+        }
+        updateMusicButton(); return;
+      }
+      if (typeof state.trackIndex !== "number" || state.trackIndex < 0 || state.trackIndex >= musicList.length) {
+        isMusicPlaying = false; updateMusicButton(); return;
+      }
+      const elapsed = (Date.now() - state.savedAt) / 1000;
+      const restoredTime = Math.max(0, (state.currentTime || 0) + elapsed);
+      try { await playTrack(state.trackIndex, restoredTime); } catch (e) {
+        isMusicPlaying = false; currentTrackIndex = state.trackIndex; audio.src = musicList[currentTrackIndex];
+        audio.volume = state.volume || 0.42;
+        audio.addEventListener("loadedmetadata", () => { if (restoredTime > 0 && restoredTime < audio.duration) audio.currentTime = restoredTime; }, { once: true });
+        updateMusicButton();
+      }
+    }
+
+    musicBtn.addEventListener("click", async () => {
+      try {
+        if (!isMusicPlaying) {
+          const state = loadMusicState();
+          if (state && typeof state.trackIndex === "number" && state.trackIndex >= 0 && state.trackIndex < musicList.length)
+            await playTrack(state.trackIndex, state.currentTime || 0);
+          else await playRandomTrack();
+        } else { audio.pause(); isMusicPlaying = false; updateMusicButton(); saveMusicState(); }
+      } catch (e) { console.log("Music playback blocked:", e); }
+    });
+    prevTrackBtn.addEventListener("click", async () => { try { await playPreviousTrack(); } catch (e) { console.log(e); } });
+    nextTrackBtn.addEventListener("click", async () => { try { await playNextTrack(); } catch (e) { console.log(e); } });
+    playlistToggle.addEventListener("click", () => { playlistPanel.classList.toggle("collapsed"); updatePlaylistUI(); });
+    audio.addEventListener("timeupdate", () => { if (isMusicPlaying) saveMusicState(); });
+    audio.addEventListener("pause", () => { if (!audio.ended) saveMusicState(); });
+    audio.addEventListener("ended", async () => { if (isMusicPlaying) await playNextTrack(); });
+    window.addEventListener("beforeunload", saveMusicState);
+
+    applyLanguage(currentLang);
+    buildPlaylist();
+    restoreMusicFromPreviousPage();
+  </script>
 </body>
 </html>
