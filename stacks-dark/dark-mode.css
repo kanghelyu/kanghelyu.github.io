@@ -176,11 +176,45 @@ html.dark span.tag {
 html.dark div.equation {
   background-color: var(--dm-math-bg);
 }
-/* MathJax rendered in HTML-CSS output */
-html.dark .MathJax {
+
+/*
+ * MathJax 2 HTML-CSS output (the Stacks Project's output mode).
+ * XyJax commutative diagrams render as nested spans with inline colors —
+ * arrows, labels, and connecting lines all get black from MathJax's defaults.
+ * We need aggressive cascade to wash them out.
+ */
+
+/* Root MathJax container — MathJax sets inline color here */
+html.dark .MathJax,
+html.dark .MathJax_Display {
   color: var(--dm-math-color) !important;
 }
-/* For SVG output */
+
+/* Every span inside MathJax — XyJax arrows are deeply nested spans */
+html.dark .MathJax span,
+html.dark .MathJax_Display span {
+  color: var(--dm-math-color) !important;
+}
+
+/* Nuke any inline color/style that MathJax injects at any depth */
+html.dark .MathJax [style*="color"],
+html.dark .MathJax_Display [style*="color"] {
+  color: var(--dm-math-color) !important;
+}
+
+/* XyJax-specific: arrow lines may use borders */
+html.dark .MathJax [style*="border"],
+html.dark .MathJax_Display [style*="border"] {
+  border-color: var(--dm-math-color) !important;
+}
+
+/* XyJax arrow heads / tails drawn with positioned spans */
+html.dark .MathJax [style*="top"],
+html.dark .MathJax [style*="left"] {
+  color: var(--dm-math-color) !important;
+}
+
+/* For SVG output (if viewer switches to SVG) */
 html.dark .MathJax_SVG * {
   fill: var(--dm-math-color) !important;
   stroke: var(--dm-math-color) !important;
