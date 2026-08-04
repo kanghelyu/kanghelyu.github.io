@@ -122,7 +122,41 @@
     });
   }
 
-  /* ----- init ---------------------------------------------------------- */
+  /* ----- post-render fix for MathJax 2 + XyJax ------------------------- */
+
+  function fixMathJaxColors() {
+    if (!isDark()) return;
+    // MathJax 2 typesets into div.equation containers.  XyJax generates deeply
+    // nested spans with inline color/border.  Force-cascade from outside.
+    document.querySelectorAll('div.equation, span.MathJax, span.MathJax_Display')
+      .forEach(function (container) {
+        container.querySelectorAll('*').forEach(function (el) {
+          el.style.setProperty('color', '#e0e0e0', 'important');
+          var bc = el.style.getPropertyValue('border-color');
+          if (bc && bc !== 'transparent' && bc !== 'initial') {
+            el.style.setProperty('border-color', '#2d3748', 'important');
+          }
+        });
+      });
+  }
+
+  /* ----- re-run fix whenever MathJax finishes a typeset pass ------------- */
+
+  function hookMathJax() {
+    if (!window.MathJax || !MathJax.Hub) {
+      // MathJax may not be loaded yet — retry
+      setTimeout(hookMathJax, 500);
+      return;
+    }
+    MathJax.Hub.Register.StartupHook('End', fixMathJaxColors);
+    MathJax.Hub.Register.MessageHook('Rerender', fixMathJaxColors);
+    // Also catch individual element re-renders
+    MathJax.Hub.Register.MessageHook('New Math', function () {
+      setTimeout(fixMathJaxColors, 200);
+    });
+  }
+
+  /* ----- also fix after a short delay (safety net) ----------------------- */
 
   function init() {
     var stored = getStored();
@@ -134,6 +168,10 @@
 
     injectToggle();
     addKeyboardShortcut();
+
+    // Fix MathJax colors after initial render
+    setTimeout(fixMathJaxColors, 1000);
+    hookMathJax();
 
     // React to system theme changes
     if (window.matchMedia) {
