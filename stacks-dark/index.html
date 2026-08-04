@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
   <style>
     :root {
       --bg: #1a1a2e;
@@ -71,21 +72,15 @@
       transform: translateY(-2px);
       box-shadow: 0 4px 16px rgba(99,179,237,0.5);
     }
-    .bookmarklet:active {
-      cursor: grabbing;
-    }
+    .bookmarklet:active { cursor: grabbing; }
     .instructions {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1.25rem;
     }
-    .instructions ol {
-      padding-left: 1.25rem;
-    }
-    .instructions li {
-      margin-bottom: 0.5rem;
-    }
+    .instructions ol { padding-left: 1.25rem; }
+    .instructions li { margin-bottom: 0.5rem; }
     .preview-box {
       background: var(--card);
       border: 1px solid var(--border);
@@ -103,14 +98,17 @@
       display: block;
       margin-top: 0.5rem;
     }
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      color: #718096;
+    .pre {
+      background: #0d1b2a;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
       font-size: 0.85rem;
-      border-top: 1px solid var(--border);
+      border: 1px solid var(--border);
+      margin-top: 0.5rem;
     }
-    footer a { color: var(--accent); }
+    .pre code { background: none; padding: 0; }
     .file-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
     .file-links a {
       background: var(--card);
@@ -122,6 +120,14 @@
       font-size: 0.9rem;
     }
     .file-links a:hover { border-color: var(--accent); }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); }
   </style>
 </head>
 <body>
@@ -137,7 +143,8 @@
     <h2>📌 Bookmarklet（推荐）</h2>
     <p>把下面的按钮拖到浏览器书签栏。之后每次打开 Stacks Project 的页面，点一下这个书签就能切换深色模式。</p>
     <p style="text-align:center;margin:1.5rem 0">
-      <a class="bookmarklet" href="javascript:(function(){var d=document,s=d.createElement('script');s.src='https://kanghelyu.github.io/stacks-dark/dark-mode.js';s.onload=function(){if(typeof stacksDarkInit==='function')stacksDarkInit()};d.body.appendChild(s);var l=d.createElement('link');l.rel='stylesheet';l.href='https://kanghelyu.github.io/stacks-dark/dark-mode.css';d.head.appendChild(l)})();"
+      <a class="bookmarklet"
+         href="javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';d.body.appendChild(s);var l=d.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css';d.head.appendChild(l)})();"
          onclick="alert('把它拖到书签栏，不是点击这里。');return false;">
         🌙 Stacks Dark
       </a>
@@ -153,15 +160,21 @@
   </section>
 
   <section>
-    <h2>⚡ 直接用（临时）</h2>
-    <p>在当前 Stacks Project 页面按下 Ctrl+Shift+D（Mac: Cmd+Shift+D），或者把下面这段代码粘贴到浏览器控制台（F12 → Console 标签页）：</p>
-    <pre style="background:#0d1b2a;color:#e2e8f0;padding:1rem;border-radius:8px;overflow-x:auto;font-size:0.85rem;border:1px solid var(--border);margin-top:0.5rem"><code>var s=document.createElement('script');
-s.src='https://kanghelyu.github.io/stacks-dark/dark-mode.js';
+    <h2>⚡ Ctrl+Shift+D 快捷键</h2>
+    <p>在任何 Stacks Project 页面上按 <strong>Ctrl+Shift+D</strong>（Mac: <strong>Cmd+Shift+D</strong>）一键切换深色模式。<br>
+    注意：你需要先用书签或控制台的方式注入一次脚本，快捷键才会生效。</p>
+  </section>
+
+  <section>
+    <h2>🖥 控制台注入（临时测试）</h2>
+    <p>打开 Stacks Project 页面的开发者工具（F12 → Console），粘贴以下代码然后回车：</p>
+    <div class="pre"><code>var s=document.createElement('script');
+s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';
 document.body.appendChild(s);
 var l=document.createElement('link');
 l.rel='stylesheet';
-l.href='https://kanghelyu.github.io/stacks-dark/dark-mode.css';
-document.head.appendChild(l);</code></pre>
+l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css';
+document.head.appendChild(l);</code></div>
   </section>
 
   <section>
@@ -183,18 +196,18 @@ document.head.appendChild(l);</code></pre>
   </section>
 
   <section>
-    <h2>📂 文件</h2>
-    <p>你也可以直接引用这些静态文件：</p>
+    <h2>📂 静态文件 CDN 链接</h2>
+    <p>你也可以直接引用这些文件（jsDelivr CDN，带正确 MIME 类型）：</p>
     <div class="file-links">
-      <a href="dark-mode.css">dark-mode.css</a>
-      <a href="dark-mode.js">dark-mode.js</a>
+      <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css">dark-mode.css</a>
+      <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js">dark-mode.js</a>
     </div>
   </section>
 
 </main>
 
 <footer>
-  <p>Stacks Project 由 <a href="https://www.math.columbia.edu/~dejong/">Johan de Jong</a> 维护 · Dark mode 由 <a href="https://kanghelyu.github.io">Kanghe Lyu</a> 制作</p>
+  <p>Based on <a href="https://stacks.math.columbia.edu">The Stacks Project</a> by Johan de Jong &amp; contributors · Dark mode by <a href="https://kanghelyu.github.io">Kanghe Lyu</a></p>
 </footer>
 
 </body>
