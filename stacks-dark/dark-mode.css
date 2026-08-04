@@ -1,0 +1,415 @@
+/* ============================================================
+   Stacks Project — Dark Mode Stylesheet
+   ============================================================
+   Usage: include in <head> after style.css, or inject dynamically
+   via dark-mode.js.  All rules are wrapped in a class-scoped
+   selector so activating dark mode is as simple as adding
+   class="dark" to <html>.
+   ============================================================ */
+
+/* ---- CSS custom properties (default theme) ---- */
+:root {
+  --dm-bg-page:         #1a1a2e;
+  --dm-bg-topbar:       #16213e;
+  --dm-bg-secondbar:    #0f3460;
+  --dm-bg-content:      #1a1a2e;
+  --dm-bg-burger:       #16213e;
+  --dm-bg-card:         #1e2a45;
+  --dm-bg-pre:          #0d1b2a;
+  --dm-bg-input:        #1a1a2e;
+  --dm-bg-toggle:       #0f3460;
+  --dm-bg-btn:          #0f3460;
+  --dm-bg-comment:      #1e2a45;
+  --dm-text-primary:    #e0e0e0;
+  --dm-text-secondary:  #a0aec0;
+  --dm-text-heading:    #e2e8f0;
+  --dm-text-link:       #63b3ed;
+  --dm-text-link-hover: #90cdf4;
+  --dm-text-muted:      #718096;
+  --dm-border:          #2d3748;
+  --dm-border-light:    #4a5568;
+  --dm-shadow:          rgba(0,0,0,0.3);
+  --dm-math-bg:         #1a1a2e;
+  --dm-math-color:      #e0e0e0;
+}
+
+/* ---- Activate via <html class="dark"> ---- */
+html.dark,
+html.dark body {
+  background-color: var(--dm-bg-page);
+  color: var(--dm-text-primary);
+}
+
+/* --- Headings --- */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: var(--dm-text-heading);
+}
+
+/* --- Links --- */
+html.dark a {
+  color: var(--dm-text-link);
+  transition: color 0.15s ease;
+}
+html.dark a:hover,
+html.dark a:focus {
+  color: var(--dm-text-link-hover);
+}
+
+/* --- Top navigation bars --- */
+html.dark div#first-bar {
+  background-color: var(--dm-bg-topbar);
+}
+html.dark nav#second-bar,
+html.dark nav#second-bar.sticky-top {
+  background-color: var(--dm-bg-secondbar) !important;
+}
+
+/* --- Header title / logo --- */
+html.dark header h1 a {
+  color: var(--dm-text-heading);
+  background-image: url('/static/stacks.png'); /* logo unchanged */
+  filter: brightness(0.9);
+}
+
+/* --- Breadcrumbs --- */
+html.dark ul#crumbs li a {
+  color: var(--dm-text-link);
+}
+html.dark ul#crumbs li.active {
+  color: var(--dm-text-muted);
+}
+html.dark ul#crumbs li + li::before {
+  color: var(--dm-text-muted);
+}
+
+/* --- Search input --- */
+html.dark form#quicksearch input[type="search"] {
+  background-color: var(--dm-bg-input);
+  color: var(--dm-text-primary);
+  border: 1px solid var(--dm-border-light);
+}
+html.dark form#quicksearch input[type="search"]::placeholder {
+  color: var(--dm-text-muted);
+}
+html.dark form#quicksearch span#search-icon img {
+  filter: invert(0.8);
+}
+
+/* --- Hamburger menu / burger content --- */
+html.dark label#burger-icon span {
+  background-color: var(--dm-text-primary);
+}
+html.dark div#burger-content {
+  background-color: var(--dm-bg-burger);
+  border-color: var(--dm-border);
+  box-shadow: 1px 1px 1px var(--dm-shadow);
+}
+
+/* --- Main content area --- */
+html.dark div#content {
+  background-color: var(--dm-bg-page);
+}
+html.dark section#main {
+  background-color: transparent;
+}
+
+/* --- Sidebar meta section --- */
+html.dark section#meta {
+  background-color: transparent;
+}
+
+/* --- HTML content blocks (the actual book text) --- */
+html.dark div.html {
+  color: var(--dm-text-primary);
+}
+html.dark div.html a.environment-identifier {
+  color: var(--dm-text-heading);
+}
+html.dark div.html article.env-theorem,
+html.dark div.html article.env-proposition,
+html.dark div.html article.env-lemma {
+  /* italic content stays readable; slight background tint helps scannability */
+  background-color: rgba(255,255,255,0.02);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+}
+
+/* --- Proofs --- */
+html.dark div.html article.env-proof {
+  border-top: 1px solid var(--dm-border-light);
+}
+
+/* --- Paragraphs and inline text --- */
+html.dark p {
+  color: var(--dm-text-primary);
+}
+
+/* --- Code / inline code --- */
+html.dark code,
+html.dark pre,
+html.dark .tag,
+html.dark .commit,
+html.dark .filename,
+html.dark .label {
+  background-color: var(--dm-bg-pre);
+  color: var(--dm-text-primary);
+  border-color: var(--dm-border);
+}
+html.dark pre {
+  border: 1px solid var(--dm-border);
+}
+
+/* --- Tags --- */
+html.dark span.tag {
+  color: var(--dm-text-link);
+  background-color: rgba(99,179,237,0.1);
+  padding: 0 0.2em;
+  border-radius: 2px;
+}
+
+/* --- Equations (MathJax) --- */
+html.dark div.equation {
+  background-color: var(--dm-math-bg);
+}
+/* MathJax rendered in HTML-CSS output */
+html.dark .MathJax {
+  color: var(--dm-math-color) !important;
+}
+/* For SVG output */
+html.dark .MathJax_SVG * {
+  fill: var(--dm-math-color) !important;
+  stroke: var(--dm-math-color) !important;
+}
+
+/* --- Tables --- */
+html.dark table,
+html.dark table#history {
+  background-color: var(--dm-bg-card);
+  color: var(--dm-text-primary);
+}
+html.dark table th,
+html.dark table td {
+  border-color: var(--dm-border);
+}
+html.dark table#history tr:nth-child(even):hover {
+  background-color: transparent;
+}
+
+/* --- Neighbours (prev/next section links) --- */
+html.dark ul.neighbours li a {
+  color: var(--dm-text-link);
+}
+
+/* --- Comments section --- */
+html.dark section#comments article {
+  background-color: var(--dm-bg-comment);
+  border-left: 3px solid var(--dm-border);
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0 4px 4px 0;
+}
+html.dark section#comments header p,
+html.dark section#comments header cite {
+  color: var(--dm-text-secondary);
+}
+html.dark section#comments blockquote {
+  color: var(--dm-text-primary);
+}
+html.dark section#comments blockquote p {
+  color: var(--dm-text-primary);
+}
+html.dark section#comments time {
+  color: var(--dm-text-muted);
+}
+
+/* --- Comment form --- */
+html.dark form#comment-form input,
+html.dark form#comment-form textarea {
+  background-color: var(--dm-bg-input);
+  color: var(--dm-text-primary);
+  border: 1px solid var(--dm-border);
+}
+html.dark form#comment-form label {
+  color: var(--dm-text-secondary);
+}
+html.dark .EasyMDEContainer .CodeMirror {
+  background-color: var(--dm-bg-input);
+  color: var(--dm-text-primary);
+  border-color: var(--dm-border);
+}
+html.dark .editor-toolbar {
+  background-color: var(--dm-bg-card);
+  border-color: var(--dm-border);
+}
+html.dark .editor-toolbar button {
+  color: var(--dm-text-primary) !important;
+}
+html.dark .editor-toolbar button:hover {
+  background-color: var(--dm-bg-secondbar);
+}
+html.dark .editor-preview {
+  background-color: var(--dm-bg-page);
+}
+html.dark .CodeMirror-cursor {
+  border-color: var(--dm-text-primary);
+}
+html.dark .cm-s-easymde .cm-comment {
+  color: var(--dm-text-muted);
+}
+
+/* --- Alert / Captcha message --- */
+html.dark .alert-warning {
+  background-color: #3a2e1a;
+  color: #e8d5a0;
+  border-color: #5a4e2a;
+}
+
+/* --- Index / browse / bibliography --- */
+html.dark ul#index-select li {
+  border-color: var(--dm-border);
+  box-shadow: 1px 1px 1px var(--dm-shadow);
+}
+html.dark ul#letters li {
+  border-color: var(--dm-border);
+}
+html.dark ul#letters li a:hover {
+  background-color: var(--dm-bg-secondbar);
+}
+html.dark dl.entry dt,
+html.dark dl.entry dd {
+  color: var(--dm-text-primary);
+}
+
+/* --- TOC (table of contents) --- */
+html.dark div#toc {
+  background-color: var(--dm-bg-card);
+}
+html.dark div#toc a {
+  color: var(--dm-text-link);
+}
+
+/* --- Tree view --- */
+html.dark ul.bonsai,
+html.dark ul.bonsai li {
+  color: var(--dm-text-primary);
+}
+
+/* --- Tag info icons (SVG) --- */
+html.dark li.tag-history a,
+html.dark li.tag-statistics a,
+html.dark li.tag-dependencies a {
+  filter: invert(0.8);
+}
+
+/* --- Clipboard button --- */
+html.dark button.clipboard {
+  background-color: var(--dm-bg-card);
+  color: var(--dm-text-primary);
+  border: 1px solid var(--dm-border);
+}
+html.dark button.clipboard:hover {
+  background-color: var(--dm-bg-secondbar);
+}
+
+/* --- BootstrapToggle overrides --- */
+html.dark div.toggle,
+html.dark div.toggle:hover,
+html.dark div.toggle:active {
+  background-color: var(--dm-bg-toggle) !important;
+  border-color: var(--dm-border-light) !important;
+}
+html.dark label.toggle-on,
+html.dark label.toggle-off {
+  background-color: var(--dm-bg-toggle);
+  color: var(--dm-text-primary);
+}
+html.dark label.toggle-on:hover,
+html.dark label.toggle-off:hover,
+html.dark label.toggle-on:active,
+html.dark label.toggle-off:active {
+  background-color: var(--dm-bg-secondbar) !important;
+  color: var(--dm-text-primary) !important;
+}
+html.dark .toggle-handle {
+  background-color: var(--dm-text-primary);
+  border-color: var(--dm-border);
+}
+
+/* --- PDF / external link icons --- */
+html.dark a[href*=".pdf"],
+html.dark a[href*="github.com"],
+html.dark a[href*="arxiv.org"],
+html.dark a[href*="doi.org"],
+html.dark a[href*="mathscinet.ams.org"] {
+  background-image: none;
+  padding-right: 0;
+}
+html.dark a[href*=".pdf"]::after {
+  content: " 📄";
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* --- hr --- */
+html.dark hr {
+  border-color: var(--dm-border);
+}
+
+/* --- TOC hover --- */
+html.dark ul#toc ul li:hover {
+  background-color: var(--dm-bg-card);
+}
+
+/* --- Browse entries --- */
+html.dark ul.entries li {
+  color: var(--dm-text-primary);
+}
+
+/* --- The dark mode toggle button itself --- */
+.dark-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.dark-mode-toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 36px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+}
+.dark-mode-toggle input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+html.dark .dark-mode-toggle input[type="checkbox"] {
+  background-color: var(--dm-text-link);
+}
+html.dark .dark-mode-toggle input[type="checkbox"]::after {
+  transform: translateX(16px);
+}
+.dark-mode-toggle .dm-label {
+  color: inherit;
+}

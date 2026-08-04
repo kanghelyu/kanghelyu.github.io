@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stacks Project · Dark Mode Reader</title>
+  <style>
+    :root {
+      --bg: #1a1a2e;
+      --text: #e0e0e0;
+      --accent: #63b3ed;
+      --card: #16213e;
+      --border: #2d3748;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    header h1 { font-size: 1.8rem; font-weight: 700; }
+    header h1 a { color: var(--accent); text-decoration: none; }
+    header p { margin-top: 0.5rem; color: #a0aec0; font-size: 0.95rem; }
+    main {
+      flex: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      width: 100%;
+    }
+    section { margin-bottom: 2.5rem; }
+    h2 {
+      font-size: 1.3rem;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    code {
+      background: #0d1b2a;
+      color: #e2e8f0;
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .bookmarklet {
+      display: inline-block;
+      background: var(--accent);
+      color: #1a1a2e;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      cursor: grab;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 2px 8px rgba(99,179,237,0.3);
+    }
+    .bookmarklet:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(99,179,237,0.5);
+    }
+    .bookmarklet:active {
+      cursor: grabbing;
+    }
+    .instructions {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+    .instructions ol {
+      padding-left: 1.25rem;
+    }
+    .instructions li {
+      margin-bottom: 0.5rem;
+    }
+    .preview-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      font-size: 0.9rem;
+    }
+    .preview-box .tag { color: var(--accent); }
+    .preview-box a { color: var(--accent); }
+    .preview-box .env-lemma {
+      font-style: italic;
+      background: rgba(255,255,255,0.02);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      display: block;
+      margin-top: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: #718096;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--accent); }
+    .file-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .file-links a {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .file-links a:hover { border-color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1><a href="https://stacks.math.columbia.edu">Stacks Project</a> · Dark Mode</h1>
+  <p>在深色背景下阅读代数几何圣经</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>📌 Bookmarklet（推荐）</h2>
+    <p>把下面的按钮拖到浏览器书签栏。之后每次打开 Stacks Project 的页面，点一下这个书签就能切换深色模式。</p>
+    <p style="text-align:center;margin:1.5rem 0">
+      <a class="bookmarklet" href="javascript:(function(){var d=document,s=d.createElement('script');s.src='https://kanghelyu.github.io/stacks-dark/dark-mode.js';s.onload=function(){if(typeof stacksDarkInit==='function')stacksDarkInit()};d.body.appendChild(s);var l=d.createElement('link');l.rel='stylesheet';l.href='https://kanghelyu.github.io/stacks-dark/dark-mode.css';d.head.appendChild(l)})();"
+         onclick="alert('把它拖到书签栏，不是点击这里。');return false;">
+        🌙 Stacks Dark
+      </a>
+    </p>
+    <div class="instructions">
+      <ol>
+        <li>按住上面的 <strong>「🌙 Stacks Dark」</strong> 按钮</li>
+        <li>拖到浏览器的书签栏</li>
+        <li>打开任意一个 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a></li>
+        <li>点击书签栏里的 <strong>🌙 Stacks Dark</strong></li>
+      </ol>
+    </div>
+  </section>
+
+  <section>
+    <h2>⚡ 直接用（临时）</h2>
+    <p>在当前 Stacks Project 页面按下 Ctrl+Shift+D（Mac: Cmd+Shift+D），或者把下面这段代码粘贴到浏览器控制台（F12 → Console 标签页）：</p>
+    <pre style="background:#0d1b2a;color:#e2e8f0;padding:1rem;border-radius:8px;overflow-x:auto;font-size:0.85rem;border:1px solid var(--border);margin-top:0.5rem"><code>var s=document.createElement('script');
+s.src='https://kanghelyu.github.io/stacks-dark/dark-mode.js';
+document.body.appendChild(s);
+var l=document.createElement('link');
+l.rel='stylesheet';
+l.href='https://kanghelyu.github.io/stacks-dark/dark-mode.css';
+document.head.appendChild(l);</code></pre>
+  </section>
+
+  <section>
+    <h2>🖼 效果预览</h2>
+    <div class="preview-box">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+        <span style="font-size:0.8rem;background:#0f3460;padding:0.2rem 0.6rem;border-radius:4px">0001</span>
+        <span style="color:#718096">Section 1.1</span>
+      </div>
+      <p><strong>Lemma 10.2</strong> — Let <span class="tag">0001</span> be a scheme and let $X$ be a ...</p>
+      <div class="env-lemma">
+        <p>Lemma 10.3. Let $f : X \to Y$ be a morphism of schemes. The following are equivalent:</p>
+        <ol style="padding-left:1.5rem;margin-top:0.3rem">
+          <li>$f$ is locally of finite type,</li>
+          <li>for every affine open $V \subset Y$, $f^{-1}(V)$ can be covered by affines ...</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>📂 文件</h2>
+    <p>你也可以直接引用这些静态文件：</p>
+    <div class="file-links">
+      <a href="dark-mode.css">dark-mode.css</a>
+      <a href="dark-mode.js">dark-mode.js</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Stacks Project 由 <a href="https://www.math.columbia.edu/~dejong/">Johan de Jong</a> 维护 · Dark mode 由 <a href="https://kanghelyu.github.io">Kanghe Lyu</a> 制作</p>
+</footer>
+
+</body>
+</html>
