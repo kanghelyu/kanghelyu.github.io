@@ -6,142 +6,91 @@
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
   <style>
-    :root {
-      --bg: #1a1a2e;
-      --text: #e0e0e0;
-      --accent: #63b3ed;
-      --card: #16213e;
-      --border: #2d3748;
-    }
+    :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
     }
     header {
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      text-align: center;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 2rem 1.5rem; text-align: center; position: relative;
     }
     header h1 { font-size: 1.8rem; font-weight: 700; }
     header h1 a { color: var(--accent); text-decoration: none; }
     header p { margin-top: 0.5rem; color: #a0aec0; font-size: 0.95rem; }
-    main {
-      flex: 1;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-      width: 100%;
+    .lang-toggle {
+      position: absolute; top: 1rem; right: 1.5rem;
+      display: flex; gap: 2px;
     }
+    .lang-toggle button {
+      background: transparent; color: #718096; border: 1px solid var(--border);
+      padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer;
+      font-size: 0.8rem; transition: all 0.15s;
+    }
+    .lang-toggle button.active {
+      color: var(--accent); border-color: var(--accent); background: rgba(99,179,237,0.1);
+    }
+    main { flex: 1; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; }
     section { margin-bottom: 2.5rem; }
-    h2 {
-      font-size: 1.3rem;
-      color: var(--accent);
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
+    h2 { font-size: 1.3rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     p { margin-bottom: 1rem; }
     code {
-      background: #0d1b2a;
-      color: #e2e8f0;
-      padding: 0.15em 0.4em;
-      border-radius: 3px;
-      font-size: 0.9em;
+      background: #0d1b2a; color: #e2e8f0; padding: 0.15em 0.4em;
+      border-radius: 3px; font-size: 0.9em;
     }
     .bookmarklet {
-      display: inline-block;
-      background: var(--accent);
-      color: #1a1a2e;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      text-decoration: none;
-      cursor: grab;
+      display: inline-block; background: var(--accent); color: #1a1a2e;
+      font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem;
+      border-radius: 8px; text-decoration: none; cursor: grab;
       transition: transform 0.15s, box-shadow 0.15s;
       box-shadow: 0 2px 8px rgba(99,179,237,0.3);
     }
-    .bookmarklet:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(99,179,237,0.5);
-    }
+    .bookmarklet:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(99,179,237,0.5); }
     .bookmarklet:active { cursor: grabbing; }
-    .instructions {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.25rem;
-    }
+    .instructions { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
     .instructions ol { padding-left: 1.25rem; }
     .instructions li { margin-bottom: 0.5rem; }
-    .preview-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      font-size: 0.9rem;
-    }
+    .preview-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; font-size: 0.9rem; }
     .preview-box .tag { color: var(--accent); }
     .preview-box a { color: var(--accent); }
-    .preview-box .env-lemma {
-      font-style: italic;
-      background: rgba(255,255,255,0.02);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      display: block;
-      margin-top: 0.5rem;
-    }
-    .pre {
-      background: #0d1b2a;
-      color: #e2e8f0;
-      padding: 1rem;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 0.85rem;
-      border: 1px solid var(--border);
-      margin-top: 0.5rem;
-    }
+    .preview-box .env-lemma { font-style: italic; background: rgba(255,255,255,0.02); padding: 0.25rem 0.5rem; border-radius: 4px; display: block; margin-top: 0.5rem; }
+    .pre { background: #0d1b2a; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; border: 1px solid var(--border); margin-top: 0.5rem; }
     .pre code { background: none; padding: 0; }
     .file-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
-    .file-links a {
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 0.4rem 1rem;
-      border-radius: 6px;
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
+    .file-links a { background: var(--card); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
     .file-links a:hover { border-color: var(--accent); }
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      color: #718096;
-      font-size: 0.85rem;
-      border-top: 1px solid var(--border);
-    }
+    footer { text-align: center; padding: 1.5rem; color: #718096; font-size: 0.85rem; border-top: 1px solid var(--border); }
     footer a { color: var(--accent); }
+    [data-lang] { display: none; }
+    html.en [data-lang="en"], html.zh [data-lang="zh"] { display: inline; }
+    html.en [data-lang="en"].block, html.zh [data-lang="zh"].block { display: block; }
+    html.en [data-lang="en"].flex, html.zh [data-lang="zh"].flex { display: flex; }
   </style>
 </head>
 <body>
 
 <header>
+  <div class="lang-toggle">
+    <button id="lang-zh" class="active" onclick="setLang('zh')">中文</button>
+    <button id="lang-en" onclick="setLang('en')">EN</button>
+  </div>
   <h1><a href="https://stacks.math.columbia.edu">Stacks Project</a> · Dark Mode</h1>
-  <p>在深色背景下阅读代数几何圣经</p>
+  <p data-lang="zh" class="block">在深色背景下阅读代数几何圣经</p>
+  <p data-lang="en" class="block">Read the algebraic geometry bible in dark mode</p>
 </header>
 
 <main>
 
+  <!-- ===== Bookmarklet ===== -->
   <section>
-    <h2>📌 Bookmarklet（推荐）</h2>
-    <p>把下面的按钮拖到浏览器书签栏。之后每次打开 Stacks Project 的页面，点一下这个书签就能切换深色模式。</p>
+    <h2 data-lang="zh">📌 Bookmarklet（推荐）</h2>
+    <h2 data-lang="en">📌 Bookmarklet (recommended)</h2>
+
+    <p data-lang="zh" class="block">把下面的按钮拖到浏览器书签栏。之后每次打开 Stacks Project 的页面，点一下这个书签就能切换深色模式。</p>
+    <p data-lang="en" class="block">Drag the button below to your browser's bookmarks bar. Then click it on any Stacks Project page to toggle dark mode.</p>
+
     <p style="text-align:center;margin:1.5rem 0">
       <a class="bookmarklet"
          href="javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';d.body.appendChild(s);var l=d.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css';d.head.appendChild(l)})();"
@@ -149,25 +98,40 @@
         🌙 Stacks Dark
       </a>
     </p>
+
     <div class="instructions">
-      <ol>
+      <ol data-lang="zh" class="block">
         <li>按住上面的 <strong>「🌙 Stacks Dark」</strong> 按钮</li>
         <li>拖到浏览器的书签栏</li>
         <li>打开任意一个 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a></li>
         <li>点击书签栏里的 <strong>🌙 Stacks Dark</strong></li>
       </ol>
+      <ol data-lang="en" class="block">
+        <li>Press and hold the <strong>🌙 Stacks Dark</strong> button above</li>
+        <li>Drag it to your browser's bookmarks bar</li>
+        <li>Open any <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project page</a></li>
+        <li>Click the <strong>🌙 Stacks Dark</strong> bookmark</li>
+      </ol>
     </div>
   </section>
 
+  <!-- ===== Keyboard shortcut ===== -->
   <section>
-    <h2>⚡ Ctrl+Shift+D 快捷键</h2>
-    <p>在任何 Stacks Project 页面上按 <strong>Ctrl+Shift+D</strong>（Mac: <strong>Cmd+Shift+D</strong>）一键切换深色模式。<br>
-    注意：你需要先用书签或控制台的方式注入一次脚本，快捷键才会生效。</p>
+    <h2 data-lang="zh">⚡ Ctrl+Shift+D 快捷键</h2>
+    <h2 data-lang="en">⚡ Keyboard shortcut</h2>
+
+    <p data-lang="zh" class="block">在任何 Stacks Project 页面上按 <strong>Ctrl+Shift+D</strong>（Mac: <strong>Cmd+Shift+D</strong>）一键切换深色模式。注意：需要先用书签或控制台方式注入一次脚本，快捷键才会生效。</p>
+    <p data-lang="en" class="block">Press <strong>Ctrl+Shift+D</strong> (Mac: <strong>Cmd+Shift+D</strong>) on any Stacks Project page to toggle dark mode. Note: the script must be injected once (via bookmarklet or console) before the shortcut works.</p>
   </section>
 
+  <!-- ===== Console injection ===== -->
   <section>
-    <h2>🖥 控制台注入（临时测试）</h2>
-    <p>打开 Stacks Project 页面的开发者工具（F12 → Console），粘贴以下代码然后回车：</p>
+    <h2 data-lang="zh">🖥 控制台注入（临时测试）</h2>
+    <h2 data-lang="en">🖥 Console injection (quick test)</h2>
+
+    <p data-lang="zh" class="block">打开 Stacks Project 页面的开发者工具（F12 → Console），粘贴以下代码然后回车：</p>
+    <p data-lang="en" class="block">Open developer tools on any Stacks Project page (F12 → Console), paste the code and press Enter:</p>
+
     <div class="pre"><code>var s=document.createElement('script');
 s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';
 document.body.appendChild(s);
@@ -177,8 +141,11 @@ l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-da
 document.head.appendChild(l);</code></div>
   </section>
 
+  <!-- ===== Preview ===== -->
   <section>
-    <h2>🖼 效果预览</h2>
+    <h2 data-lang="zh">🖼 效果预览</h2>
+    <h2 data-lang="en">🖼 Preview</h2>
+
     <div class="preview-box">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
         <span style="font-size:0.8rem;background:#0f3460;padding:0.2rem 0.6rem;border-radius:4px">0001</span>
@@ -195,9 +162,14 @@ document.head.appendChild(l);</code></div>
     </div>
   </section>
 
+  <!-- ===== CDN links ===== -->
   <section>
-    <h2>📂 静态文件 CDN 链接</h2>
-    <p>你也可以直接引用这些文件（jsDelivr CDN，带正确 MIME 类型）：</p>
+    <h2 data-lang="zh">📂 静态文件 CDN 链接</h2>
+    <h2 data-lang="en">📂 CDN file links</h2>
+
+    <p data-lang="zh" class="block">你也可以直接引用这些文件（jsDelivr CDN，带正确 MIME 类型）：</p>
+    <p data-lang="en" class="block">You can also reference these files directly via jsDelivr CDN (correct MIME types included):</p>
+
     <div class="file-links">
       <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css">dark-mode.css</a>
       <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js">dark-mode.js</a>
@@ -209,6 +181,43 @@ document.head.appendChild(l);</code></div>
 <footer>
   <p>Based on <a href="https://stacks.math.columbia.edu">The Stacks Project</a> by Johan de Jong &amp; contributors · Dark mode by <a href="https://kanghelyu.github.io">Kanghe Lyu</a></p>
 </footer>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'stacks-dark-lang';
+
+  function getStored() {
+    try { return localStorage.getItem(STORAGE_KEY); } catch(e) { return null; }
+  }
+  function setStored(v) {
+    try { localStorage.setItem(STORAGE_KEY, v); } catch(e) {}
+  }
+
+  window.setLang = function(lang) {
+    document.documentElement.className = lang === 'en' ? 'en' : 'zh';
+    setStored(lang);
+    document.getElementById('lang-zh').classList.toggle('active', lang === 'zh');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  };
+
+  var stored = getStored();
+  // default: browser language prefers English? Otherwise Chinese
+  var defaultLang = stored || (navigator.language && navigator.language.startsWith('en') ? 'en' : 'zh');
+  window.setLang(defaultLang);
+
+  // Also update the bookmarklet onclick alert language
+  var bml = document.querySelector('.bookmarklet');
+  if (bml) {
+    bml.onclick = function() {
+      alert(document.documentElement.className === 'en'
+        ? 'Drag this to your bookmarks bar, not click it.'
+        : '把它拖到书签栏，不是点击这里。');
+      return false;
+    };
+  }
+})();
+</script>
 
 </body>
 </html>
