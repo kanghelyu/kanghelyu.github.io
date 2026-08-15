@@ -175,7 +175,19 @@
 
     <section class="projects-grid">
 
-      <article class="project">
+            <article class="project">
+        <div class="project-icon">⚡</div>
+        <div class="project-title">DeepSeek Flow</div>
+        <div class="project-desc" id="desc-dflow">
+          A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.
+        </div>
+        <div class="project-actions">
+          <a id="btn-dflow-site" class="button" href="https://deepseekflow.kanghelyu.org/">Website</a>
+          <a id="btn-dflow-gh" class="button" href="https://github.com/kanghelyu/dsh-deepseek-flow">GitHub</a>
+        </div>
+      </article>
+
+<article class="project">
         <div class="project-icon">🌙</div>
         <div class="project-title">Stacks Project Dark Mode</div>
         <div class="project-desc" id="desc-dark">
@@ -223,6 +235,9 @@
         btnDarkGH: "GitHub",
         btnQingheAPK: "Download APK",
         btnQingheGH: "GitHub",
+        descDflow: "A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.",
+        btnDflowSite: "Website",
+        btnDflowGH: "GitHub",
         footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
       },
       zh: {
@@ -237,6 +252,9 @@
         btnDarkGH: "GitHub",
         btnQingheAPK: "下载 APK",
         btnQingheGH: "GitHub",
+        descDflow: "DeepSeek Flow — 面向 DeepSeek Harness 的 Markdown 优先可视化工作流编辑器：画布连线、逻辑门、拓扑审查、一句话构建工作流。",
+        btnDflowSite: "官网",
+        btnDflowGH: "GitHub",
         footer: "工具 · 项目 · 软件"
       }
     };
@@ -263,6 +281,9 @@
       document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
       document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
       document.getElementById("btn-qinghe-gh").textContent = t.btnQingheGH;
+      document.getElementById("desc-dflow").textContent = t.descDflow;
+      document.getElementById("btn-dflow-site").textContent = t.btnDflowSite;
+      document.getElementById("btn-dflow-gh").textContent = t.btnDflowGH;
       document.getElementById("footer").textContent = t.footer;
 
       toggleBtn.textContent = currentLang === "en" ? "EN / 中文" : "中文 / EN";
