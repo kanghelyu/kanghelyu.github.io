@@ -219,8 +219,8 @@
       dust.push({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: 0.4 + Math.random() * 1.3,
-        alpha: 0.12 + Math.random() * 0.4,
+        r: 0.8 + Math.random() * 1.6,
+        alpha: 0.40 + Math.random() * 0.45,
         phase: Math.random() * Math.PI * 2,
         speed: 0.004 + Math.random() * 0.014,
         color: c < 0.62 ? 0 : (c < 0.82 ? 1 : 2)
@@ -235,10 +235,10 @@
       for (var i = 0; i < dust.length; i++) {
         var d = dust[i];
         if (d.color !== g) continue;
-        var a = d.alpha + Math.sin(time * d.speed + d.phase) * 0.1;
+        var a = d.alpha + Math.sin(time * d.speed + d.phase) * 0.15;
         var wp = warp(d.x, d.y);
-        ctx.globalAlpha = Math.min(1, Math.max(0.03, a));
-        var s = d.r * (d.r > 1.2 ? 2 : 1.6);
+        ctx.globalAlpha = Math.min(1, Math.max(0.08, a));
+        var s = d.r * (d.r > 1.6 ? 2.6 : 2.1);
         ctx.fillRect(wp.x - s / 2, wp.y - s / 2, s, s);
       }
     }
@@ -262,9 +262,9 @@
         px: 0, py: 0,
         vx: (Math.random() - 0.5) * 0.4,
         vy: (Math.random() - 0.5) * 0.4,
-        r: 0.9 + Math.random() * 2.1,
+        r: 1.2 + Math.random() * 2.4,
         big: Math.random() < 0.3,
-        alpha: 0.10 + Math.random() * 0.14,
+        alpha: 0.5 + Math.random() * 0.35,
         phase: Math.random() * Math.PI * 2,
         twinkle: 0.004 + Math.random() * 0.012,
         color: Math.random() > 0.5 ? "168,230,230" : "244,217,160"
@@ -313,7 +313,7 @@
         var ldy = orbs[i].y - orbs[j].y;
         var ld2 = ldx * ldx + ldy * ldy;
         if (ld2 < 16900) {
-          var la = 0.05 * (1 - Math.sqrt(ld2) / 130);
+          var la = 0.09 * (1 - Math.sqrt(ld2) / 130);
           ctx.beginPath();
           ctx.moveTo(orbs[i].x, orbs[i].y);
           ctx.lineTo(orbs[j].x, orbs[j].y);
@@ -335,15 +335,15 @@
         ctx.beginPath();
         ctx.moveTo(p.px, p.py);
         ctx.lineTo(p.x, p.y);
-        ctx.strokeStyle = "rgba(" + p.color + "," + (a * 0.5).toFixed(3) + ")";
-        ctx.lineWidth = p.r * 0.8;
+        ctx.strokeStyle = "rgba(" + p.color + "," + (a * 0.8).toFixed(3) + ")";
+        ctx.lineWidth = p.r * 0.9;
         ctx.stroke();
       }
 
       if (p.big) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r * 3.4, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.2).toFixed(3) + ")";
+        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.3).toFixed(3) + ")";
         ctx.fill();
       }
       ctx.beginPath();
