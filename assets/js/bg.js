@@ -1,9 +1,9 @@
 /* ============================================================
    Kanghe Lyu site — bg.js
-   Shared full math background for ALL pages:
+   Shared math background for ALL pages:
      Torus / Klein bottle / Moebius strip (glow wireframe,
-     Moebius boundary edges highlighted), starfield, linked
-     particles, math symbol rain, and black-hole cursor lensing.
+     Moebius boundary edges highlighted), starfield, and a
+     rich drifting particle field with soft links.
    ============================================================ */
 
 (function () {
@@ -13,67 +13,6 @@
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var w = 0, h = 0, time = 0, scrollY = 0;
-  var mouse = { x: -9999, y: -9999 };
-
-  /* ============ Black-hole lensing ============ */
-
-  var LENS_R = 260;   // influence radius
-  var CORE_R = 20;    // event-horizon radius
-
-  function warp(x, y) {
-    if (mouse.x < 0) return { x: x, y: y, gone: false };
-    var dx = x - mouse.x, dy = y - mouse.y;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist > LENS_R) return { x: x, y: y, gone: false };
-    var t = 1 - dist / LENS_R;
-    var s = t * t;
-    var pull = s * s * 150;
-    var maxPull = Math.max(0, dist - CORE_R * 0.92);
-    if (pull > maxPull) pull = maxPull;
-    var ux = dx / (dist || 1), uy = dy / (dist || 1);
-    var sw = s * 22; // tangential swirl
-    return {
-      x: x - ux * pull - uy * sw,
-      y: y - uy * pull + ux * sw,
-      gone: dist < CORE_R * 1.25
-    };
-  }
-
-  function drawBlackHole() {
-    if (mouse.x < 0) return;
-    var x = mouse.x, y = mouse.y;
-
-    // warm accretion glow
-    var g = ctx.createRadialGradient(x, y, CORE_R * 0.4, x, y, CORE_R * 5);
-    g.addColorStop(0, "rgba(255,220,160,0.20)");
-    g.addColorStop(0.35, "rgba(244,217,160,0.09)");
-    g.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(x, y, CORE_R * 5, 0, Math.PI * 2); ctx.fill();
-
-    // photon ring
-    ctx.save();
-    ctx.shadowColor = "rgba(255,230,180,0.9)";
-    ctx.shadowBlur = 14;
-    ctx.strokeStyle = "rgba(255,242,214,0.85)";
-    ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.arc(x, y, CORE_R * 1.7, 0, Math.PI * 2); ctx.stroke();
-    ctx.restore();
-
-    // faint inner lens ring
-    ctx.strokeStyle = "rgba(168,230,230,0.22)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.arc(x, y, CORE_R * 1.15, 0, Math.PI * 2); ctx.stroke();
-
-    // absorption halo + event horizon
-    var absorb = ctx.createRadialGradient(x, y, CORE_R, x, y, CORE_R * 1.5);
-    absorb.addColorStop(0, "rgba(0,0,0,0.95)");
-    absorb.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = absorb;
-    ctx.beginPath(); ctx.arc(x, y, CORE_R * 1.5, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#000";
-    ctx.beginPath(); ctx.arc(x, y, CORE_R, 0, Math.PI * 2); ctx.fill();
-  }
 
   /* ============ Rotation ============ */
 
@@ -150,13 +89,12 @@
   var KLEIN = buildKlein();
   var MOBIUS = buildMobius();
 
-  /* ============ Glowing wireframe (lens-warped) ============ */
+  /* ============ Glowing wireframe ============ */
 
   function drawSurface(grid, rot, cx, cy, scale, lineRGB, dotRGB, glowRGB, withEdges) {
     var U = grid.length - 1, V = grid[0].length - 1;
     var i, j, p;
 
-    // project + lens warp every vertex once
     var proj = [];
     for (i = 0; i <= U; i++) {
       proj[i] = [];
@@ -164,8 +102,7 @@
         var g = grid[i][j];
         var r = rot(g[0], g[1], g[2]);
         var k = scale / (8 - r[2]);
-        var wp = warp(cx + r[0] * k, cy + r[1] * k);
-        proj[i][j] = { x: wp.x, y: wp.y, d: r[2] };
+        proj[i][j] = { x: cx + r[0] * k, y: cy + r[1] * k, d: r[2] };
       }
     }
 
@@ -267,118 +204,90 @@
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
       var flicker = s.alpha + Math.sin(time * s.speed + s.phase) * 0.12;
-      var wp = warp(s.x, s.y);
-      if (wp.gone) continue;
       var a = Math.min(1, Math.max(0.05, flicker));
       ctx.beginPath();
-      ctx.arc(wp.x, wp.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(200,220,240," + a.toFixed(3) + ")";
       ctx.fill();
       if (s.r > 0.9) {
         ctx.beginPath();
-        ctx.arc(wp.x, wp.y, s.r * 3, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(168,230,230," + (a * 0.10).toFixed(3) + ")";
         ctx.fill();
       }
     }
   }
 
-  /* ============ Linked particles ============ */
+  /* ============ Drifting particle field ============
+     Two kinds: fine dust (small, gentle) and soft glow orbs
+     (larger, slow upward drift, breathing halo).            */
 
   var particles = [];
+  var PARTICLE_COUNT = 72;
+
   function initParticles() {
     particles = [];
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < PARTICLE_COUNT; i++) {
+      var orb = Math.random() < 0.28;
       particles.push({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.15,
-        vy: (Math.random() - 0.5) * 0.15,
-        r: 1 + Math.random() * 1.8,
-        alpha: 0.05 + Math.random() * 0.10,
+        vx: (Math.random() - 0.5) * (orb ? 0.14 : 0.24),
+        vy: (Math.random() - 0.5) * (orb ? 0.14 : 0.24) - (orb ? 0.07 : 0),
+        r: orb ? 1.8 + Math.random() * 2.4 : 0.7 + Math.random() * 1.2,
+        orb: orb,
+        alpha: (orb ? 0.12 : 0.06) + Math.random() * 0.10,
+        phase: Math.random() * Math.PI * 2,
+        twinkle: 0.004 + Math.random() * 0.012,
         color: Math.random() > 0.5 ? "168,230,230" : "244,217,160"
       });
     }
   }
 
   function drawParticles() {
-    var i, j, p, pts = [];
+    var i, j, p;
+
+    // update + draw dots
     for (i = 0; i < particles.length; i++) {
       p = particles[i];
-      p.x += p.vx; p.y += p.vy;
-      if (p.x < 0) p.x = w; if (p.x > w) p.x = 0;
-      if (p.y < 0) p.y = h; if (p.y > h) p.y = 0;
-      pts.push(warp(p.x, p.y));
-    }
-    for (i = 0; i < particles.length; i++) {
-      if (pts[i].gone) continue;
+      p.x += p.vx + Math.sin(time * 0.008 + p.phase) * 0.06;
+      p.y += p.vy;
+      if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
+      if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
+
+      var breathe = 0.55 + 0.45 * Math.sin(time * p.twinkle + p.phase);
+      var a = p.alpha * breathe;
+
+      if (p.orb) {
+        // breathing halo
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.22).toFixed(3) + ")";
+        ctx.fill();
+      }
       ctx.beginPath();
-      ctx.arc(pts[i].x, pts[i].y, p2r(i), 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(" + particles[i].color + "," + particles[i].alpha.toFixed(3) + ")";
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(" + p.color + "," + a.toFixed(3) + ")";
       ctx.fill();
     }
+
+    // soft links between nearby particles
     for (i = 0; i < particles.length; i++) {
       for (j = i + 1; j < particles.length; j++) {
-        if (pts[i].gone || pts[j].gone) continue;
-        var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+        var dx = particles[i].x - particles[j].x;
+        var dy = particles[i].y - particles[j].y;
         var d2 = dx * dx + dy * dy;
-        if (d2 < 14400) {
-          var a = 0.035 * (1 - Math.sqrt(d2) / 120);
+        if (d2 < 16900) {
+          var a = 0.04 * (1 - Math.sqrt(d2) / 130);
           ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
           ctx.strokeStyle = "rgba(168,230,230," + a.toFixed(4) + ")";
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
     }
-  }
-  function p2r(i) { return particles[i].r; }
-
-  /* ============ Math symbol rain ============ */
-
-  var mathRain = [];
-  var mathSymbols = ["∫", "∂", "∇", "∑", "∞", "Δ", "Ω", "Φ", "Ψ", "π", "λ", "μ", "⊗", "⊕", "∧", "∨"];
-
-  function initMathRain() {
-    mathRain = [];
-    for (var i = 0; i < 26; i++) {
-      mathRain.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        speed: 0.3 + Math.random() * 0.6,
-        size: 14 + Math.floor(Math.random() * 10),
-        symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
-        drift: (Math.random() - 0.5) * 0.25,
-        phase: Math.random() * Math.PI * 2,
-        alpha: 0.10 + Math.random() * 0.16
-      });
-    }
-  }
-
-  function drawMathRain() {
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    for (var i = 0; i < mathRain.length; i++) {
-      var r = mathRain[i];
-      r.y += r.speed;
-      r.x += Math.sin(time * 0.012 + r.phase) * r.drift;
-      if (r.y > h + 24) { r.y = -24; r.x = Math.random() * w; }
-      if (r.x < -24) r.x = w + 24;
-      if (r.x > w + 24) r.x = -24;
-
-      var wp = warp(r.x, r.y);
-      if (wp.gone) continue;
-
-      var a = r.alpha + Math.sin(time * 0.018 + r.phase) * 0.05;
-      ctx.font = "400 " + r.size + "px Georgia";
-      ctx.shadowColor = "rgba(244,217,160,0.8)";
-      ctx.shadowBlur = 10;
-      ctx.fillStyle = "rgba(244,217,160," + Math.max(0.03, a).toFixed(3) + ")";
-      ctx.fillText(r.symbol, wp.x, wp.y);
-    }
-    ctx.shadowBlur = 0;
   }
 
   /* ============ Backdrop layers ============ */
@@ -391,15 +300,6 @@
     grad.addColorStop(1, "#0b1520");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
-
-    ctx.strokeStyle = "rgba(168,230,230,0.025)";
-    ctx.lineWidth = 0.5;
-    for (var x = 0; x < w; x += 60) {
-      ctx.beginPath(); ctx.moveTo(x + 0.5, 0); ctx.lineTo(x + 0.5, h); ctx.stroke();
-    }
-    for (var y = 0; y < h; y += 60) {
-      ctx.beginPath(); ctx.moveTo(0, y + 0.5); ctx.lineTo(w, y + 0.5); ctx.stroke();
-    }
   }
 
   function drawAmbientGlow() {
@@ -445,9 +345,7 @@
     drawSurface(MOBIUS, makeRotator(1.05, -0.25 - time * 0.003, 0.12),
       w * 0.50, h * 0.76 - off, s * 0.50, "168,230,230", "244,217,160", "168,230,230", true);
 
-    drawMathRain();
     drawVignette();
-    drawBlackHole();
     requestAnimationFrame(render);
   }
 
@@ -459,16 +357,10 @@
     canvas.width = w;
     canvas.height = h;
     initStars();
-    initMathRain();
   }
 
   window.addEventListener("resize", resize);
   window.addEventListener("scroll", function () { scrollY = window.scrollY; }, { passive: true });
-  window.addEventListener("mousemove", function (e) {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-  window.addEventListener("mouseout", function () { mouse.x = -9999; mouse.y = -9999; });
 
   resize();
   initParticles();
