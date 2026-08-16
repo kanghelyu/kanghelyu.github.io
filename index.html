@@ -11,6 +11,7 @@
 </head>
 <body>
   <canvas id="bg"></canvas>
+  <div class="cursor-glow" id="cursor-glow"></div>
 
   <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
   <button id="music-toggle" class="music-toggle">♪ Music</button>
@@ -37,52 +38,64 @@
         B.Sc. in Mathematics, Sichuan University (2022–2026)<br>Ph.D. candidate at SUSTech SICM (2026–)
       </div>
 
-      <p id="intro-p1">
-        My interests lie in representation theory, noncommutative geometry, mathematical physics, and algebraic geometry.
-      </p>
+      <div class="reveal">
+        <p id="intro-p1">
+          My interests lie in representation theory, noncommutative geometry, mathematical physics, and algebraic geometry.
+        </p>
 
-      <p id="intro-p2">
-        I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, advised by Prof. Vyacheslav Futorny.
-      </p>
+        <p id="intro-p2">
+          I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, advised by Prof. Vyacheslav Futorny.
+        </p>
 
-      <p id="intro-p3">
-        This page contains my personal information, curriculum vitae, and mathematical notes or surveys.
-      </p>
+        <p id="intro-p3">
+          This page contains my personal information, curriculum vitae, and mathematical notes or surveys.
+        </p>
+      </div>
 
-      <p id="music-note">
+      <div class="reveal reveal-delay-2 music-callout" id="music-note">
         Click the music button in the upper-right corner to listen to AI music that I created to match the visual style of this website, adding a more immersive atmosphere while browsing (Some are sung by "AI languages").
-      </p>
+      </div>
 
-      <h2 id="exp-title">Experience</h2>
-      <p id="exp-p1">Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), from 01/07/2024 to 15/07/2024.</p>
-      <p id="exp-p2">International Mathematics Summer School at Westlake University, from 06/07/2025 to 16/07/2025.</p>
-      <p id="exp-p3">Visiting Program at New Uzbekistan University, from 12/11/2025 to 23/01/2026.</p>
-      <p id="exp-p4">Visiting Program at SUSTech, from 12/03/2026 to 12/05/2026.</p>
-      <p id="exp-p5">Summer School for Outstanding Mathematics Students, Sichuan University, from 05/07/2026 to 19/07/2026.</p>
-      <p id="exp-p6">Visiting Program at Institute for Problems of Information Transmission, Moscow, from 05/07/2026 to 19/07/2026.</p>
+      <div class="reveal reveal-delay-1">
+        <h2 id="exp-title">Experience</h2>
+        <ul class="experience-list">
+          <li id="exp-p1">Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), 01/07/2024 – 15/07/2024.</li>
+          <li id="exp-p2">International Mathematics Summer School at Westlake University, 06/07/2025 – 16/07/2025.</li>
+          <li id="exp-p3">Visiting Program at New Uzbekistan University, 12/11/2025 – 23/01/2026.</li>
+          <li id="exp-p4">Visiting Program at SUSTech, 12/03/2026 – 12/05/2026.</li>
+          <li id="exp-p5">Summer School for Outstanding Mathematics Students, Sichuan University, 05/07/2026 – 19/07/2026.</li>
+          <li id="exp-p6">Visiting Program at Institute for Problems of Information Transmission, Moscow, 05/07/2026 – 19/07/2026.</li>
+        </ul>
+      </div>
 
-      <h2 id="awards-title">Awards</h2>
-      <p id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</p>
-      <p id="awards-p2">College Students' Innovative Entrepreneurial Training Plan Program, National Level.</p>
-      <p id="awards-p3">Sichuan University Comprehensive First-Class Scholarship (Top 5%), 2023–2024.</p>
-      <p id="awards-p4">Outstanding Undergraduate Student, Sichuan University, 2023–2024.</p>
-      <p id="awards-p5">Outstanding Student Cadre, Sichuan University, 2022–2023.</p>
-      <p id="awards-p6">Sichuan Provincial Comprehensive Quality Class A Certificate, 12/2024.</p>
-      <p id="awards-p7">Sichuan University Outstanding Graduate, 10/2025.</p>
+      <div class="reveal reveal-delay-2">
+        <h2 id="awards-title">Awards</h2>
+        <ul class="awards-list">
+          <li id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</li>
+          <li id="awards-p2">College Students' Innovative Entrepreneurial Training Plan Program, National Level.</li>
+          <li id="awards-p3">Sichuan University Comprehensive First-Class Scholarship (Top 5%), 2023–2024.</li>
+          <li id="awards-p4">Outstanding Undergraduate Student, Sichuan University, 2023–2024.</li>
+          <li id="awards-p5">Outstanding Student Cadre, Sichuan University, 2022–2023.</li>
+          <li id="awards-p6">Sichuan Provincial Comprehensive Quality Class A Certificate, 12/2024.</li>
+          <li id="awards-p7">Sichuan University Outstanding Graduate, 10/2025.</li>
+        </ul>
+      </div>
 
-      <h2 id="contact-title">Contact</h2>
-      <p class="contact">
-        Email: <a id="email-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
-      </p>
+      <div class="reveal reveal-delay-1">
+        <h2 id="contact-title">Contact</h2>
+        <p class="contact">
+          Email: <a id="email-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
+        </p>
+      </div>
 
-      <nav class="button-row">
+      <nav class="reveal button-row">
         <a id="btn-email" href="mailto:kanghelyu@foxmail.com" class="button">Email</a>
         <a id="btn-notes" href="notes.html" class="button">Notes</a>
         <a id="btn-projects" href="projects.html" class="button">Apps</a>
         <a id="btn-cv" href="cv.pdf" target="_blank" class="button">CV</a>
       </nav>
 
-      <div id="footer" class="footer">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
+      <div id="footer" class="footer reveal">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
     </div>
   </div>
 

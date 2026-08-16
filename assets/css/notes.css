@@ -1,12 +1,12 @@
 /* ============================================================
-   Kanghe Lyu site — notes.css
-   Notes grid and note cards.
+   Kanghe Lyu site — notes.css v2
+   Notes grid, card typography, staggered reveal.
    ============================================================ */
 
 .notes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
   margin-top: 20px;
   width: 100%;
 }
@@ -19,40 +19,44 @@
   word-break: break-word;
 }
 
+.note {
+  animation: fadeInUp 0.7s var(--ease-out-expo) both;
+}
+.note:nth-child(1) { animation-delay: 0.35s; }
+.note:nth-child(2) { animation-delay: 0.42s; }
+.note:nth-child(3) { animation-delay: 0.49s; }
+.note:nth-child(4) { animation-delay: 0.56s; }
+.note:nth-child(5) { animation-delay: 0.63s; }
+.note:nth-child(6) { animation-delay: 0.70s; }
+.note:nth-child(7) { animation-delay: 0.77s; }
+
 .note-title {
+  position: relative;
+  z-index: 1;
   min-width: 0;
-  font-size: 1.22rem;
-  color: #fff7e8;
-  margin-bottom: 12px;
+  font-size: 1.12rem;
+  color: var(--paper);
+  margin-bottom: 10px;
   overflow-wrap: anywhere;
   word-break: break-word;
-  text-shadow:
-    3px 3px 0 rgba(0, 0, 0, 0.42),
-    0 0 8px rgba(0, 0, 0, 0.28);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  line-height: 1.4;
 }
 
 .note-desc {
+  position: relative;
+  z-index: 1;
   min-width: 0;
   color: var(--subtle);
-  font-size: 1rem;
-  line-height: 1.7;
-  margin-bottom: 20px;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  margin-bottom: 18px;
 }
 
 .page .button {
   max-width: 100%;
   overflow-wrap: anywhere;
   word-break: break-word;
-}
-
-.note-actions {
-  min-width: 0;
-}
-
-@media (min-width: 761px) {
-  .notes-grid {
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  }
 }
 
 @media (max-width: 760px) {
@@ -62,7 +66,5 @@
 }
 
 @media (max-width: 360px) {
-  .note {
-    padding: 20px 14px 18px;
-  }
+  .note { padding: 18px 14px 16px; }
 }

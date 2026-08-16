@@ -1,157 +1,187 @@
 /* ============================================================
-   Kanghe Lyu site — page.css
-   Shared by notes.html / projects.html
-   Subpage shell, cards and subpage-sized buttons.
+   Kanghe Lyu site — page.css v2
+   Shared by notes.html / projects.html.
+   Subpage shell with canvas particles, cards, animations.
    ============================================================ */
 
 body {
-  background:
-    radial-gradient(circle at 20% 20%, rgba(168, 230, 230, 0.13), transparent 28%),
-    radial-gradient(circle at 85% 70%, rgba(244, 217, 160, 0.10), transparent 30%),
-    linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+  background: var(--bg-deep);
+}
+
+/* ---- Subtle particle canvas for subpages ---- */
+#bg-subtle {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--bg-deep);
+  pointer-events: none;
+  touch-action: none;
 }
 
 .page {
-  width: min(980px, 92vw);
+  position: relative;
+  z-index: 2;
+  width: min(960px, 92vw);
   margin: 0 auto;
-  padding: 96px 0 80px;
+  padding: 100px 0 80px;
+  animation: fadeIn 0.6s var(--ease-out-expo) 0.1s both;
 }
 
 .back {
   display: inline-flex;
-  margin-bottom: 42px;
-  color: var(--glow-cyan);
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 36px;
+  color: var(--cyan);
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.92rem;
   letter-spacing: 0.08em;
-  text-shadow:
-    3px 3px 0 rgba(0, 0, 0, 0.45),
-    0 0 10px rgba(168, 230, 230, 0.28);
+  transition: all 0.3s var(--ease-out-expo);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
 }
-
 .back:hover {
-  text-shadow:
-    3px 3px 0 rgba(0, 0, 0, 0.45),
-    0 0 18px rgba(168, 230, 230, 0.55);
-}
-
-/* Subpages use the cyan hover glow for the music toggle */
-.music-toggle:hover {
-  transform: translate(2px, 2px);
-  box-shadow:
-    2px 2px 0 rgba(0, 0, 0, 0.65),
-    0 0 28px rgba(168, 230, 230, 0.24);
+  color: var(--cyan-bright);
+  border-color: var(--glass-border);
+  background: var(--glass-bg);
+  text-shadow: 0 0 12px rgba(168, 230, 230, 0.4);
+  transform: translateX(-4px);
 }
 
 h1 {
-  font-size: clamp(3rem, 7vw, 5.2rem);
+  font-size: clamp(2.8rem, 6.5vw, 4.5rem);
   line-height: 1.05;
   font-weight: 400;
-  letter-spacing: -0.04em;
-  color: #fff7e8;
-  margin-bottom: 24px;
-  text-shadow:
-    4px 0 0 rgba(0, 0, 0, 0.60),
-    0 4px 0 rgba(0, 0, 0, 0.60),
-    4px 4px 0 rgba(0, 0, 0, 0.60),
-    0 0 20px rgba(168, 230, 230, 0.30);
+  letter-spacing: -0.03em;
+  color: var(--paper);
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px rgba(168, 230, 230, 0.12), 0 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeInUp 0.8s var(--ease-out-expo) 0.15s both;
 }
 
 .intro {
-  max-width: 720px;
-  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  max-width: 680px;
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
   line-height: 1.85;
-  color: #e8d9c0;
-  margin-bottom: 54px;
-  text-shadow:
-    3px 3px 0 rgba(0, 0, 0, 0.42),
-    0 0 8px rgba(0, 0, 0, 0.28);
+  color: var(--ink);
+  margin-bottom: 48px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  animation: fadeInUp 0.8s var(--ease-out-expo) 0.3s both;
 }
 
 h2 {
-  font-size: 1.35rem;
-  color: var(--math-gold);
-  letter-spacing: 0.08em;
-  margin: 46px 0 18px;
-  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.48);
+  font-size: 1.2rem;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin: 40px 0 16px;
+  text-shadow: 0 0 12px rgba(244, 217, 160, 0.2);
+  position: relative;
+  padding-left: 16px;
+  animation: fadeInUp 0.8s var(--ease-out-expo) 0.35s both;
+}
+h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--gold), var(--cyan-dim));
+  box-shadow: 0 0 8px rgba(244, 217, 160, 0.3);
 }
 
-/* Shared card chrome (notes grid + projects grid) */
+/* ---- Card chrome ---- */
 .note,
 .project {
   min-width: 0;
   max-width: 100%;
   padding: 24px 24px 22px;
-  border: 2px solid rgba(244, 217, 160, 0.46);
-  background: rgba(15, 28, 34, 0.34);
-  box-shadow:
-    5px 5px 0 rgba(0, 0, 0, 0.50),
-    0 0 20px rgba(168, 230, 230, 0.10),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: all 0.4s var(--ease-out-expo);
+  position: relative;
+  overflow: hidden;
+}
+.note::before,
+.project::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(168,230,230,0.04), transparent 50%, rgba(244,217,160,0.03));
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.note:hover,
+.project:hover {
+  border-color: rgba(168, 230, 230, 0.25);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft), 0 0 30px rgba(168, 230, 230, 0.1), 0 8px 32px rgba(0,0,0,0.3);
+}
+.note:hover::before,
+.project:hover::before {
+  opacity: 1;
 }
 
 .note-actions,
 .project-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
 }
 
-/* Subpage buttons: smaller than homepage hero buttons */
+/* ---- Subpage buttons ---- */
 .page .button {
-  padding: 10px 18px;
-  color: #f0e6d2;
+  padding: 9px 18px;
+  color: var(--paper);
   text-decoration: none;
-  font-size: 0.98rem;
-  border: 2px solid rgba(244, 217, 160, 0.62);
-  background: rgba(15, 28, 34, 0.38);
-  box-shadow:
-    3px 3px 0 rgba(0, 0, 0, 0.55),
-    0 0 14px rgba(168, 230, 230, 0.12);
-  transition: all 0.2s ease;
+  font-size: 0.88rem;
+  font-family: var(--font-body);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(244, 217, 160, 0.2);
+  background: rgba(15, 28, 34, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: all 0.3s var(--ease-out-expo);
+  position: relative;
+  z-index: 1;
 }
-
 .page .button:hover {
-  border-color: var(--math-gold);
-  color: #fff7e8;
-  transform: translate(2px, 2px);
-  box-shadow:
-    1px 1px 0 rgba(0, 0, 0, 0.65),
-    0 0 20px rgba(168, 230, 230, 0.24);
+  border-color: var(--gold);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(168, 230, 230, 0.15), 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .footer {
-  margin-top: 70px;
-  color: #c8b68a;
-  opacity: 0.82;
-  letter-spacing: 0.12em;
-  font-size: 0.98rem;
-  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.42);
+  margin-top: 60px;
+  color: var(--muted);
+  opacity: 0.7;
+  letter-spacing: 0.15em;
+  font-size: 0.88rem;
+  animation: fadeInUp 0.8s var(--ease-out-expo) 0.5s both;
 }
 
+/* ---- Responsive ---- */
 @media (max-width: 760px) {
   .page {
-    width: min(92vw, 980px);
-    padding: 180px 0 58px;
+    width: min(92vw, 960px);
+    padding: 160px 0 56px;
   }
-
-  .note,
-  .project {
-    padding: 22px 18px 20px;
-  }
-
-  .note-actions,
-  .project-actions {
-    gap: 10px;
-  }
-
-  .page .button {
-    padding: 10px 16px;
-  }
+  .note, .project { padding: 20px 18px 18px; }
+  .note-actions, .project-actions { gap: 8px; }
+  .page .button { padding: 8px 14px; font-size: 0.84rem; }
 }
 
 @media (max-width: 360px) {
-  .page {
-    width: 94vw;
-  }
+  .page { width: 94vw; }
 }
