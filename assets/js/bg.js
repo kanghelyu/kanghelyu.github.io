@@ -13,6 +13,29 @@
   if (!canvas) return;
   var ctx = canvas.getContext("2d");
   var w = 0, h = 0, time = 0, scrollY = 0;
+  var mouse = { x: -9999, y: -9999 };
+
+  /* ============ Invisible gravitational lens ============
+     Bends stars, particles and wireframes around the cursor.
+     No cursor visual is drawn — plain system cursor only. */
+
+  var LENS_R = 260;   // influence radius
+  var LENS_VOID = 26; // closest approach to the unseen mass
+
+  function warp(x, y) {
+    if (mouse.x < 0) return { x: x, y: y };
+    var dx = x - mouse.x, dy = y - mouse.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > LENS_R) return { x: x, y: y };
+    var t = 1 - dist / LENS_R;
+    var s = t * t;
+    var pull = s * s * 150;
+    var maxPull = Math.max(0, dist - LENS_VOID);
+    if (pull > maxPull) pull = maxPull;
+    var ux = dx / (dist || 1), uy = dy / (dist || 1);
+    var sw = s * 22; // tangential swirl
+    return { x: x - ux * pull - uy * sw, y: y - uy * pull + ux * sw };
+  }
 
   /* ============ Rotation ============ */
 
@@ -102,7 +125,8 @@
         var g = grid[i][j];
         var r = rot(g[0], g[1], g[2]);
         var k = scale / (8 - r[2]);
-        proj[i][j] = { x: cx + r[0] * k, y: cy + r[1] * k, d: r[2] };
+        var wp = warp(cx + r[0] * k, cy + r[1] * k);
+        proj[i][j] = { x: wp.x, y: wp.y, d: r[2] };
       }
     }
 
@@ -205,13 +229,14 @@
       var s = stars[i];
       var flicker = s.alpha + Math.sin(time * s.speed + s.phase) * 0.12;
       var a = Math.min(1, Math.max(0.05, flicker));
+      var wp = warp(s.x, s.y);
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(wp.x, wp.y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(200,220,240," + a.toFixed(3) + ")";
       ctx.fill();
       if (s.r > 0.9) {
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r * 3, 0, Math.PI * 2);
+        ctx.arc(wp.x, wp.y, s.r * 3, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(168,230,230," + (a * 0.10).toFixed(3) + ")";
         ctx.fill();
       }
@@ -247,26 +272,31 @@
   function drawParticles() {
     var i, j, p;
 
-    // update + draw dots
+    // update, then lens-warp every draw position once
+    var pts = [];
     for (i = 0; i < particles.length; i++) {
       p = particles[i];
       p.x += p.vx + Math.sin(time * 0.008 + p.phase) * 0.06;
       p.y += p.vy;
       if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
       if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
+      pts.push(warp(p.x, p.y));
+    }
 
+    for (i = 0; i < particles.length; i++) {
+      p = particles[i];
       var breathe = 0.55 + 0.45 * Math.sin(time * p.twinkle + p.phase);
       var a = p.alpha * breathe;
 
       if (p.orb) {
         // breathing halo
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3.2, 0, Math.PI * 2);
+        ctx.arc(pts[i].x, pts[i].y, p.r * 3.2, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.22).toFixed(3) + ")";
         ctx.fill();
       }
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.arc(pts[i].x, pts[i].y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(" + p.color + "," + a.toFixed(3) + ")";
       ctx.fill();
     }
@@ -274,14 +304,14 @@
     // soft links between nearby particles
     for (i = 0; i < particles.length; i++) {
       for (j = i + 1; j < particles.length; j++) {
-        var dx = particles[i].x - particles[j].x;
-        var dy = particles[i].y - particles[j].y;
+        var dx = pts[i].x - pts[j].x;
+        var dy = pts[i].y - pts[j].y;
         var d2 = dx * dx + dy * dy;
         if (d2 < 16900) {
           var a = 0.04 * (1 - Math.sqrt(d2) / 130);
           ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
           ctx.strokeStyle = "rgba(168,230,230," + a.toFixed(4) + ")";
           ctx.lineWidth = 0.5;
           ctx.stroke();
@@ -361,6 +391,11 @@
 
   window.addEventListener("resize", resize);
   window.addEventListener("scroll", function () { scrollY = window.scrollY; }, { passive: true });
+  window.addEventListener("mousemove", function (e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  window.addEventListener("mouseout", function () { mouse.x = -9999; mouse.y = -9999; });
 
   resize();
   initParticles();
