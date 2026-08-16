@@ -1,0 +1,46 @@
+/* ============================================================
+   Kanghe Lyu site — projects.css
+   Projects grid and project cards.
+   ============================================================ */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.project-icon {
+  font-size: 2.2rem;
+  margin-bottom: 6px;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.50);
+}
+
+.project-title {
+  font-size: 1.22rem;
+  color: #fff7e8;
+  margin-bottom: 12px;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.42),
+    0 0 8px rgba(0, 0, 0, 0.28);
+}
+
+.project-desc {
+  color: var(--subtle);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 761px) {
+  .projects-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .projects-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

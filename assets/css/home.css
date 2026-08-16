@@ -1,0 +1,133 @@
+/* ============================================================
+   Kanghe Lyu site — home.css
+   Homepage-only layout: canvas backdrop, overlay text, CV.
+   ============================================================ */
+
+html, body {
+  overflow-y: auto;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.button {
+  border-radius: 0;
+}
+
+#bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #0f1c22;
+  pointer-events: none;
+  touch-action: none;
+}
+
+.overlay-text {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 112px 10vw 72px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, rgba(15, 28, 34, 0.08), rgba(15, 28, 34, 0.22) 54%, rgba(15, 28, 34, 0.50) 100%);
+}
+
+.content-wrapper {
+  max-width: 860px;
+  width: 100%;
+  margin: auto 0;
+  pointer-events: auto;
+  filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.42));
+}
+
+.eyebrow { opacity: 0.98; }
+
+h1 {
+  font-size: clamp(3.2rem, 7vw, 5.8rem);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: #fff7e8;
+  margin-bottom: 22px;
+  text-shadow:
+    4px 0 0 rgba(0, 0, 0, 0.60),
+    0 4px 0 rgba(0, 0, 0, 0.60),
+    4px 4px 0 rgba(0, 0, 0, 0.60),
+    0 0 20px rgba(168, 230, 230, 0.30);
+}
+
+.subtitle {
+  font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+  line-height: 1.55;
+  color: var(--subtle);
+  max-width: 660px;
+  margin: 0 0 40px;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.45),
+    0 0 8px rgba(0, 0, 0, 0.30);
+}
+
+p {
+  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  line-height: 1.9;
+  color: #e8d9c0;
+  margin-bottom: 18px;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.42),
+    0 0 8px rgba(0, 0, 0, 0.28);
+}
+
+h2 {
+  font-size: 1.35rem;
+  color: var(--math-gold);
+  letter-spacing: 0.08em;
+  margin: 48px 0 16px;
+  text-align: left;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.48);
+}
+
+.contact {
+  text-align: left;
+  font-size: 1.15rem;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: flex-start;
+  margin-top: 50px;
+}
+
+.footer {
+  margin-top: 64px;
+  padding-bottom: 8px;
+  font-size: 1.02rem;
+  color: #c8b68a;
+  opacity: 0.84;
+  letter-spacing: 0.12em;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 760px) {
+  .overlay-text {
+    padding: 180px 8vw 52px;
+  }
+
+  .content-wrapper {
+    margin: 0;
+  }
+
+  .button-row {
+    gap: 14px;
+  }
+
+  .button {
+    padding: 12px 24px;
+  }
+}

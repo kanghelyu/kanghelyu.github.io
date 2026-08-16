@@ -1,0 +1,68 @@
+/* ============================================================
+   Kanghe Lyu site — notes.css
+   Notes grid and note cards.
+   ============================================================ */
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 22px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.intro,
+.note,
+.note-desc,
+.footer {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.note-title {
+  min-width: 0;
+  font-size: 1.22rem;
+  color: #fff7e8;
+  margin-bottom: 12px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.42),
+    0 0 8px rgba(0, 0, 0, 0.28);
+}
+
+.note-desc {
+  min-width: 0;
+  color: var(--subtle);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.page .button {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.note-actions {
+  min-width: 0;
+}
+
+@media (min-width: 761px) {
+  .notes-grid {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .notes-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 360px) {
+  .note {
+    padding: 20px 14px 18px;
+  }
+}

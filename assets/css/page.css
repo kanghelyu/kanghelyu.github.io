@@ -1,0 +1,157 @@
+/* ============================================================
+   Kanghe Lyu site — page.css
+   Shared by notes.html / projects.html
+   Subpage shell, cards and subpage-sized buttons.
+   ============================================================ */
+
+body {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(168, 230, 230, 0.13), transparent 28%),
+    radial-gradient(circle at 85% 70%, rgba(244, 217, 160, 0.10), transparent 30%),
+    linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+}
+
+.page {
+  width: min(980px, 92vw);
+  margin: 0 auto;
+  padding: 96px 0 80px;
+}
+
+.back {
+  display: inline-flex;
+  margin-bottom: 42px;
+  color: var(--glow-cyan);
+  text-decoration: none;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.45),
+    0 0 10px rgba(168, 230, 230, 0.28);
+}
+
+.back:hover {
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.45),
+    0 0 18px rgba(168, 230, 230, 0.55);
+}
+
+/* Subpages use the cyan hover glow for the music toggle */
+.music-toggle:hover {
+  transform: translate(2px, 2px);
+  box-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.65),
+    0 0 28px rgba(168, 230, 230, 0.24);
+}
+
+h1 {
+  font-size: clamp(3rem, 7vw, 5.2rem);
+  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  color: #fff7e8;
+  margin-bottom: 24px;
+  text-shadow:
+    4px 0 0 rgba(0, 0, 0, 0.60),
+    0 4px 0 rgba(0, 0, 0, 0.60),
+    4px 4px 0 rgba(0, 0, 0, 0.60),
+    0 0 20px rgba(168, 230, 230, 0.30);
+}
+
+.intro {
+  max-width: 720px;
+  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  line-height: 1.85;
+  color: #e8d9c0;
+  margin-bottom: 54px;
+  text-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.42),
+    0 0 8px rgba(0, 0, 0, 0.28);
+}
+
+h2 {
+  font-size: 1.35rem;
+  color: var(--math-gold);
+  letter-spacing: 0.08em;
+  margin: 46px 0 18px;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.48);
+}
+
+/* Shared card chrome (notes grid + projects grid) */
+.note,
+.project {
+  min-width: 0;
+  max-width: 100%;
+  padding: 24px 24px 22px;
+  border: 2px solid rgba(244, 217, 160, 0.46);
+  background: rgba(15, 28, 34, 0.34);
+  box-shadow:
+    5px 5px 0 rgba(0, 0, 0, 0.50),
+    0 0 20px rgba(168, 230, 230, 0.10),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+}
+
+.note-actions,
+.project-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Subpage buttons: smaller than homepage hero buttons */
+.page .button {
+  padding: 10px 18px;
+  color: #f0e6d2;
+  text-decoration: none;
+  font-size: 0.98rem;
+  border: 2px solid rgba(244, 217, 160, 0.62);
+  background: rgba(15, 28, 34, 0.38);
+  box-shadow:
+    3px 3px 0 rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(168, 230, 230, 0.12);
+  transition: all 0.2s ease;
+}
+
+.page .button:hover {
+  border-color: var(--math-gold);
+  color: #fff7e8;
+  transform: translate(2px, 2px);
+  box-shadow:
+    1px 1px 0 rgba(0, 0, 0, 0.65),
+    0 0 20px rgba(168, 230, 230, 0.24);
+}
+
+.footer {
+  margin-top: 70px;
+  color: #c8b68a;
+  opacity: 0.82;
+  letter-spacing: 0.12em;
+  font-size: 0.98rem;
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.42);
+}
+
+@media (max-width: 760px) {
+  .page {
+    width: min(92vw, 980px);
+    padding: 180px 0 58px;
+  }
+
+  .note,
+  .project {
+    padding: 22px 18px 20px;
+  }
+
+  .note-actions,
+  .project-actions {
+    gap: 10px;
+  }
+
+  .page .button {
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 360px) {
+  .page {
+    width: 94vw;
+  }
+}
