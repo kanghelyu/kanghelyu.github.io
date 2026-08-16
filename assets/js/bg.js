@@ -206,117 +206,150 @@
     }
   }
 
-  /* ============ Starfield ============ */
+  /* ============ Dense dust field (lens-warped) ============ */
 
-  var stars = [];
-  function initStars() {
-    stars = [];
-    var n = Math.round((w * h) / 16000);
+  var dust = [];
+  var DUST_COLORS = ["200,220,240", "168,230,230", "244,217,160"];
+
+  function initDust() {
+    dust = [];
+    var n = Math.min(520, Math.round((w * h) / 4000));
     for (var i = 0; i < n; i++) {
-      stars.push({
+      var c = Math.random();
+      dust.push({
         x: Math.random() * w,
         y: Math.random() * h,
-        r: 0.3 + Math.random() * 1.2,
-        alpha: 0.15 + Math.random() * 0.45,
+        r: 0.4 + Math.random() * 1.3,
+        alpha: 0.12 + Math.random() * 0.4,
         phase: Math.random() * Math.PI * 2,
-        speed: 0.005 + Math.random() * 0.015
+        speed: 0.004 + Math.random() * 0.014,
+        color: c < 0.62 ? 0 : (c < 0.82 ? 1 : 2)
       });
     }
   }
 
-  function drawStars() {
-    for (var i = 0; i < stars.length; i++) {
-      var s = stars[i];
-      var flicker = s.alpha + Math.sin(time * s.speed + s.phase) * 0.12;
-      var a = Math.min(1, Math.max(0.05, flicker));
-      var wp = warp(s.x, s.y);
-      ctx.beginPath();
-      ctx.arc(wp.x, wp.y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(200,220,240," + a.toFixed(3) + ")";
-      ctx.fill();
-      if (s.r > 0.9) {
-        ctx.beginPath();
-        ctx.arc(wp.x, wp.y, s.r * 3, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(168,230,230," + (a * 0.10).toFixed(3) + ")";
-        ctx.fill();
+  function drawDust() {
+    // grouped by color: one fillStyle switch per group, alpha via globalAlpha
+    for (var g = 0; g < 3; g++) {
+      ctx.fillStyle = "rgb(" + DUST_COLORS[g] + ")";
+      for (var i = 0; i < dust.length; i++) {
+        var d = dust[i];
+        if (d.color !== g) continue;
+        var a = d.alpha + Math.sin(time * d.speed + d.phase) * 0.1;
+        var wp = warp(d.x, d.y);
+        ctx.globalAlpha = Math.min(1, Math.max(0.03, a));
+        var s = d.r * (d.r > 1.2 ? 2 : 1.6);
+        ctx.fillRect(wp.x - s / 2, wp.y - s / 2, s, s);
       }
     }
+    ctx.globalAlpha = 1;
   }
 
-  /* ============ Drifting particle field ============
-     Two kinds: fine dust (small, gentle) and soft glow orbs
-     (larger, slow upward drift, breathing halo).            */
+  /* ============ Glow orbs with real gravity ============
+     Velocity/acceleration physics: softened inverse-square pull
+     toward the cursor plus a tangential term, so orbs visibly
+     orbit the lens and stream past it with motion streaks. */
 
-  var particles = [];
-  var PARTICLE_COUNT = 72;
+  var orbs = [];
+  var ORB_COUNT = 80;
 
-  function initParticles() {
-    particles = [];
-    for (var i = 0; i < PARTICLE_COUNT; i++) {
-      var orb = Math.random() < 0.28;
-      particles.push({
+  function initOrbs() {
+    orbs = [];
+    for (var i = 0; i < ORB_COUNT; i++) {
+      var o = {
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * (orb ? 0.14 : 0.24),
-        vy: (Math.random() - 0.5) * (orb ? 0.14 : 0.24) - (orb ? 0.07 : 0),
-        r: orb ? 1.8 + Math.random() * 2.4 : 0.7 + Math.random() * 1.2,
-        orb: orb,
-        alpha: (orb ? 0.12 : 0.06) + Math.random() * 0.10,
+        px: 0, py: 0,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: 0.9 + Math.random() * 2.1,
+        big: Math.random() < 0.3,
+        alpha: 0.10 + Math.random() * 0.14,
         phase: Math.random() * Math.PI * 2,
         twinkle: 0.004 + Math.random() * 0.012,
         color: Math.random() > 0.5 ? "168,230,230" : "244,217,160"
-      });
+      };
+      o.px = o.x; o.py = o.y;
+      orbs.push(o);
     }
   }
 
-  function drawParticles() {
-    var i, j, p;
+  function stepOrbs() {
+    for (var i = 0; i < orbs.length; i++) {
+      var p = orbs[i];
+      p.px = p.x; p.py = p.y;
 
-    // update, then lens-warp every draw position once
-    var pts = [];
-    for (i = 0; i < particles.length; i++) {
-      p = particles[i];
-      p.x += p.vx + Math.sin(time * 0.008 + p.phase) * 0.06;
-      p.y += p.vy;
-      if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
-      if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
-      pts.push(warp(p.x, p.y));
-    }
-
-    for (i = 0; i < particles.length; i++) {
-      p = particles[i];
-      var breathe = 0.55 + 0.45 * Math.sin(time * p.twinkle + p.phase);
-      var a = p.alpha * breathe;
-
-      if (p.orb) {
-        // breathing halo
-        ctx.beginPath();
-        ctx.arc(pts[i].x, pts[i].y, p.r * 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.22).toFixed(3) + ")";
-        ctx.fill();
-      }
-      ctx.beginPath();
-      ctx.arc(pts[i].x, pts[i].y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(" + p.color + "," + a.toFixed(3) + ")";
-      ctx.fill();
-    }
-
-    // soft links between nearby particles
-    for (i = 0; i < particles.length; i++) {
-      for (j = i + 1; j < particles.length; j++) {
-        var dx = pts[i].x - pts[j].x;
-        var dy = pts[i].y - pts[j].y;
+      if (mouse.x >= 0) {
+        var dx = mouse.x - p.x, dy = mouse.y - p.y;
         var d2 = dx * dx + dy * dy;
-        if (d2 < 16900) {
-          var a = 0.04 * (1 - Math.sqrt(d2) / 130);
+        var dist = Math.sqrt(d2) || 1;
+        var f = 2600 / (d2 + 2500);
+        var ux = dx / dist, uy = dy / dist;
+        var ax = ux * f - uy * f * 0.4;
+        var ay = uy * f + ux * f * 0.4;
+        p.vx = (p.vx + ax * 0.16) * 0.96;
+        p.vy = (p.vy + ay * 0.16) * 0.96;
+      } else {
+        p.vx = (p.vx + (Math.random() - 0.5) * 0.012) * 0.985;
+        p.vy = (p.vy + (Math.random() - 0.5) * 0.012) * 0.985;
+      }
+
+      var sp = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (sp > 2.6) { p.vx = p.vx / sp * 2.6; p.vy = p.vy / sp * 2.6; }
+
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < -16) p.x = w + 16; if (p.x > w + 16) p.x = -16;
+      if (p.y < -16) p.y = h + 16; if (p.y > h + 16) p.y = -16;
+    }
+  }
+
+  function drawOrbs() {
+    var i, j;
+
+    // soft links — cluster around the lens into a glowing web
+    for (i = 0; i < orbs.length; i++) {
+      for (j = i + 1; j < orbs.length; j++) {
+        var ldx = orbs[i].x - orbs[j].x;
+        var ldy = orbs[i].y - orbs[j].y;
+        var ld2 = ldx * ldx + ldy * ldy;
+        if (ld2 < 16900) {
+          var la = 0.05 * (1 - Math.sqrt(ld2) / 130);
           ctx.beginPath();
-          ctx.moveTo(pts[i].x, pts[i].y);
-          ctx.lineTo(pts[j].x, pts[j].y);
-          ctx.strokeStyle = "rgba(168,230,230," + a.toFixed(4) + ")";
+          ctx.moveTo(orbs[i].x, orbs[i].y);
+          ctx.lineTo(orbs[j].x, orbs[j].y);
+          ctx.strokeStyle = "rgba(168,230,230," + la.toFixed(4) + ")";
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
+    }
+
+    for (i = 0; i < orbs.length; i++) {
+      var p = orbs[i];
+      var breathe = 0.6 + 0.4 * Math.sin(time * p.twinkle + p.phase);
+      var a = p.alpha * breathe;
+
+      // motion streak
+      var mvx = p.x - p.px, mvy = p.y - p.py;
+      if (mvx * mvx + mvy * mvy > 0.5) {
+        ctx.beginPath();
+        ctx.moveTo(p.px, p.py);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = "rgba(" + p.color + "," + (a * 0.5).toFixed(3) + ")";
+        ctx.lineWidth = p.r * 0.8;
+        ctx.stroke();
+      }
+
+      if (p.big) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3.4, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.2).toFixed(3) + ")";
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(" + p.color + "," + a.toFixed(3) + ")";
+      ctx.fill();
     }
   }
 
@@ -362,8 +395,9 @@
     ctx.clearRect(0, 0, w, h);
     drawBackground();
     drawAmbientGlow();
-    drawStars();
-    drawParticles();
+    drawDust();
+    stepOrbs();
+    drawOrbs();
 
     var s = Math.min(w, h);
     var off = scrollY * 0.12;
@@ -386,7 +420,7 @@
     h = window.innerHeight;
     canvas.width = w;
     canvas.height = h;
-    initStars();
+    initDust();
   }
 
   window.addEventListener("resize", resize);
@@ -398,6 +432,6 @@
   window.addEventListener("mouseout", function () { mouse.x = -9999; mouse.y = -9999; });
 
   resize();
-  initParticles();
+  initOrbs();
   render();
 })();
