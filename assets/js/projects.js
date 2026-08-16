@@ -16,6 +16,9 @@
         intro: "A collection of tools and web apps I have built.",
         descDark: "A dark mode reader for The Stacks Project \u2014 the open-source textbook on algebraic geometry. Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.",
         descQinghe: "QingHe Ledger \u2014 A local-first, privacy-focused bilingual (Chinese/English) ledger app. No ads, no network required. Built with SwiftUI.",
+        descDflow: "A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.",
+        btnDflowSite: "Website",
+        btnDflowGH: "GitHub",
         btnDarkLanding: "Landing Page",
         btnDarkGH: "GitHub",
         btnQingheAPK: "Download APK",
@@ -30,6 +33,9 @@
         intro: "我开发的一些工具和网页应用。",
         descDark: "Stacks Project 深色模式阅读器。一键切换、支持系统偏好、快捷键，跨页面保持状态。",
         descQinghe: "青禾记账 — 本地优先、隐私友好的双语记账 App。无广告、无需网络，纯 SwiftUI 构建。",
+        descDflow: "DeepSeek Flow — 面向 DeepSeek Harness 的 Markdown 优先可视化工作流编辑器：画布连线、逻辑门、拓扑审查、一句话构建工作流。",
+        btnDflowSite: "官网",
+        btnDflowGH: "GitHub",
         btnDarkLanding: "入口页面",
         btnDarkGH: "GitHub",
         btnQingheAPK: "下载 APK",
@@ -51,6 +57,9 @@
 
     document.getElementById("desc-dark").textContent = t.descDark;
     document.getElementById("desc-qinghe").textContent = t.descQinghe;
+    document.getElementById("desc-dflow").textContent = t.descDflow;
+    document.getElementById("btn-dflow-site").textContent = t.btnDflowSite;
+    document.getElementById("btn-dflow-gh").textContent = t.btnDflowGH;
     document.getElementById("btn-dark-landing").textContent = t.btnDarkLanding;
     document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
     document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
