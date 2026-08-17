@@ -2,8 +2,8 @@
    Kanghe Lyu site — bg.js
    Shared math background for ALL pages:
      Torus / Klein bottle / Moebius strip (glow wireframe,
-     Moebius boundary edges highlighted), starfield, and a
-     rich drifting particle field with soft links.
+     Moebius boundary edges highlighted), and a drifting field
+     of geometric-representation-theory glyphs.
    ============================================================ */
 
 (function () {
@@ -114,9 +114,10 @@
 
   /* ============ Glowing wireframe ============ */
 
-  function drawSurface(grid, rot, cx, cy, scale, lineRGB, dotRGB, glowRGB, withEdges) {
+  function drawSurface(grid, rot, cx, cy, scale, lineRGB, dotRGB, glowRGB, withEdges, brightness) {
     var U = grid.length - 1, V = grid[0].length - 1;
     var i, j, p;
+    var glowBoost = brightness || 1;
 
     var proj = [];
     for (i = 0; i <= U; i++) {
@@ -132,7 +133,7 @@
 
     // soft halo behind the surface
     var halo = ctx.createRadialGradient(cx, cy, scale * 0.05, cx, cy, scale * 0.75);
-    halo.addColorStop(0, "rgba(" + glowRGB + ",0.05)");
+    halo.addColorStop(0, "rgba(" + glowRGB + "," + Math.min(0.10, 0.05 * glowBoost).toFixed(3) + ")");
     halo.addColorStop(1, "rgba(" + glowRGB + ",0)");
     ctx.fillStyle = halo;
     ctx.fillRect(cx - scale, cy - scale, scale * 2, scale * 2);
@@ -143,7 +144,7 @@
       for (j = 0; j < V; j++) {
         p = proj[i][j];
         var pu = proj[i + 1][j], pv = proj[i][j + 1];
-        var a1 = Math.max(0.10, Math.min(0.55, 0.28 + p.d * 0.09)) * 0.30;
+        var a1 = Math.min(0.85, Math.max(0.10, Math.min(0.55, 0.28 + p.d * 0.09)) * 0.30 * glowBoost);
         ctx.strokeStyle = "rgba(" + lineRGB + "," + a1.toFixed(3) + ")";
         ctx.beginPath();
         ctx.moveTo(p.x, p.y); ctx.lineTo(pu.x, pu.y);
@@ -158,7 +159,7 @@
       for (j = 0; j < V; j++) {
         p = proj[i][j];
         var pu2 = proj[i + 1][j], pv2 = proj[i][j + 1];
-        var a2 = Math.max(0.14, Math.min(0.65, 0.30 + p.d * 0.10));
+        var a2 = Math.min(0.95, Math.max(0.14, Math.min(0.65, 0.30 + p.d * 0.10)) * glowBoost);
         ctx.strokeStyle = "rgba(" + lineRGB + "," + a2.toFixed(3) + ")";
         ctx.beginPath();
         ctx.moveTo(p.x, p.y); ctx.lineTo(pu2.x, pu2.y);
@@ -192,7 +193,7 @@
       for (j = 0; j <= V; j++) {
         if ((i + j) % 4 !== 0) continue;
         p = proj[i][j];
-        var a = Math.min(0.85, Math.max(0.15, 0.35 + p.d * 0.12));
+        var a = Math.min(0.98, Math.max(0.15, 0.35 + p.d * 0.12) * glowBoost);
         var r2 = Math.max(0.6, 1 + (p.d + 1.5) * 0.35);
         ctx.beginPath();
         ctx.arc(p.x, p.y, r2 * 3, 0, Math.PI * 2);
@@ -206,30 +207,36 @@
     }
   }
 
-  /* ============ Dense dust field (lens-warped) ============ */
+  /* ============ Floating mathematical glyphs (lens-warped) ============ */
 
   var dust = [];
   var DUST_COLORS = ["200,220,240", "168,230,230", "244,217,160"];
+  var MATH_GLYPHS = ["χ", "λ", "ρ", "π", "Γ", "V", "G", "⊗", "⊕", "≅", "∂", "∇", "∞"];
+  var MATH_FONT = "STIX Two Math, Cambria Math, Times New Roman, serif";
 
   function initDust() {
     dust = [];
-    var n = Math.min(520, Math.round((w * h) / 4000));
+    var n = Math.min(240, Math.round((w * h) / 8500));
     for (var i = 0; i < n; i++) {
       var c = Math.random();
       dust.push({
         x: Math.random() * w,
         y: Math.random() * h,
         r: 0.8 + Math.random() * 1.6,
+        size: 9 + Math.random() * 7,
         alpha: 0.40 + Math.random() * 0.45,
         phase: Math.random() * Math.PI * 2,
         speed: 0.004 + Math.random() * 0.014,
-        color: c < 0.62 ? 0 : (c < 0.82 ? 1 : 2)
+        color: c < 0.62 ? 0 : (c < 0.82 ? 1 : 2),
+        glyph: MATH_GLYPHS[Math.floor(Math.random() * MATH_GLYPHS.length)]
       });
     }
   }
 
   function drawDust() {
-    // grouped by color: one fillStyle switch per group, alpha via globalAlpha
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    // Grouped by color to keep the canvas draw loop inexpensive.
     for (var g = 0; g < 3; g++) {
       ctx.fillStyle = "rgb(" + DUST_COLORS[g] + ")";
       for (var i = 0; i < dust.length; i++) {
@@ -238,20 +245,21 @@
         var a = d.alpha + Math.sin(time * d.speed + d.phase) * 0.15;
         var wp = warp(d.x, d.y);
         ctx.globalAlpha = Math.min(1, Math.max(0.08, a));
-        var s = d.r * (d.r > 1.6 ? 2.6 : 2.1);
-        ctx.fillRect(wp.x - s / 2, wp.y - s / 2, s, s);
+        var size = d.size * (0.92 + 0.08 * Math.sin(time * d.speed + d.phase));
+        ctx.font = size.toFixed(1) + "px " + MATH_FONT;
+        ctx.fillText(d.glyph, wp.x, wp.y);
       }
     }
     ctx.globalAlpha = 1;
   }
 
-  /* ============ Glow orbs with real gravity ============
+  /* ============ Moving glyphs with real gravity ============
      Velocity/acceleration physics: softened inverse-square pull
-     toward the cursor plus a tangential term, so orbs visibly
-     orbit the lens and stream past it with motion streaks. */
+     toward the cursor plus a tangential term, so glyphs visibly
+     orbit the lens and drift past it with restrained motion. */
 
   var orbs = [];
-  var ORB_COUNT = 80;
+  var ORB_COUNT = 42;
 
   function initOrbs() {
     orbs = [];
@@ -264,10 +272,12 @@
         vy: (Math.random() - 0.5) * 0.4,
         r: 1.2 + Math.random() * 2.4,
         big: Math.random() < 0.3,
+        size: 12 + Math.random() * 8,
         alpha: 0.5 + Math.random() * 0.35,
         phase: Math.random() * Math.PI * 2,
         twinkle: 0.004 + Math.random() * 0.012,
-        color: Math.random() > 0.5 ? "168,230,230" : "244,217,160"
+        color: Math.random() > 0.5 ? "168,230,230" : "244,217,160",
+        glyph: MATH_GLYPHS[Math.floor(Math.random() * MATH_GLYPHS.length)]
       };
       o.px = o.x; o.py = o.y;
       orbs.push(o);
@@ -305,6 +315,8 @@
 
   function drawOrbs() {
     var i, j;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
 
     // soft links — cluster around the lens into a glowing web
     for (i = 0; i < orbs.length; i++) {
@@ -313,7 +325,7 @@
         var ldy = orbs[i].y - orbs[j].y;
         var ld2 = ldx * ldx + ldy * ldy;
         if (ld2 < 16900) {
-          var la = 0.09 * (1 - Math.sqrt(ld2) / 130);
+          var la = 0.045 * (1 - Math.sqrt(ld2) / 130);
           ctx.beginPath();
           ctx.moveTo(orbs[i].x, orbs[i].y);
           ctx.lineTo(orbs[j].x, orbs[j].y);
@@ -329,27 +341,10 @@
       var breathe = 0.6 + 0.4 * Math.sin(time * p.twinkle + p.phase);
       var a = p.alpha * breathe;
 
-      // motion streak
-      var mvx = p.x - p.px, mvy = p.y - p.py;
-      if (mvx * mvx + mvy * mvy > 0.5) {
-        ctx.beginPath();
-        ctx.moveTo(p.px, p.py);
-        ctx.lineTo(p.x, p.y);
-        ctx.strokeStyle = "rgba(" + p.color + "," + (a * 0.8).toFixed(3) + ")";
-        ctx.lineWidth = p.r * 0.9;
-        ctx.stroke();
-      }
-
-      if (p.big) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 3.4, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(" + p.color + "," + (a * 0.3).toFixed(3) + ")";
-        ctx.fill();
-      }
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      var size = p.size * (p.big ? 1.18 : 1) * (0.88 + 0.12 * breathe);
+      ctx.font = size.toFixed(1) + "px " + MATH_FONT;
       ctx.fillStyle = "rgba(" + p.color + "," + a.toFixed(3) + ")";
-      ctx.fill();
+      ctx.fillText(p.glyph, p.x, p.y);
     }
   }
 
@@ -405,7 +400,7 @@
     drawSurface(TORUS, makeRotator(0.72 + time * 0.005, 0.55 + time * 0.007, 0.08),
       w * 0.24, h * 0.30 - off, s * 0.55, "168,230,230", "244,217,160", "168,230,230", false);
     drawSurface(KLEIN, makeRotator(0.34 + time * 0.006, -0.78 + time * 0.005, -0.18),
-      w * 0.78, h * 0.36 - off, s * 0.80, "244,217,160", "168,230,230", "244,217,160", false);
+      w * 0.78, h * 0.36 - off, s * 0.80, "255,231,170", "190,244,236", "255,231,170", false, 1.16);
     drawSurface(MOBIUS, makeRotator(1.05, -0.25 - time * 0.003, 0.12),
       w * 0.50, h * 0.76 - off, s * 0.50, "168,230,230", "244,217,160", "168,230,230", true);
 
