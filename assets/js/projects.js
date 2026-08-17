@@ -18,6 +18,7 @@
         descQinghe: "QingHe Ledger \u2014 A local-first, privacy-focused bilingual (Chinese/English) ledger app. No ads, no network required. Built with SwiftUI.",
         descDflow: "A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.",
         descAflow: "Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).",
+        descClick: "A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.",
         btnAflowSite: "Website",
         btnAflowGH: "GitHub",
         btnDflowSite: "Website",
@@ -26,6 +27,7 @@
         btnDarkGH: "GitHub",
         btnQingheAPK: "Download APK",
         btnQingheGH: "GitHub",
+        btnClickGH: "GitHub",
         footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
       },
       zh: {
@@ -38,6 +40,7 @@
         descQinghe: "青禾记账 — 本地优先、隐私友好的双语记账 App。无广告、无需网络，纯 SwiftUI 构建。",
         descDflow: "DeepSeek Flow — 面向 DeepSeek Harness 的 Markdown 优先可视化工作流编辑器：画布连线、逻辑门、拓扑审查、一句话构建工作流。",
         descAflow: "AgentFlow（af）— Markdown 优先的分步工作流：确定性逻辑门 + 零依赖 CLI + 可视化 Studio 画布 + 桌面宠物窗，适用于任何编码代理（ZCode / Claude Code / Codex CLI）。",
+        descClick: "click — 面向自有游戏或应用调试的本地 Android 连点录制与坐标脚本工具：支持录制短按、编辑时间，并绑定录制时的前台应用后再回放。",
         btnAflowSite: "官网",
         btnAflowGH: "GitHub",
         btnDflowSite: "官网",
@@ -46,6 +49,7 @@
         btnDarkGH: "GitHub",
         btnQingheAPK: "下载 APK",
         btnQingheGH: "GitHub",
+        btnClickGH: "GitHub",
         footer: "工具 · 项目 · 软件"
       }
     };
@@ -65,6 +69,7 @@
     document.getElementById("desc-qinghe").textContent = t.descQinghe;
     document.getElementById("desc-dflow").textContent = t.descDflow;
     document.getElementById("desc-aflow").textContent = t.descAflow;
+    document.getElementById("desc-click").textContent = t.descClick;
     document.getElementById("btn-aflow-site").textContent = t.btnAflowSite;
     document.getElementById("btn-aflow-gh").textContent = t.btnAflowGH;
     document.getElementById("btn-dflow-site").textContent = t.btnDflowSite;
@@ -73,6 +78,7 @@
     document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
     document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
     document.getElementById("btn-qinghe-gh").textContent = t.btnQingheGH;
+    document.getElementById("btn-click-gh").textContent = t.btnClickGH;
   }
 
   KangheSite.init(applyPageLanguage);
