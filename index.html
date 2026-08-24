@@ -3,72 +3,119 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kanghe Lyu</title>
-  <meta name="description" content="研究兴趣包括代数几何、表示论和数学物理。包含笔记、CV和联系方式。">
-  <meta name="keywords" content="吕康禾, KANGHE LYU, 数学, Math, 几何, geometry, 表示论, representation theory, 数学物理, mathematical physics, 四川大学, Sichuan University, 南方科技大学, SUSTech">
-  <link rel="stylesheet" href="assets/css/base.css?v=3" />
-  <link rel="stylesheet" href="assets/css/home.css?v=3" />
+  <title>Kanghe Lyu — Mathematics</title>
+  <meta name="description" content="Kanghe Lyu is a mathematics researcher interested in representation theory, noncommutative geometry, mathematical physics, and algebraic geometry." />
+  <meta name="keywords" content="吕康禾, KANGHE LYU, mathematics, geometry, representation theory, mathematical physics, Sichuan University, SUSTech" />
+  <meta name="theme-color" content="#071018" />
+  <link rel="canonical" href="https://kanghelyu.org/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Kanghe Lyu — Mathematics" />
+  <meta property="og:description" content="Research, notes, and projects by Kanghe Lyu." />
+  <meta property="og:url" content="https://kanghelyu.org/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Kanghe Lyu — Mathematics" />
+  <meta name="twitter:description" content="Research, notes, and projects by Kanghe Lyu." />
+  <link rel="stylesheet" href="assets/css/base.css?v=4" />
+  <link rel="stylesheet" href="assets/css/home.css?v=4" />
 </head>
 <body>
-  <canvas id="bg"></canvas>
+  <canvas id="bg" aria-hidden="true"></canvas>
 
-  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
-  <button id="music-toggle" class="music-toggle">♪ Music</button>
+  <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch language" aria-pressed="false">EN / 中文</button>
+  <button id="music-toggle" class="music-toggle" type="button" aria-label="Play background music" aria-pressed="false">♪ Music</button>
 
-  <div class="track-controls">
-    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
-    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
+  <div class="track-controls" aria-label="Music track controls">
+    <button id="prev-track" class="track-btn" type="button" aria-label="Previous track">⏮</button>
+    <button id="next-track" class="track-btn" type="button" aria-label="Next track">⏭</button>
   </div>
 
-  <div id="playlist-panel" class="playlist-panel collapsed">
-    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
-    <div id="playlist-list" class="playlist-list"></div>
+  <div id="playlist-panel" class="playlist-panel collapsed" aria-label="Music playlist">
+    <button id="playlist-toggle" class="playlist-toggle" type="button" aria-expanded="false" aria-controls="playlist-list">Playlist ▾</button>
+    <div id="playlist-list" class="playlist-list" role="list"></div>
   </div>
 
-  <audio id="bg-music" preload="auto"></audio>
+  <audio id="bg-music" preload="metadata"></audio>
 
   <div class="overlay-text">
-    <div class="content-wrapper">
-      <div id="eyebrow" class="eyebrow">MATHEMATICS · GEOMETRY · REPRESENTATION THEORY</div>
+    <header class="site-header content-wrapper">
+      <nav class="page-nav" aria-label="Primary navigation">
+        <a id="nav-research" href="#research">Research</a>
+        <a id="nav-experience" href="#experience">Experience</a>
+        <a id="nav-contact" href="#contact">Contact</a>
+      </nav>
 
-      <h1 id="name">Kanghe Lyu</h1>
+      <section class="hero" aria-labelledby="name">
+        <p id="eyebrow" class="eyebrow">MATHEMATICS · GEOMETRY · REPRESENTATION THEORY</p>
+        <h1 id="name">Kanghe Lyu</h1>
+        <p id="subtitle" class="subtitle">B.Sc. in Mathematics, Sichuan University (2022–2026)
+Ph.D. candidate at SUSTech SICM (2026–)</p>
+        <p id="hero-status" class="hero-status">Researcher · SUSTech SICM · Shenzhen</p>
 
-      <div id="subtitle" class="subtitle">
-        B.Sc. in Mathematics, Sichuan University (2022–2026)<br>Ph.D. candidate at SUSTech SICM (2026–)
-      </div>
+        <nav class="reveal button-row hero-actions" aria-label="Selected links">
+          <a id="btn-notes" href="notes.html" class="button button-primary">Notes</a>
+          <a id="btn-projects" href="projects.html" class="button">Apps</a>
+          <a id="btn-cv" href="cv.pdf" target="_blank" rel="noopener noreferrer" class="button">CV</a>
+          <a id="btn-email" href="mailto:kanghelyu@foxmail.com" class="button button-quiet">Email</a>
+        </nav>
+      </section>
+    </header>
 
-      <div class="reveal">
-        <p id="intro-p1">
-          My interests lie in representation theory, noncommutative geometry, mathematical physics, and algebraic geometry.
-        </p>
+    <main id="main-content" class="content-wrapper">
+      <section id="research" class="content-section reveal" aria-labelledby="research-title">
+        <div class="section-heading">
+          <p class="section-index">01</p>
+          <h2 id="research-title">Research</h2>
+        </div>
+        <div class="intro-copy">
+          <p id="intro-p1">My interests lie in representation theory, noncommutative geometry, mathematical physics, and algebraic geometry.</p>
+          <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, advised by Prof. Vyacheslav Futorny.</p>
+          <p id="intro-p3">This page contains my personal information, curriculum vitae, and mathematical notes or surveys.</p>
+        </div>
+        <div class="focus-grid" aria-label="Research areas">
+          <article class="focus-item">
+            <p class="focus-number">I</p>
+            <h3 id="focus-1-title">Representation theory</h3>
+            <p id="focus-1-text">Structure, symmetries, and the languages used to describe them.</p>
+          </article>
+          <article class="focus-item">
+            <p class="focus-number">II</p>
+            <h3 id="focus-2-title">Noncommutative geometry</h3>
+            <p id="focus-2-text">Geometry where algebra becomes the primary coordinate system.</p>
+          </article>
+          <article class="focus-item">
+            <p class="focus-number">III</p>
+            <h3 id="focus-3-title">Mathematical physics</h3>
+            <p id="focus-3-text">Connections between rigorous structures and physical intuition.</p>
+          </article>
+          <article class="focus-item">
+            <p class="focus-number">IV</p>
+            <h3 id="focus-4-title">Algebraic geometry</h3>
+            <p id="focus-4-text">Spaces, invariants, and the geometry hidden in equations.</p>
+          </article>
+        </div>
+        <aside class="music-callout" id="music-note">Use the music control to listen to AI music created to accompany this visual language.</aside>
+      </section>
 
-        <p id="intro-p2">
-          I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, advised by Prof. Vyacheslav Futorny.
-        </p>
-
-        <p id="intro-p3">
-          This page contains my personal information, curriculum vitae, and mathematical notes or surveys.
-        </p>
-      </div>
-
-      <div class="reveal reveal-delay-2 music-callout" id="music-note">
-        Click the music button in the upper-right corner to listen to AI music that I created to match the visual style of this website, adding a more immersive atmosphere while browsing (Some are sung by "AI languages").
-      </div>
-
-      <div class="reveal reveal-delay-1">
-        <h2 id="exp-title">Experience</h2>
-        <ul class="experience-list">
+      <section id="experience" class="content-section reveal" aria-labelledby="exp-title">
+        <div class="section-heading">
+          <p class="section-index">02</p>
+          <h2 id="exp-title">Experience</h2>
+        </div>
+        <ol class="experience-list">
           <li id="exp-p1">Summer School at New Uzbekistan University (Speakers: Pavel Etingof, Yuri Berest), 01/07/2024 – 15/07/2024.</li>
           <li id="exp-p2">International Mathematics Summer School at Westlake University, 06/07/2025 – 16/07/2025.</li>
           <li id="exp-p3">Visiting Program at New Uzbekistan University, 12/11/2025 – 23/01/2026.</li>
           <li id="exp-p4">Visiting Program at SUSTech, 12/03/2026 – 12/05/2026.</li>
           <li id="exp-p5">Summer School for Outstanding Mathematics Students, Sichuan University, 05/07/2026 – 19/07/2026.</li>
           <li id="exp-p6">Visiting Program at Institute for Problems of Information Transmission, Moscow, 05/07/2026 – 19/07/2026.</li>
-        </ul>
-      </div>
+        </ol>
+      </section>
 
-      <div class="reveal reveal-delay-2">
-        <h2 id="awards-title">Awards</h2>
+      <section id="awards" class="content-section reveal" aria-labelledby="awards-title">
+        <div class="section-heading">
+          <p class="section-index">03</p>
+          <h2 id="awards-title">Awards & projects</h2>
+        </div>
         <ul class="awards-list">
           <li id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</li>
           <li id="awards-p2">College Students' Innovative Entrepreneurial Training Plan Program, National Level.</li>
@@ -78,28 +125,26 @@
           <li id="awards-p6">Sichuan Provincial Comprehensive Quality Class A Certificate, 12/2024.</li>
           <li id="awards-p7">Sichuan University Outstanding Graduate, 10/2025.</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="reveal reveal-delay-1">
-        <h2 id="contact-title">Contact</h2>
-        <p class="contact">
-          Email: <a id="email-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a>
-        </p>
-      </div>
+      <section id="contact" class="content-section contact-section reveal" aria-labelledby="contact-title">
+        <div class="section-heading">
+          <p class="section-index">04</p>
+          <h2 id="contact-title">Contact</h2>
+        </div>
+        <p id="contact-lead">For mathematical conversation, collaboration, or a thoughtful exchange, write to:</p>
+        <p class="contact"><a id="email-link" href="mailto:kanghelyu@foxmail.com">kanghelyu@foxmail.com</a></p>
+      </section>
+    </main>
 
-      <nav class="reveal button-row">
-        <a id="btn-email" href="mailto:kanghelyu@foxmail.com" class="button">Email</a>
-        <a id="btn-notes" href="notes.html" class="button">Notes</a>
-        <a id="btn-projects" href="projects.html" class="button">Apps</a>
-        <a id="btn-cv" href="cv.pdf" target="_blank" class="button">CV</a>
-      </nav>
-
-      <div id="footer" class="footer reveal">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</div>
-    </div>
+    <footer class="site-footer content-wrapper">
+      <p id="footer" class="footer">GEOMETRY · REPRESENTATION THEORY · MATHEMATICAL PHYSICS</p>
+      <p class="footer-meta">© <span id="footer-year">2026</span> Kanghe Lyu</p>
+    </footer>
   </div>
 
-  <script src="assets/js/site.js?v=3"></script>
-  <script src="assets/js/home.js?v=3"></script>
-  <script src="assets/js/bg.js?v=9"></script>
+  <script src="assets/js/site.js?v=4"></script>
+  <script src="assets/js/home.js?v=4"></script>
+  <script src="assets/js/bg.js?v=10"></script>
 </body>
 </html>
