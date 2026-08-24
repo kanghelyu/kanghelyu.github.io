@@ -104,7 +104,7 @@
     const t = translations[lang] || translations.en;
     ids.forEach((id) => {
       const element = document.getElementById(id);
-      const key = id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+      const key = id === "btn-projects" ? "btnApps" : id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
       if (element && Object.prototype.hasOwnProperty.call(t, key)) element.textContent = t[key];
     });
     document.title = `${t.name} — Mathematics`;
