@@ -73,7 +73,6 @@
       item.className = "playlist-item";
       item.type = "button";
       item.dataset.index = String(index);
-      item.setAttribute("role", "listitem");
       item.textContent = getTrackName(index);
       item.addEventListener("click", async () => {
         try { await playTrack(index, 0); } catch (error) { console.info("Track playback was blocked:", error); }
