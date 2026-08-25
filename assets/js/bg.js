@@ -90,10 +90,16 @@
 
   let width = 0;
   let height = 0;
+  let dpr = 1;
   let time = 0;
   let frame = 0;
   let lastFrame = 0;
   let visible = !document.hidden;
+  // Pre-rendered once per size: everything behind the wireframes (gradient
+  // + surface halos) and everything in front of them (vignette). The frame
+  // loop then only blits these two layers and strokes the wireframes.
+  let staticLayer = null;
+  let vignetteLayer = null;
 
   function rotate(point, angles) {
     const [ax, ay, az] = angles;
@@ -113,13 +119,41 @@
     return { x: cx + rotated[0] * perspective, y: cy + rotated[1] * perspective };
   }
 
-  function drawGlow(cx, cy, radius, color, alpha) {
-    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  function drawGlow(context, cx, cy, radius, color, alpha) {
+    const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, radius);
     gradient.addColorStop(0, `rgba(${color},${alpha})`);
     gradient.addColorStop(0.32, `rgba(${color},${alpha * 0.34})`);
     gradient.addColorStop(1, `rgba(${color},0)`);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+    context.fillStyle = gradient;
+    context.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  }
+
+  function buildStaticLayers() {
+    staticLayer = document.createElement("canvas");
+    staticLayer.width = canvas.width;
+    staticLayer.height = canvas.height;
+    const sctx = staticLayer.getContext("2d");
+    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const gradient = sctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "#04080e");
+    gradient.addColorStop(0.5, "#081019");
+    gradient.addColorStop(1, "#060c15");
+    sctx.fillStyle = gradient;
+    sctx.fillRect(0, 0, width, height);
+    surfaces.forEach((surface) => {
+      drawGlow(sctx, width * surface.center[0], height * surface.center[1], Math.min(width, height) * surface.scale * 1.35, surface.color, 0.34);
+    });
+
+    vignetteLayer = document.createElement("canvas");
+    vignetteLayer.width = canvas.width;
+    vignetteLayer.height = canvas.height;
+    const vctx = vignetteLayer.getContext("2d");
+    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const vignette = vctx.createRadialGradient(width * 0.5, height * 0.45, Math.min(width, height) * 0.18, width * 0.5, height * 0.45, Math.max(width, height) * 0.8);
+    vignette.addColorStop(0, "rgba(0,0,0,0)");
+    vignette.addColorStop(1, "rgba(0,0,0,0.22)");
+    vctx.fillStyle = vignette;
+    vctx.fillRect(0, 0, width, height);
   }
 
   function drawSurface(surface) {
@@ -136,7 +170,6 @@
     const uMax = projected.length - 1;
     const vMax = projected[0].length - 1;
 
-    drawGlow(cx, cy, scale * 1.35, surface.color, 0.34);
     // One stroke per grid row instead of one per cell — same output,
     // an order of magnitude fewer path submissions per frame.
     const drawWireframe = (lineWidth, opacityScale, composite) => {
@@ -181,23 +214,6 @@
     }
   }
 
-  function drawBackground() {
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, "#04080e");
-    gradient.addColorStop(0.5, "#081019");
-    gradient.addColorStop(1, "#060c15");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  function drawVignette() {
-    const gradient = ctx.createRadialGradient(width * 0.5, height * 0.45, Math.min(width, height) * 0.18, width * 0.5, height * 0.45, Math.max(width, height) * 0.8);
-    gradient.addColorStop(0, "rgba(0,0,0,0)");
-    gradient.addColorStop(1, "rgba(0,0,0,0.22)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-  }
-
   function render(now) {
     frame = 0;
     if (!visible) return;
@@ -210,9 +226,9 @@
     }
     time = now;
     ctx.clearRect(0, 0, width, height);
-    drawBackground();
+    ctx.drawImage(staticLayer, 0, 0, width, height);
     surfaces.forEach(drawSurface);
-    drawVignette();
+    ctx.drawImage(vignetteLayer, 0, 0, width, height);
     if (animated) frame = requestAnimationFrame(render);
   }
 
@@ -223,10 +239,11 @@
   function applySize(w, h) {
     width = w;
     height = h;
-    const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.2 : 2);
+    dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.2 : 2);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildStaticLayers();
     render(0);
   }
 

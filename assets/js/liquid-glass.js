@@ -17,12 +17,17 @@
   const root = document.documentElement;
   root.classList.add(canFilter ? "liquid-glass-supported" : "liquid-glass-fallback");
 
-  const TARGET_SELECTOR = ".media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select";
+  const TARGET_SELECTOR = ".media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, input, textarea, select";
   // Elements already sitting inside a glass surface stay plain: the
   // container provides the material (no double refraction inside frames).
   const GLASS_CONTAINER_SELECTOR = ".media-dock, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet";
   document.querySelectorAll(TARGET_SELECTOR).forEach((element) => {
     if (element.parentElement && element.parentElement.closest(GLASS_CONTAINER_SELECTOR)) return;
+    element.classList.add("liquid-glass");
+  });
+  // The playlist popup lives inside the dock but is a surface in its own
+  // right — same material as the dock, not the plain nested fallback.
+  document.querySelectorAll(".playlist-panel").forEach((element) => {
     element.classList.add("liquid-glass");
   });
 
