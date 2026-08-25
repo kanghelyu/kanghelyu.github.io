@@ -68,19 +68,19 @@
 
   const SCENES = {
     full: [
-      // Torus & Klein bottle: bold wireframes; Möbius matches their opacity.
-      { name: "torus", grid: buildSurface("torus"), center: [0.22, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.95, coreWidth: 2.3, glowWidth: 4.4, glowFade: 0.26 },
-      { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.85, coreWidth: 2.3, glowWidth: 4.4, glowFade: 0.26 },
+      // Torus & Klein bottle: fine, crisp wireframes; Möbius matches opacity.
+      { name: "torus", grid: buildSurface("torus"), center: [0.22, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.95, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 },
+      { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.85, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 },
       { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.07, -0.09, 0.03], alpha: 0.9 }
     ],
     torus: [
-      { name: "torus", grid: buildSurface("torus"), center: [0.5, 0.46], scale: 1.12, color: palette.cyan, accent: palette.gold, angles: STATIC_VIEW, alpha: 0.95, coreWidth: 2.3, glowWidth: 4.4, glowFade: 0.26 }
+      { name: "torus", grid: buildSurface("torus"), center: [0.5, 0.46], scale: 1.12, color: palette.cyan, accent: palette.gold, angles: STATIC_VIEW, alpha: 0.95, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 }
     ],
     mobius: [
       { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.48], scale: 1.08, color: palette.blue, accent: palette.gold, angles: STATIC_VIEW, alpha: 0.9 }
     ],
     klein: [
-      { name: "klein", grid: buildSurface("klein"), center: [0.5, 0.44], scale: 1.18, color: palette.gold, accent: palette.cyan, angles: [0.9, -0.6, 0.42], alpha: 0.85, coreWidth: 2.3, glowWidth: 4.4, glowFade: 0.26 }
+      { name: "klein", grid: buildSurface("klein"), center: [0.5, 0.44], scale: 1.18, color: palette.gold, accent: palette.cyan, angles: [0.9, -0.6, 0.42], alpha: 0.85, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 }
     ]
   };
 
@@ -216,16 +216,30 @@
     if (animated) frame = requestAnimationFrame(render);
   }
 
-  function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.2 : 1.5);
+  let stableWidth = 0;
+  let stableHeight = 0;
+  let resizeTimer = 0;
+
+  function applySize(w, h) {
+    width = w;
+    height = h;
+    const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.2 : 2);
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     render(0);
+  }
+
+  function resize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    // Phone toolbars fire resize with small height deltas while scrolling;
+    // redrawing on those is what makes the fixed backdrop visibly jump.
+    // The element is stretched by CSS in the meantime, which is imperceptible.
+    if (w === stableWidth && Math.abs(h - stableHeight) < 140) return;
+    stableWidth = w;
+    stableHeight = h;
+    applySize(w, h);
   }
 
   if (animated) {
@@ -234,6 +248,9 @@
       if (visible && !frame) frame = requestAnimationFrame(render);
     });
   }
-  window.addEventListener("resize", resize, { passive: true });
+  window.addEventListener("resize", () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(resize, 200);
+  }, { passive: true });
   resize();
 })();
