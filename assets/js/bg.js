@@ -141,8 +141,8 @@
       {
         name: "torus",
         grid: buildSurface("torus"),
-        center: [0.5, 0.42],
-        scale: 1.28,
+        center: [0.5, 0.46],
+        scale: 1.22,
         color: palette.cyan,
         accent: palette.gold,
         speed: [0, 0, 0],
@@ -157,8 +157,8 @@
       {
         name: "mobius",
         grid: buildSurface("mobius"),
-        center: [0.5, 0.46],
-        scale: 1.22,
+        center: [0.5, 0.48],
+        scale: 1.17,
         color: palette.blue,
         accent: palette.gold,
         speed: [0, 0, 0],
@@ -173,8 +173,8 @@
       {
         name: "klein",
         grid: buildSurface("klein"),
-        center: [0.5, 0.46],
-        scale: 1.35,
+        center: [0.5, 0.44],
+        scale: 1.28,
         color: palette.gold,
         accent: palette.cyan,
         speed: [0, 0, 0],
@@ -182,7 +182,7 @@
         coreWidth: 1.8,
         glowWidth: 3.4,
         glowFade: 0.2,
-        view: [0.9, 0.62, 0.22]
+        view: [0.9, -0.6, 0.42]
       }
     ]
   };
@@ -304,6 +304,15 @@
     return list;
   }
 
+  function drawGlow(cx, cy, radius, color, alpha) {
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    gradient.addColorStop(0, "rgba(" + color + "," + alpha + ")");
+    gradient.addColorStop(0.32, "rgba(" + color + "," + alpha * 0.34 + ")");
+    gradient.addColorStop(1, "rgba(" + color + ",0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  }
+
   function drawSurface(surface, time) {
     const view = surface.view || STATIC_VIEW;
     const ax = view[0] + (surface.speed[0] || 0) * time;
@@ -312,6 +321,7 @@
     const cx = cssW * surface.center[0];
     const cy = cssH * surface.center[1];
     const dim = Math.min(cssW, cssH);
+    drawGlow(cx, cy, surface.scale * 0.5 * dim * 1.35, surface.color, 0.34);
     const grid = surface.grid;
     const rows = grid.length;
     const cols = grid[0].length;
@@ -359,9 +369,7 @@
       const y1 = segs[i * 5 + 1];
       const x2 = segs[i * 5 + 2];
       const y2 = segs[i * 5 + 3];
-      const z = segs[i * 5 + 4];
-      const depth = Math.max(0.25, Math.min(1, 1.35 - (z - 3.2) * 0.18));
-      const a = alpha * depth;
+      const a = alpha;
 
       ctx.strokeStyle = "rgba(" + surface.color + "," + (a * glowFade).toFixed(3) + ")";
       ctx.lineWidth = glow;
