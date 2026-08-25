@@ -5,18 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+  <link rel="stylesheet" href="../assets/css/base.css?v=7">
+  <script src="../assets/js/liquid-glass.js?v=1" defer></script>
+  <script src="../assets/js/bg.js?v=13" defer></script>
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: var(--bg); color: var(--text);
+      background: #071520; color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
     }
-    header {
-      background: var(--card); border-bottom: 1px solid var(--border);
-      padding: 2rem 1.5rem; text-align: center; position: relative;
+    #bg { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
+    header, main, footer { position: relative; z-index: 2; }
+    header { background: rgba(14, 34, 47, 0.54); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); }
+    main { background: transparent; }
+    .instructions, .preview-box, .pre, .file-links { position: relative; }
+    .glass-panel, .instructions, .preview-box, .pre, .file-links, .bookmarklet, .file-links a, .lang-toggle button {
+      border-color: rgba(190,245,245,0.28) !important;
+      background: linear-gradient(135deg, rgba(155,235,235,0.12), transparent 38%), rgba(16,35,48,0.56) !important;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.14) !important;
+      backdrop-filter: blur(18px) saturate(1.25);
+      -webkit-backdrop-filter: blur(18px) saturate(1.25);
     }
+
     header h1 { font-size: 1.8rem; font-weight: 700; }
     header h1 a { color: var(--accent); text-decoration: none; }
     header p { margin-top: 0.5rem; color: #a0aec0; font-size: 0.95rem; }
@@ -70,8 +82,9 @@
   </style>
 </head>
 <body>
+<canvas id="bg" aria-hidden="true"></canvas>
 
-<header>
+<header class="glass-panel">
   <div class="lang-toggle">
     <button id="lang-zh" class="active" onclick="setLang('zh')">中文</button>
     <button id="lang-en" onclick="setLang('en')">EN</button>
@@ -92,14 +105,14 @@
     <p data-lang="en" class="block">Drag the button below to your browser's bookmarks bar. Then click it on any Stacks Project page to toggle dark mode.</p>
 
     <p style="text-align:center;margin:1.5rem 0">
-      <a class="bookmarklet"
+      <a class="bookmarklet glass-interactive"
          href="javascript:(function(){var d=document,s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';d.body.appendChild(s);var l=d.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css';d.head.appendChild(l)})();"
          onclick="alert('把它拖到书签栏，不是点击这里。');return false;">
         🌙 Stacks Dark
       </a>
     </p>
 
-    <div class="instructions">
+    <div class="instructions glass-panel">
       <ol data-lang="zh" class="block">
         <li>按住上面的 <strong>「🌙 Stacks Dark」</strong> 按钮</li>
         <li>拖到浏览器的书签栏</li>
@@ -132,7 +145,7 @@
     <p data-lang="zh" class="block">打开 Stacks Project 页面的开发者工具（F12 → Console），粘贴以下代码然后回车：</p>
     <p data-lang="en" class="block">Open developer tools on any Stacks Project page (F12 → Console), paste the code and press Enter:</p>
 
-    <div class="pre"><code>var s=document.createElement('script');
+    <div class="pre glass-panel"><code>var s=document.createElement('script');
 s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js';
 document.body.appendChild(s);
 var l=document.createElement('link');
@@ -146,7 +159,7 @@ document.head.appendChild(l);</code></div>
     <h2 data-lang="zh">🖼 效果预览</h2>
     <h2 data-lang="en">🖼 Preview</h2>
 
-    <div class="preview-box">
+    <div class="preview-box glass-panel">
       <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
         <span style="font-size:0.8rem;background:#0f3460;padding:0.2rem 0.6rem;border-radius:4px">0001</span>
         <span style="color:#718096">Section 1.1</span>
@@ -170,7 +183,7 @@ document.head.appendChild(l);</code></div>
     <p data-lang="zh" class="block">你也可以直接引用这些文件（jsDelivr CDN，带正确 MIME 类型）：</p>
     <p data-lang="en" class="block">You can also reference these files directly via jsDelivr CDN (correct MIME types included):</p>
 
-    <div class="file-links">
+    <div class="file-links glass-panel">
       <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.css">dark-mode.css</a>
       <a href="https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@main/stacks-dark/dark-mode.js">dark-mode.js</a>
     </div>

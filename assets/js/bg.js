@@ -1,4 +1,8 @@
-/* Kanghe Lyu site — restrained mathematical light field */
+/*
+ * Shared mathematical background: Torus, Klein bottle and Möbius strip.
+ * The geometry is rendered as a restrained 2D wireframe so every page,
+ * including low-power devices, has a deterministic fallback.
+ */
 (function () {
   "use strict";
 
@@ -10,39 +14,218 @@
   const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const touchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
   const lowPower = touchDevice || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
-  const symbols = ["χ", "λ", "ρ", "π", "∂", "∞", "⊗", "Γ"];
-  const mathFont = "STIX Two Math, Cambria Math, Times New Roman, serif";
+  const widthLimit = lowPower ? 26 : 36;
+  const heightLimit = lowPower ? 12 : 18;
+  const palette = {
+    cyan: "168,230,230",
+    gold: "244,217,160",
+    blue: "113,181,206"
+  };
   const pointer = { x: -9999, y: -9999 };
-  const lights = [
-    { x: 0.16, y: 0.2, radius: 0.55, color: "168,230,230", speed: 0.00014, phase: 0.2 },
-    { x: 0.82, y: 0.42, radius: 0.48, color: "244,217,160", speed: 0.00011, phase: 2.1 },
-    { x: 0.52, y: 0.88, radius: 0.42, color: "105,157,180", speed: 0.00009, phase: 4.2 }
-  ];
+  const mathGlyphs = ["χ", "λ", "ρ", "π", "∂", "∞", "⊗", "Γ"];
+  const mathFont = "STIX Two Math, Cambria Math, Times New Roman, serif";
   let width = 0;
   let height = 0;
   let dpr = 1;
   let time = 0;
   let scrollY = 0;
   let visible = !document.hidden;
-  let frameId = 0;
+  let frame = 0;
   let lastFrame = 0;
   let texture = [];
 
+  function buildSurface(kind) {
+    const grid = [];
+    const uCount = kind === "mobius" ? widthLimit + 6 : widthLimit;
+    const vCount = kind === "mobius" ? Math.max(8, heightLimit - 4) : heightLimit;
+    for (let i = 0; i <= uCount; i += 1) {
+      const row = [];
+      const u = (i / uCount) * Math.PI * 2;
+      for (let j = 0; j <= vCount; j += 1) {
+        const v = (j / vCount) * Math.PI * 2;
+        if (kind === "torus") {
+          const R = 1.85;
+          const r = 0.72;
+          row.push([(R + r * Math.cos(v)) * Math.cos(u), (R + r * Math.cos(v)) * Math.sin(u), r * Math.sin(v)]);
+        } else if (kind === "klein") {
+          let x;
+          let z;
+          if (u < Math.PI) {
+            x = 3 * Math.cos(u) * (1 + Math.sin(u)) + 2 * (1 - Math.cos(u) / 2) * Math.cos(u) * Math.cos(v);
+            z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
+          } else {
+            x = 3 * Math.cos(u) * (1 + Math.sin(u)) + 2 * (1 - Math.cos(u) / 2) * Math.cos(v + Math.PI);
+            z = -8 * Math.sin(u);
+          }
+          row.push([x * 0.19, -2 * (1 - Math.cos(u) / 2) * Math.sin(v) * 0.19, z * 0.19]);
+        } else {
+          const strip = -0.55 + (1.1 * j) / vCount;
+          const R = 1.8;
+          row.push([(R + strip * Math.cos(u / 2)) * Math.cos(u), (R + strip * Math.cos(u / 2)) * Math.sin(u), strip * Math.sin(u / 2)]);
+        }
+      }
+      grid.push(row);
+    }
+    return grid;
+  }
+
+  const surfaces = [
+    { name: "torus", grid: buildSurface("torus"), center: [0.22, 0.3], scale: 0.48, color: palette.cyan, accent: palette.gold, speed: [0.0007, 0.0009, 0.00025], alpha: 0.42 },
+    { name: "klein", grid: buildSurface("klein"), center: [0.79, 0.39], scale: 0.64, color: palette.gold, accent: palette.cyan, speed: [0.0005, 0.0008, -0.0002], alpha: 0.34 },
+    { name: "mobius", grid: buildSurface("mobius"), center: [0.51, 0.78], scale: 0.43, color: palette.blue, accent: palette.gold, speed: [0.0004, -0.00045, 0.00015], alpha: 0.38 }
+  ];
+
+  function rotate(point, angles) {
+    const [ax, ay, az] = angles;
+    const ca = Math.cos(ax), sa = Math.sin(ax);
+    const cy = Math.cos(ay), sy = Math.sin(ay);
+    const cz = Math.cos(az), sz = Math.sin(az);
+    const y1 = point[1] * ca - point[2] * sa;
+    const z1 = point[1] * sa + point[2] * ca;
+    const x2 = point[0] * cy + z1 * sy;
+    const z2 = -point[0] * sy + z1 * cy;
+    return [x2 * cz - y1 * sz, x2 * sz + y1 * cz, z2];
+  }
+
+  function warp(x, y) {
+    if (touchDevice || pointer.x < 0) return { x, y };
+    const dx = x - pointer.x;
+    const dy = y - pointer.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > 230) return { x, y };
+    const strength = Math.pow(1 - distance / 230, 2);
+    const pull = Math.min(strength * 16, Math.max(0, distance - 18));
+    const ux = dx / (distance || 1);
+    const uy = dy / (distance || 1);
+    return { x: x - ux * pull - uy * strength * 5, y: y - uy * pull + ux * strength * 5 };
+  }
+
   function initTexture() {
     texture = [];
-    const count = lowPower ? 7 : 12;
-    for (let index = 0; index < count; index += 1) {
+    const count = lowPower ? 10 : 18;
+    for (let i = 0; i < count; i += 1) {
       texture.push({
         x: Math.random(),
         y: Math.random(),
-        size: 18 + Math.random() * 14,
-        alpha: 0.105 + Math.random() * 0.075,
+        size: 17 + Math.random() * 15,
+        alpha: 0.08 + Math.random() * 0.08,
         phase: Math.random() * Math.PI * 2,
-        speed: 0.00018 + Math.random() * 0.00024,
-        symbol: symbols[index % symbols.length],
-        color: index % 3 === 0 ? "244,217,160" : "168,230,230"
+        symbol: mathGlyphs[i % mathGlyphs.length],
+        color: i % 4 === 0 ? palette.gold : palette.cyan
       });
     }
+  }
+
+  function project(point, angles, cx, cy, scale) {
+    const rotated = rotate(point, angles);
+    const perspective = scale / (7.5 - rotated[2]);
+    return warp(cx + rotated[0] * perspective, cy + rotated[1] * perspective);
+  }
+
+  function drawGlow(cx, cy, radius, color, alpha) {
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    gradient.addColorStop(0, `rgba(${color},${alpha})`);
+    gradient.addColorStop(0.32, `rgba(${color},${alpha * 0.34})`);
+    gradient.addColorStop(1, `rgba(${color},0)`);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  }
+
+  function drawSurface(surface, index) {
+    const seconds = time * 0.001;
+    const angles = [
+      0.7 + seconds * surface.speed[0],
+      0.4 + seconds * surface.speed[1],
+      0.08 + seconds * surface.speed[2]
+    ];
+    const cx = width * surface.center[0];
+    const cy = height * surface.center[1] - scrollY * (0.025 + index * 0.018);
+    const scale = Math.min(width, height) * surface.scale;
+    const projected = surface.grid.map((row) => row.map((point) => project(point, angles, cx, cy, scale)));
+    const uMax = projected.length - 1;
+    const vMax = projected[0].length - 1;
+
+    drawGlow(cx, cy, scale * 0.78, surface.color, 0.055);
+    ctx.lineWidth = lowPower ? 0.8 : 1.05;
+    for (let i = 0; i < uMax; i += 1) {
+      for (let j = 0; j < vMax; j += 1) {
+        const point = projected[i][j];
+        const nextU = projected[i + 1][j];
+        const nextV = projected[i][j + 1];
+        ctx.strokeStyle = `rgba(${surface.color},${(surface.alpha * (0.66 + (i % 5) * 0.045)).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(point.x, point.y);
+        ctx.lineTo(nextU.x, nextU.y);
+        ctx.moveTo(point.x, point.y);
+        ctx.lineTo(nextV.x, nextV.y);
+        ctx.stroke();
+      }
+    }
+
+    if (surface.name === "mobius") {
+      ctx.lineWidth = lowPower ? 1.2 : 1.8;
+      [0, vMax].forEach((edge) => {
+        for (let i = 0; i < uMax; i += 1) {
+          const first = projected[i][edge];
+          const second = projected[i + 1][edge];
+          ctx.strokeStyle = `rgba(${surface.accent},0.58)`;
+          ctx.beginPath();
+          ctx.moveTo(first.x, first.y);
+          ctx.lineTo(second.x, second.y);
+          ctx.stroke();
+        }
+      });
+    }
+  }
+
+  function drawTexture() {
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    texture.forEach((item) => {
+      const drift = reducedMotion ? 0 : Math.sin(time * 0.0008 + item.phase) * 0.018;
+      ctx.globalAlpha = item.alpha;
+      ctx.fillStyle = `rgb(${item.color})`;
+      ctx.font = `${item.size}px ${mathFont}`;
+      ctx.fillText(item.symbol, width * (item.x + drift), height * item.y - scrollY * 0.018);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function drawBackground() {
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, "#071520");
+    gradient.addColorStop(0.48, "#0b2030");
+    gradient.addColorStop(1, "#0b1723");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+    drawGlow(width * 0.22, height * 0.22, Math.max(width, height) * 0.56, palette.cyan, 0.12);
+    drawGlow(width * 0.82, height * 0.56, Math.max(width, height) * 0.48, palette.gold, 0.09);
+    drawGlow(width * 0.48, height * 0.92, Math.max(width, height) * 0.42, palette.blue, 0.08);
+  }
+
+  function drawVignette() {
+    const gradient = ctx.createRadialGradient(width * 0.5, height * 0.45, Math.min(width, height) * 0.18, width * 0.5, height * 0.45, Math.max(width, height) * 0.8);
+    gradient.addColorStop(0, "rgba(0,0,0,0)");
+    gradient.addColorStop(1, "rgba(0,0,0,0.24)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function render(now) {
+    frame = 0;
+    if (!visible) return;
+    if (!reducedMotion && now - lastFrame < (lowPower ? 52 : 32)) {
+      frame = requestAnimationFrame(render);
+      return;
+    }
+    lastFrame = now;
+    time += 1;
+    ctx.clearRect(0, 0, width, height);
+    drawBackground();
+    surfaces.forEach(drawSurface);
+    drawTexture();
+    drawVignette();
+    if (!reducedMotion) frame = requestAnimationFrame(render);
   }
 
   function resize() {
@@ -58,107 +241,15 @@
     render(0);
   }
 
-  function drawBase() {
-    const base = ctx.createLinearGradient(0, 0, width, height);
-    base.addColorStop(0, "#060d14");
-    base.addColorStop(0.48, "#091520");
-    base.addColorStop(1, "#071018");
-    ctx.fillStyle = base;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  function drawLight(light, index) {
-    const drift = reducedMotion ? 0 : Math.sin(time * light.speed + light.phase) * 0.08;
-    const x = width * (light.x + drift * (index % 2 === 0 ? 1 : -1));
-    const y = height * (light.y + Math.cos(time * light.speed * 0.8 + light.phase) * 0.06);
-    const radius = Math.max(width, height) * light.radius;
-    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-    gradient.addColorStop(0, `rgba(${light.color},0.14)`);
-    gradient.addColorStop(0.35, `rgba(${light.color},0.055)`);
-    gradient.addColorStop(1, `rgba(${light.color},0)`);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  function drawRibbon(offset, color, alpha) {
-    const amplitude = Math.min(width, height) * 0.11;
-    const baseline = height * (0.18 + offset);
-    ctx.beginPath();
-    for (let x = -40; x <= width + 40; x += 24) {
-      const wave = Math.sin(x * 0.006 + time * 0.00032 + offset * 10) * amplitude;
-      const y = baseline + wave + scrollY * (offset - 0.25) * 0.035;
-      if (x === -40) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.strokeStyle = `rgba(${color},${alpha})`;
-    ctx.lineWidth = 1;
-    ctx.stroke();
-  }
-
-  function drawTexture() {
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    texture.forEach((item) => {
-      const drift = reducedMotion ? 0 : Math.sin(time * item.speed + item.phase) * 0.035;
-      const x = width * (item.x + drift);
-      const y = height * (item.y + Math.cos(time * item.speed * 0.7 + item.phase) * 0.025) - scrollY * 0.035;
-      ctx.globalAlpha = item.alpha;
-      ctx.fillStyle = `rgb(${item.color})`;
-      ctx.font = `${item.size}px ${mathFont}`;
-      ctx.fillText(item.symbol, x, y);
-    });
-    ctx.globalAlpha = 1;
-  }
-
-  function drawPointerGlow() {
-    if (touchDevice || pointer.x < 0) return;
-    const radius = Math.min(220, Math.max(110, Math.min(width, height) * 0.22));
-    const gradient = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, radius);
-    gradient.addColorStop(0, "rgba(168,230,230,0.045)");
-    gradient.addColorStop(0.42, "rgba(168,230,230,0.012)");
-    gradient.addColorStop(1, "rgba(168,230,230,0)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(pointer.x - radius, pointer.y - radius, radius * 2, radius * 2);
-  }
-
-  function drawVignette() {
-    const gradient = ctx.createRadialGradient(width * 0.5, height * 0.48, Math.min(width, height) * 0.2, width * 0.5, height * 0.48, Math.max(width, height) * 0.76);
-    gradient.addColorStop(0, "rgba(0,0,0,0)");
-    gradient.addColorStop(1, "rgba(0,0,0,0.38)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
-  }
-
-  function render(now) {
-    frameId = 0;
-    if (!visible) return;
-    if (!reducedMotion && now - lastFrame < (lowPower ? 55 : 34)) {
-      frameId = requestAnimationFrame(render);
-      return;
-    }
-    lastFrame = now;
-    time += 1;
-    drawBase();
-    lights.forEach(drawLight);
-    drawRibbon(0.04, "168,230,230", 0.12);
-    drawRibbon(0.38, "244,217,160", 0.08);
-    drawRibbon(0.72, "168,230,230", 0.07);
-    drawTexture();
-    drawPointerGlow();
-    drawVignette();
-    if (!reducedMotion) frameId = requestAnimationFrame(render);
-  }
-
   document.addEventListener("visibilitychange", () => {
     visible = !document.hidden;
-    if (visible && !reducedMotion && !frameId) frameId = requestAnimationFrame(render);
+    if (visible && !reducedMotion && !frame) frame = requestAnimationFrame(render);
   });
   window.addEventListener("resize", resize, { passive: true });
   window.addEventListener("scroll", () => { scrollY = window.scrollY; }, { passive: true });
   if (!touchDevice) {
-    window.addEventListener("mousemove", (event) => { pointer.x = event.clientX; pointer.y = event.clientY; }, { passive: true });
-    window.addEventListener("mouseout", () => { pointer.x = -9999; pointer.y = -9999; }, { passive: true });
+    window.addEventListener("pointermove", (event) => { pointer.x = event.clientX; pointer.y = event.clientY; }, { passive: true });
+    window.addEventListener("pointerleave", () => { pointer.x = -9999; pointer.y = -9999; }, { passive: true });
   }
-
   resize();
 })();
