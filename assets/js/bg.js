@@ -21,7 +21,6 @@
     gold: "244,217,160",
     blue: "113,181,206"
   };
-  const pointer = { x: -9999, y: -9999 };
   const mathGlyphs = ["χ", "λ", "ρ", "π", "∂", "∞", "⊗", "Γ"];
   const mathFont = "STIX Two Math, Cambria Math, Times New Roman, serif";
   let width = 0;
@@ -86,25 +85,6 @@
     return [x2 * cz - y1 * sz, x2 * sz + y1 * cz, z2];
   }
 
-  function warp(x, y) {
-    if (touchDevice || pointer.x < 0) return { x, y };
-    const dx = x - pointer.x;
-    const dy = y - pointer.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const lensRadius = Math.min(width, height) * 0.58;
-    if (distance > lensRadius) return { x, y };
-    const normalized = 1 - distance / lensRadius;
-    const strength = normalized * normalized * (3 - 2 * normalized);
-    const pull = Math.min(strength * 52, Math.max(0, distance - 12));
-    const twist = strength * 28;
-    const ux = dx / (distance || 1);
-    const uy = dy / (distance || 1);
-    return {
-      x: x - ux * pull - uy * twist,
-      y: y - uy * pull + ux * twist
-    };
-  }
-
   function initTexture() {
     texture = [];
     const count = lowPower ? 10 : 18;
@@ -124,7 +104,7 @@
   function project(point, angles, cx, cy, scale) {
     const rotated = rotate(point, angles);
     const perspective = scale / (7.5 - rotated[2]);
-    return warp(cx + rotated[0] * perspective, cy + rotated[1] * perspective);
+    return { x: cx + rotated[0] * perspective, y: cy + rotated[1] * perspective };
   }
 
   function drawGlow(cx, cy, radius, color, alpha) {
@@ -174,23 +154,33 @@
 
     drawWireframe(lowPower ? 1.35 : 1.85, 0.055, "lighter");
     drawWireframe(lowPower ? 0.95 : 1.3, 1, "source-over");
+    drawBoundaryGlow(projected, uMax, vMax, surface.color, surface.name === "mobius" ? surface.accent : null);
+  }
 
-    if (surface.name === "mobius") {
+  function drawBoundaryGlow(projected, uMax, vMax, color, accent) {
+    const paths = [
+      Array.from({ length: uMax + 1 }, (_, i) => projected[i][0]),
+      Array.from({ length: uMax + 1 }, (_, i) => projected[i][vMax]),
+      Array.from({ length: vMax + 1 }, (_, j) => projected[0][j]),
+      Array.from({ length: vMax + 1 }, (_, j) => projected[uMax][j])
+    ];
+    const strokePaths = (lineWidth, strokeStyle, composite) => {
       ctx.save();
-      ctx.lineWidth = lowPower ? 1.1 : 1.7;
-      [0, vMax].forEach((edge) => {
-        for (let i = 0; i < uMax; i += 1) {
-          const first = projected[i][edge];
-          const second = projected[i + 1][edge];
-          ctx.strokeStyle = `rgba(${surface.accent},0.76)`;
-          ctx.beginPath();
-          ctx.moveTo(first.x, first.y);
-          ctx.lineTo(second.x, second.y);
-          ctx.stroke();
-        }
+      ctx.globalCompositeOperation = composite;
+      ctx.lineWidth = lineWidth;
+      ctx.strokeStyle = strokeStyle;
+      paths.forEach((path) => {
+        ctx.beginPath();
+        path.forEach((point, index) => {
+          if (index === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        });
+        ctx.stroke();
       });
       ctx.restore();
-    }
+    };
+    strokePaths(lowPower ? 1.8 : 2.45, `rgba(${color},0.17)`, "lighter");
+    if (accent) strokePaths(lowPower ? 1.15 : 1.5, `rgba(${accent},0.66)`, "source-over");
   }
 
   function drawTexture() {
@@ -261,9 +251,5 @@
     if (visible && !reducedMotion && !frame) frame = requestAnimationFrame(render);
   });
   window.addEventListener("resize", resize, { passive: true });
-  if (!touchDevice) {
-    window.addEventListener("pointermove", (event) => { pointer.x = event.clientX; pointer.y = event.clientY; }, { passive: true });
-    window.addEventListener("pointerleave", () => { pointer.x = -9999; pointer.y = -9999; }, { passive: true });
-  }
   resize();
 })();
