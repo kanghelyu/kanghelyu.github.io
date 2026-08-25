@@ -117,7 +117,10 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 
 
 
-/* Liquid Glass surfaces, adapted from shuding/liquid-glass (MIT). */
+/* Liquid Glass surfaces. Real backdrop refraction is injected at runtime by
+   assets/js/liquid-glass.js (web port of the Kyant0/AndroidLiquidGlass
+   technique): an inline SVG displacement filter is attached per element via
+   inline backdrop-filter in Chromium; other engines keep this frosted look. */
 :root {
   --glass-border: rgba(220, 255, 255, 0.38);
   --glass-highlight: rgba(255, 255, 255, 0.28);
@@ -126,14 +129,14 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select {
   position: relative;
   border: 1px solid var(--glass-border);
-  background: transparent;
+  background: linear-gradient(120deg, rgba(160, 224, 244, 0.09), rgba(160, 224, 244, 0.03) 42%, rgba(255, 240, 214, 0.06));
   box-shadow: var(--glass-shadow);
   backdrop-filter: saturate(1.35) contrast(1.05);
   -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
   isolation: isolate;
   overflow: clip;
 }
-.media-dock.liquid-glass { overflow: visible; }
+.media-dock.liquid-glass { background: rgba(7, 16, 24, 0.58); overflow: visible; }
 .media-dock.liquid-glass::after { display: none; }
 .liquid-glass::before, .glass-panel::before, .note::before, .project::before, .instructions::before, .preview-box::before, .bookmarklet::before, .file-links::before {
   position: absolute;
@@ -155,22 +158,11 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .liquid-glass::after, .glass-panel::after, .note::after, .project::after, .instructions::after, .preview-box::after, .bookmarklet::after, .file-links::after {
   display: none;
 }
-.media-dock {
-  position: fixed;
-  right: 24px;
-  bottom: 22px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  min-height: 46px;
-  padding: 4px 6px;
-  border-radius: 20px;
-}
+/* Re-assert the dock's fixed positioning after the glass group above,
+   which resets position to relative for the refraction layers. */
+.media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; border-radius: 20px; }
 .liquid-glass.media-dock { overflow: visible; }
 .liquid-glass.media-dock::after { display: none; }
-.liquid-glass-supported .liquid-glass { filter: none; }
-.liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg?v=3#glass-distortion"); }
-.liquid-glass-fallback .liquid-glass { filter: none; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
   border-color: rgba(208,255,255,0.42);

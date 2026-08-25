@@ -12,7 +12,8 @@
   if (!ctx) return;
 
   const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const lowPower = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
+  const touchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  const lowPower = touchDevice || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   const widthLimit = lowPower ? 26 : 36;
   const heightLimit = lowPower ? 12 : 18;
   const palette = {
@@ -67,8 +68,10 @@
   }
 
   const surfaces = [
-    { name: "torus", grid: buildSurface("torus"), center: [0.18, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.56 },
-    { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.48 },
+    // Torus & Klein bottle: bold, near-opaque wireframes so they read clearly
+    // against the glow field. Möbius keeps its original delicate styling.
+    { name: "torus", grid: buildSurface("torus"), center: [0.18, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.95, coreWidth: 2.7, glowWidth: 5.2, glowFade: 0.26 },
+    { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.85, coreWidth: 2.7, glowWidth: 5.2, glowFade: 0.26 },
     { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.07, -0.09, 0.03], alpha: 0.52 }
   ];
 
@@ -151,8 +154,11 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 2.4 : 3.2, 0.16, "lighter");
-    drawWireframe(lowPower ? 1.2 : 1.6, 1, "source-over");
+    const coreWidth = surface.coreWidth || (lowPower ? 1.2 : 1.6);
+    const glowWidth = surface.glowWidth || (lowPower ? 2.4 : 3.2);
+    const glowFade = surface.glowFade || 0.16;
+    drawWireframe(glowWidth, glowFade, "lighter");
+    drawWireframe(coreWidth, 1, "source-over");
 
     if (surface.name === "mobius") {
       ctx.save();
