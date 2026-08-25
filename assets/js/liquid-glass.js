@@ -1,6 +1,6 @@
 /*
- * Local adaptation inspired by lucasromerodb/liquid-glass-effect-macos.
- * The material lives in a static SVG filter and fixed normal/highlight maps.
+ * Local adaptation inspired by shuding/liquid-glass.
+ * The material uses a static SVG displacement/light filter and fixed maps.
  * JavaScript only adds hooks and keeps the pointer shine inside each surface.
  */
 (function () {
@@ -13,7 +13,7 @@
   if (reduceMotion) root.classList.add("liquid-glass-reduced");
 
   const targets = Array.from(document.querySelectorAll(
-    ".media-dock, .button, .glass-panel, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select"
+    ".media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select"
   ));
   if (!targets.length || reduceMotion || !canFilter) return;
 

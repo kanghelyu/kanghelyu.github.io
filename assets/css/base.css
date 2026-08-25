@@ -125,7 +125,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   --glass-highlight: rgba(255, 255, 255, 0.23);
   --glass-shadow: 0 22px 58px rgba(0, 0, 0, 0.24), inset 0 1px 0 var(--glass-highlight), inset 0 -1px 0 rgba(111, 221, 255, 0.16);
 }
-.media-dock, .button, .glass-panel, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select {
+.media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select {
   position: relative;
   border: 1px solid var(--glass-border);
   background: linear-gradient(120deg, rgba(255, 255, 255, 0.085), transparent 24%, rgba(116, 224, 255, 0.045) 62%, rgba(255, 226, 166, 0.04)), var(--glass-fill);
@@ -137,7 +137,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 }
 .media-dock.liquid-glass { overflow: visible; }
 .media-dock.liquid-glass::after { display: none; }
-.liquid-glass::before, .glass-panel::before, .instructions::before, .preview-box::before, .bookmarklet::before, .file-links::before {
+.liquid-glass::before, .glass-panel::before, .note::before, .project::before, .instructions::before, .preview-box::before, .bookmarklet::before, .file-links::before {
   position: absolute;
   inset: -1px;
   z-index: -1;
@@ -152,7 +152,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   pointer-events: none;
   mix-blend-mode: screen;
 }
-.liquid-glass::after, .glass-panel::after, .instructions::after, .preview-box::after, .bookmarklet::after, .file-links::after {
+.liquid-glass::after, .glass-panel::after, .note::after, .project::after, .instructions::after, .preview-box::after, .bookmarklet::after, .file-links::after {
   position: absolute;
   top: var(--glass-pointer-y, 50%);
   left: var(--glass-pointer-x, 50%);
@@ -184,7 +184,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg#glass-distortion"); }
 .liquid-glass-fallback .liquid-glass { filter: none; }
 .playlist-panel { background: rgba(8, 18, 27, 0.1); border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
-.glass-interactive:hover, .button:hover, .instructions:hover, .preview-box:hover {
+.glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
   border-color: rgba(208,255,255,0.42);
   box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
 }

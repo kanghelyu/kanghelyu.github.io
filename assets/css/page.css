@@ -99,32 +99,29 @@ h2::before {
   box-shadow: 0 0 8px rgba(244, 217, 160, 0.3);
 }
 
-/* ---- Open content layout ---- */
+/* ---- Liquid glass item cards ---- */
 .note,
 .project {
   min-width: 0;
   max-width: 100%;
-  padding: 24px 0 22px;
-  border: 0;
-  border-top: 1px solid var(--line-soft);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  transition: color 0.3s var(--ease-out-expo), border-color 0.3s ease;
+  padding: 24px 24px 22px;
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(172, 240, 250, 0.035);
+  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
+  transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.35s ease;
   position: relative;
-  overflow: visible;
+  overflow: clip;
 }
 .note:first-child,
-.project:first-child { border-top-color: transparent; }
-.note::before,
-.project::before { display: none; }
+.project:first-child { border-top-color: var(--glass-border); }
 .note:hover,
 .project:hover {
-  border-color: var(--line-soft);
-  transform: none;
-  box-shadow: none;
+  border-color: rgba(224, 255, 255, 0.46);
+  transform: translateY(-3px);
+  box-shadow: 0 22px 58px rgba(0,0,0,0.24), 0 0 24px rgba(120, 226, 255, 0.1), inset 0 1px 0 rgba(255,255,255,0.23);
 }
 .note-actions,
 .project-actions {
