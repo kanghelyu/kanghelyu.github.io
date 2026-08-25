@@ -32,16 +32,20 @@
   });
 
   const ua = navigator.userAgent;
-  const chromium = /Chrome\/|Chromium\/|Edg\//.test(ua) && !/Firefox|FxiOS/i.test(ua);
+  // Safari (WebKit without a Chromium/Firefox shell) can't resolve SVG
+  // filter references in backdrop-filter — it keeps the stylesheet frost.
+  // Firefox resolves inline references fine, so it gets the full material.
+  const webkitOnly = /AppleWebKit/i.test(ua) && !/Chrome\/|Chromium\/|Edg\//i.test(ua) && !/FxiOS/i.test(ua);
   const lowPower = (navigator.hardwareConcurrency || 8) <= 4;
-  if (!canFilter || !chromium || lowPower) return;
+  if (!canFilter || webkitOnly || lowPower) return;
 
   try {
     const SVG_NS = "http://www.w3.org/2000/svg";
-    // Strongest rim shift for the blue channel; R/G get larger scales so the
-    // fringe spreads red→blue like real dispersive glass. One grade for every
-    // surface — the same material the large cards use.
+    // Panel grade: rim-band dispersion. Small controls (buttons, dock) use a
+    // full-surface lens — a 12px rim on a 45px pill over a dark backdrop is
+    // invisible, while a whole-surface warp reads as glass at any size.
     const CHANNEL_SCALES = [66, 55, 46];
+    const CHANNEL_SCALES_SMALL = [56, 47, 40];
     const filters = new Map();
     let defs = null;
 
@@ -66,7 +70,7 @@
       return Math.hypot(ax, ay) + Math.min(Math.max(qx, qy), 0) - r;
     }
 
-    function displacementMapDataURL(w, h, radius) {
+    function displacementMapDataURL(w, h, radius, small) {
       const down = Math.min(1, 320 / Math.max(w, h)); // keep maps small on large panels
       const mw = Math.max(12, Math.round(w * down));
       const mh = Math.max(12, Math.round(h * down));
@@ -75,7 +79,8 @@
       const rr = Math.max(2, Math.min(radius * down, hw, hh));
       // Refraction band in ELEMENT pixels (the map is downscaled on large
       // surfaces, so computing it in map px would smear the rim on cards).
-      const bandEl = Math.min(26, Math.max(12, Math.min(w, h) * 0.16));
+      // Small controls lens their whole surface; large panels bend the rim.
+      const bandEl = small ? Math.max(26, Math.min(w, h) * 0.6) : Math.min(26, Math.max(12, Math.min(w, h) * 0.16));
       const band = Math.max(4, bandEl * down);
 
       const field = new Float32Array(mw * mh);
@@ -118,17 +123,18 @@
       return canvas.toDataURL();
     }
 
-    function buildFilter(w, h, radius) {
-      const key = w + "x" + h + "x" + radius;
+    function buildFilter(w, h, radius, small) {
+      const key = w + "x" + h + "x" + radius + (small ? "s" : "");
       if (filters.has(key)) return filters.get(key);
 
-      const mapURL = displacementMapDataURL(w, h, radius);
+      const scales = small ? CHANNEL_SCALES_SMALL : CHANNEL_SCALES;
+      const mapURL = displacementMapDataURL(w, h, radius, small);
       const id = "liquid-glass-" + (filters.size + 1);
       const filter = document.createElementNS(SVG_NS, "filter");
       filter.setAttribute("id", id);
       // Region in element px, padded past the strongest displacement so rim
       // sampling reads real backdrop instead of clamping to transparency.
-      const pad = Math.ceil(CHANNEL_SCALES[2] / 2) + 8;
+      const pad = Math.ceil(scales[0] / 2) + 8;
       filter.setAttribute("x", String(-pad));
       filter.setAttribute("y", String(-pad));
       filter.setAttribute("width", String(w + pad * 2));
@@ -164,7 +170,7 @@
         const warp = document.createElementNS(SVG_NS, "feDisplacementMap");
         warp.setAttribute("in", "ch-" + name);
         warp.setAttribute("in2", "map");
-        warp.setAttribute("scale", String(CHANNEL_SCALES[i]));
+        warp.setAttribute("scale", String(scales[i]));
         warp.setAttribute("xChannelSelector", "R");
         warp.setAttribute("yChannelSelector", "G");
         warp.setAttribute("result", "warp-" + name);
@@ -204,7 +210,8 @@
       if (styles.display === "none" || styles.visibility === "hidden") return;
       let radius = parseFloat(styles.borderTopLeftRadius) || 0;
       radius = Math.max(2, Math.min(radius, w / 2, h / 2));
-      const id = buildFilter(w, h, radius);
+      const small = Math.min(w, h) < 120;
+      const id = buildFilter(w, h, radius, small);
       element.style.backdropFilter = "url(#" + id + ") saturate(1.3) contrast(1.04) brightness(1.05)";
     }
 

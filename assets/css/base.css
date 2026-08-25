@@ -158,7 +158,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
    which resets position to relative for the refraction layers. */
 .media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; border-radius: 20px; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
-.playlist-panel.liquid-glass { background: rgba(7, 16, 24, 0.58); }
+.playlist-panel.liquid-glass { background: rgba(7, 16, 24, 0.42); }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
   border-color: rgba(208,255,255,0.42);
   box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
