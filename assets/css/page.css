@@ -183,7 +183,7 @@ h2::before {
 @media (max-width: 760px) {
   .page {
     width: min(92vw, 960px);
-    padding: 160px 0 56px;
+    padding: 92px 0 56px;
   }
   .note, .project { padding: 20px 18px 18px; }
   .note-actions, .project-actions { gap: 8px; }
