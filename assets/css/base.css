@@ -158,6 +158,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   transform: translate(-50%, -50%);
   transition: opacity 300ms ease;
 }
+.media-dock { position: fixed; z-index: 100; }
 .liquid-glass-supported .liquid-glass { filter: var(--liquid-filter, none); }
 .liquid-glass-fallback .liquid-glass { filter: none; }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
