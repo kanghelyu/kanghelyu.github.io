@@ -95,7 +95,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .music-toggle.playing { color: var(--cyan) !important; }
 .track-label { max-width: 92px; padding: 0 8px; overflow: hidden; color: var(--muted); font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-toggle { padding: 0 10px; color: var(--gold) !important; font-size: 0.78rem; letter-spacing: 0.03em; }
-.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-dock); backdrop-filter: blur(8px) saturate(1.35); -webkit-backdrop-filter: blur(8px) saturate(1.35); }
+.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-dock); }
 .playlist-panel.collapsed { display: none; }
 .playlist-list { max-height: 240px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: rgba(244, 217, 160, 0.38) transparent; scrollbar-width: thin; }
 .playlist-item { display: block; width: 100%; min-height: 36px; padding: 7px 12px; border: 0; border-bottom: 1px solid rgba(168, 230, 230, 0.06); background: transparent; color: var(--ink); cursor: pointer; text-align: left; font-size: 0.8rem; }
@@ -158,7 +158,12 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
    which resets position to relative for the refraction layers. */
 .media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; border-radius: 20px; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
-.playlist-panel.liquid-glass { background: rgba(7, 16, 24, 0.42); }
+.playlist-panel.liquid-glass {
+  /* Same material as the dock: dark glass backing + the shared saturate. */
+  background: rgba(7, 16, 24, 0.58);
+  backdrop-filter: saturate(1.35) contrast(1.05);
+  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
+}
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
   border-color: rgba(208,255,255,0.42);
   box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
