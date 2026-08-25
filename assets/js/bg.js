@@ -36,7 +36,7 @@
         x: Math.random(),
         y: Math.random(),
         size: 18 + Math.random() * 14,
-        alpha: 0.055 + Math.random() * 0.045,
+        alpha: 0.105 + Math.random() * 0.075,
         phase: Math.random() * Math.PI * 2,
         speed: 0.00018 + Math.random() * 0.00024,
         symbol: symbols[index % symbols.length],
@@ -73,8 +73,8 @@
     const y = height * (light.y + Math.cos(time * light.speed * 0.8 + light.phase) * 0.06);
     const radius = Math.max(width, height) * light.radius;
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
-    gradient.addColorStop(0, `rgba(${light.color},0.075)`);
-    gradient.addColorStop(0.35, `rgba(${light.color},0.025)`);
+    gradient.addColorStop(0, `rgba(${light.color},0.14)`);
+    gradient.addColorStop(0.35, `rgba(${light.color},0.055)`);
     gradient.addColorStop(1, `rgba(${light.color},0)`);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
@@ -140,9 +140,9 @@
     time += 1;
     drawBase();
     lights.forEach(drawLight);
-    drawRibbon(0.04, "168,230,230", 0.065);
-    drawRibbon(0.38, "244,217,160", 0.045);
-    drawRibbon(0.72, "168,230,230", 0.04);
+    drawRibbon(0.04, "168,230,230", 0.12);
+    drawRibbon(0.38, "244,217,160", 0.08);
+    drawRibbon(0.72, "168,230,230", 0.07);
     drawTexture();
     drawPointerGlow();
     drawVignette();
