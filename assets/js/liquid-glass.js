@@ -34,8 +34,10 @@
   try {
     const SVG_NS = "http://www.w3.org/2000/svg";
     // Strongest rim shift for the blue channel; R/G get larger scales so the
-    // fringe spreads red→blue like real dispersive glass.
+    // fringe spreads red→blue like real dispersive glass. Small controls use
+    // a stronger lens — at button scale a panel-grade lens reads as nothing.
     const CHANNEL_SCALES = [66, 55, 46];
+    const CHANNEL_SCALES_SMALL = [108, 90, 74];
     const filters = new Map();
     let defs = null;
 
@@ -60,7 +62,7 @@
       return Math.hypot(ax, ay) + Math.min(Math.max(qx, qy), 0) - r;
     }
 
-    function displacementMapDataURL(w, h, radius) {
+    function displacementMapDataURL(w, h, radius, small) {
       const down = Math.min(1, 320 / Math.max(w, h)); // keep maps small on large panels
       const mw = Math.max(12, Math.round(w * down));
       const mh = Math.max(12, Math.round(h * down));
@@ -69,9 +71,9 @@
       const rr = Math.max(2, Math.min(radius * down, hw, hh));
       // Refraction band in ELEMENT pixels (the map is downscaled on large
       // surfaces, so computing it in map px would smear the rim on cards).
-      // Small controls need a proportionally wider band or the effect is
-      // invisible at button scale.
-      const bandEl = Math.min(26, Math.max(12, Math.min(w, h) * 0.16));
+      // Buttons get a fixed wide band; at 45px tall a proportional band
+      // collapses and the lens disappears.
+      const bandEl = small ? 18 : Math.min(26, Math.max(12, Math.min(w, h) * 0.16));
       const band = Math.max(4, bandEl * down);
 
       const field = new Float32Array(mw * mh);
@@ -114,20 +116,22 @@
       return canvas.toDataURL();
     }
 
-    function buildFilter(w, h, radius) {
-      const key = w + "x" + h + "x" + radius;
+    function buildFilter(w, h, radius, small) {
+      const key = w + "x" + h + "x" + radius + (small ? "s" : "");
       if (filters.has(key)) return filters.get(key);
 
-      const mapURL = displacementMapDataURL(w, h, radius);
+      const scales = small ? CHANNEL_SCALES_SMALL : CHANNEL_SCALES;
+      const mapURL = displacementMapDataURL(w, h, radius, small);
       const id = "liquid-glass-" + (filters.size + 1);
       const filter = document.createElementNS(SVG_NS, "filter");
       filter.setAttribute("id", id);
-      // Region wider than the element so rim sampling reads backdrop pixels
-      // beyond the border box instead of clamping to transparency.
-      filter.setAttribute("x", "-14%");
-      filter.setAttribute("y", "-30%");
-      filter.setAttribute("width", "128%");
-      filter.setAttribute("height", "160%");
+      // Region in element px, padded past the strongest displacement so rim
+      // sampling reads real backdrop instead of clamping to transparency.
+      const pad = Math.ceil(scales[2] / 2) + 8;
+      filter.setAttribute("x", String(-pad));
+      filter.setAttribute("y", String(-pad));
+      filter.setAttribute("width", String(w + pad * 2));
+      filter.setAttribute("height", String(h + pad * 2));
       filter.setAttribute("color-interpolation-filters", "sRGB");
 
       const image = document.createElementNS(SVG_NS, "feImage");
@@ -159,7 +163,7 @@
         const warp = document.createElementNS(SVG_NS, "feDisplacementMap");
         warp.setAttribute("in", "ch-" + name);
         warp.setAttribute("in2", "map");
-        warp.setAttribute("scale", String(CHANNEL_SCALES[i]));
+        warp.setAttribute("scale", String(scales[i]));
         warp.setAttribute("xChannelSelector", "R");
         warp.setAttribute("yChannelSelector", "G");
         warp.setAttribute("result", "warp-" + name);
@@ -199,10 +203,11 @@
       if (styles.display === "none" || styles.visibility === "hidden") return;
       let radius = parseFloat(styles.borderTopLeftRadius) || 0;
       radius = Math.max(2, Math.min(radius, w / 2, h / 2));
-      const id = buildFilter(w, h, radius);
+      const small = Math.min(w, h) < 120;
+      const id = buildFilter(w, h, radius, small);
       // Small controls get a whisper of blur on top of the refraction —
       // the frosted read without losing the rim distortion.
-      const frost = Math.min(w, h) < 120 ? " blur(1.4px)" : "";
+      const frost = small ? " blur(1px)" : "";
       element.style.backdropFilter = "url(#" + id + ")" + frost + " saturate(1.3) contrast(1.04) brightness(1.05)";
     }
 
