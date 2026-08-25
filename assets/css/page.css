@@ -24,14 +24,6 @@ body { background: var(--bg-deep); }
   padding: 100px 0 80px;
   animation: fadeIn 0.6s var(--ease-out-expo) 0.1s both;
 }
-.page::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(6, 13, 20, 0.18), transparent 320px);
-}
 
 .back {
   display: inline-flex;
@@ -50,7 +42,7 @@ body { background: var(--bg-deep); }
 .back:hover {
   color: var(--cyan-bright);
   border-color: var(--glass-border);
-  background: transparent;
+  background: var(--glass-bg);
   text-shadow: 0 0 12px rgba(168, 230, 230, 0.4);
   transform: translateX(-4px);
 }
@@ -99,21 +91,16 @@ h2::before {
   box-shadow: 0 0 8px rgba(244, 217, 160, 0.3);
 }
 
-/* ---- Liquid glass item cards ---- */
+/* ---- Liquid glass item cards ----
+   Fill, border and backdrop come from the shared glass group in base.css,
+   so cards look identical across pages. */
 .note,
 .project {
   min-width: 0;
   max-width: 100%;
   padding: 24px 24px 22px;
-  border: 1px solid var(--glass-border);
   border-radius: 20px;
-  background: transparent;
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: saturate(1.35) contrast(1.05);
-  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
   transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.35s ease;
-  position: relative;
-  overflow: clip;
 }
 .note:first-child,
 .project:first-child { border-top-color: var(--glass-border); }
@@ -132,7 +119,8 @@ h2::before {
   z-index: 1;
 }
 
-/* ---- Subpage buttons ---- */
+/* ---- Subpage buttons ----
+   Same shared glass material as the homepage buttons; only sizing differs. */
 .page .button {
   padding: 9px 18px;
   color: var(--paper);
@@ -140,11 +128,6 @@ h2::before {
   font-size: 0.88rem;
   font-family: var(--font-body);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(190, 245, 245, 0.2);
-  background: transparent;
-  backdrop-filter: saturate(1.35) contrast(1.05);
-  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
   transition: all 0.3s var(--ease-out-expo);
   position: relative;
   z-index: 1;
@@ -179,13 +162,4 @@ h2::before {
 
 @media (max-width: 360px) {
   .page { width: 94vw; }
-}
-
-/* Keep buttons glassy without turning the whole page into a card. */
-.page .button {
-  border-color: var(--glass-border);
-  background: transparent;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
-  backdrop-filter: saturate(1.35) contrast(1.05);
-  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
 }

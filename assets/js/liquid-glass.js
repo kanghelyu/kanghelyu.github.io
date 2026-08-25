@@ -18,7 +18,11 @@
   root.classList.add(canFilter ? "liquid-glass-supported" : "liquid-glass-fallback");
 
   const TARGET_SELECTOR = ".media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select";
+  // Elements already sitting inside a glass surface stay plain: the
+  // container provides the material (no double refraction inside frames).
+  const GLASS_CONTAINER_SELECTOR = ".media-dock, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet";
   document.querySelectorAll(TARGET_SELECTOR).forEach((element) => {
+    if (element.parentElement && element.parentElement.closest(GLASS_CONTAINER_SELECTOR)) return;
     element.classList.add("liquid-glass");
   });
 
@@ -31,7 +35,7 @@
     const SVG_NS = "http://www.w3.org/2000/svg";
     // Strongest rim shift for the blue channel; R/G get larger scales so the
     // fringe spreads red→blue like real dispersive glass.
-    const CHANNEL_SCALES = [58, 48, 40];
+    const CHANNEL_SCALES = [66, 55, 46];
     const filters = new Map();
     let defs = null;
 
@@ -65,7 +69,9 @@
       const rr = Math.max(2, Math.min(radius * down, hw, hh));
       // Refraction band in ELEMENT pixels (the map is downscaled on large
       // surfaces, so computing it in map px would smear the rim on cards).
-      const bandEl = Math.min(26, Math.max(10, Math.min(w, h) * 0.10));
+      // Small controls need a proportionally wider band or the effect is
+      // invisible at button scale.
+      const bandEl = Math.min(26, Math.max(12, Math.min(w, h) * 0.16));
       const band = Math.max(4, bandEl * down);
 
       const field = new Float32Array(mw * mh);
@@ -194,7 +200,10 @@
       let radius = parseFloat(styles.borderTopLeftRadius) || 0;
       radius = Math.max(2, Math.min(radius, w / 2, h / 2));
       const id = buildFilter(w, h, radius);
-      element.style.backdropFilter = "url(#" + id + ") saturate(1.3) contrast(1.05) brightness(1.04)";
+      // Small controls get a whisper of blur on top of the refraction —
+      // the frosted read without losing the rim distortion.
+      const frost = Math.min(w, h) < 120 ? " blur(1.4px)" : "";
+      element.style.backdropFilter = "url(#" + id + ")" + frost + " saturate(1.3) contrast(1.04) brightness(1.05)";
     }
 
     function enhanceAll() {
