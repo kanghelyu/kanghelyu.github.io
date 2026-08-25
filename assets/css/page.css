@@ -6,8 +6,6 @@
 
 body { background: var(--bg-deep); }
 
-.page { background: rgba(8, 18, 27, 0.28); border: 1px solid rgba(190,245,245,0.12); border-radius: 18px; padding: 42px clamp(18px, 4vw, 42px) 70px; box-shadow: 0 22px 70px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-
 /* ---- Full math background canvas (shared with homepage) ---- */
 #bg {
   position: fixed;
