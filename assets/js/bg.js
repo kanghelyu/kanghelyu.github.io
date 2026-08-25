@@ -130,7 +130,7 @@
     const uMax = projected.length - 1;
     const vMax = projected[0].length - 1;
 
-    drawGlow(cx, cy, scale * 0.9, surface.color, 0.18);
+    drawGlow(cx, cy, scale * 1.35, surface.color, 0.34);
     const drawWireframe = (lineWidth, opacityScale, composite) => {
       ctx.save();
       ctx.globalCompositeOperation = composite;
@@ -152,35 +152,8 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 1.35 : 1.85, 0.055, "lighter");
+    drawWireframe(lowPower ? 1.35 : 1.85, 0.1, "lighter");
     drawWireframe(lowPower ? 0.95 : 1.3, 1, "source-over");
-    drawBoundaryGlow(projected, uMax, vMax, surface.color, surface.name === "mobius" ? surface.accent : null);
-  }
-
-  function drawBoundaryGlow(projected, uMax, vMax, color, accent) {
-    const paths = [
-      Array.from({ length: uMax + 1 }, (_, i) => projected[i][0]),
-      Array.from({ length: uMax + 1 }, (_, i) => projected[i][vMax]),
-      Array.from({ length: vMax + 1 }, (_, j) => projected[0][j]),
-      Array.from({ length: vMax + 1 }, (_, j) => projected[uMax][j])
-    ];
-    const strokePaths = (lineWidth, strokeStyle, composite) => {
-      ctx.save();
-      ctx.globalCompositeOperation = composite;
-      ctx.lineWidth = lineWidth;
-      ctx.strokeStyle = strokeStyle;
-      paths.forEach((path) => {
-        ctx.beginPath();
-        path.forEach((point, index) => {
-          if (index === 0) ctx.moveTo(point.x, point.y);
-          else ctx.lineTo(point.x, point.y);
-        });
-        ctx.stroke();
-      });
-      ctx.restore();
-    };
-    strokePaths(lowPower ? 1.8 : 2.45, `rgba(${color},0.17)`, "lighter");
-    if (accent) strokePaths(lowPower ? 1.15 : 1.5, `rgba(${accent},0.66)`, "source-over");
   }
 
   function drawTexture() {
