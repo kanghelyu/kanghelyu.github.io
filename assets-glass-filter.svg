@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
+  <defs>
+    <filter id="glass-distortion" x="-12%" y="-16%" width="124%" height="132%" color-interpolation-filters="sRGB">
+      <feImage href="assets-glass-normal-map.svg" preserveAspectRatio="none" result="normal-map"/>
+      <feImage href="assets-glass-highlight-map.svg" preserveAspectRatio="none" result="highlight-map"/>
+      <feDisplacementMap in="SourceGraphic" in2="normal-map" scale="8" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+      <feDiffuseLighting in="normal-map" surfaceScale="2.2" diffuseConstant="0.62" lighting-color="#d9ffff" result="diffuse-light">
+        <feDistantLight azimuth="218" elevation="52"/>
+      </feDiffuseLighting>
+      <feSpecularLighting in="normal-map" surfaceScale="3" specularConstant="0.72" specularExponent="24" lighting-color="#ffffff" result="specular-light">
+        <feDistantLight azimuth="236" elevation="62"/>
+      </feSpecularLighting>
+      <feComposite in="diffuse-light" in2="refracted" operator="in" result="diffuse-clipped"/>
+      <feComposite in="specular-light" in2="refracted" operator="in" result="specular-clipped"/>
+      <feBlend in="refracted" in2="diffuse-clipped" mode="screen" result="lit-refracted"/>
+      <feBlend in="lit-refracted" in2="specular-clipped" mode="screen" result="lit-glass"/>
+      <feBlend in="lit-glass" in2="highlight-map" mode="screen"/>
+    </filter>
+  </defs>
+</svg>

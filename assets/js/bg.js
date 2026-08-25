@@ -172,8 +172,8 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 2.5 : 5.6, 0.38, "lighter");
-    drawWireframe(lowPower ? 0.9 : 1.35, 1, "source-over");
+    drawWireframe(lowPower ? 1.15 : 1.55, 0.055, "lighter");
+    drawWireframe(lowPower ? 0.78 : 1.05, 1, "source-over");
 
     if (surface.name === "mobius") {
       ctx.save();

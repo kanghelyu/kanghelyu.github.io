@@ -24,6 +24,8 @@
     const music = document.getElementById("music-toggle");
     const trackControls = document.querySelector(".track-controls");
     const playlistPanel = document.getElementById("playlist-panel");
+    const playlistToggle = document.getElementById("playlist-toggle");
+    const playlistList = document.getElementById("playlist-list");
     if (!language && !music && !trackControls && !playlistPanel) return null;
 
     dock = document.createElement("div");
@@ -46,7 +48,11 @@
     label.setAttribute("aria-live", "polite");
     label.textContent = "Music";
     dock.appendChild(label);
-    if (playlistPanel) dock.appendChild(playlistPanel);
+    if (playlistToggle) dock.appendChild(playlistToggle);
+    if (playlistPanel) {
+      if (playlistList && playlistList.parentElement !== playlistPanel) playlistPanel.appendChild(playlistList);
+      dock.appendChild(playlistPanel);
+    }
     return dock;
   }
 

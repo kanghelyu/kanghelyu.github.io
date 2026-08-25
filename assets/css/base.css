@@ -167,9 +167,21 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   transition: opacity 300ms ease;
   mix-blend-mode: screen;
 }
-.media-dock { position: fixed; z-index: 100; }
+.media-dock {
+  position: fixed;
+  right: 24px;
+  bottom: 22px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 4px 6px;
+  border-radius: 12px;
+}
+.liquid-glass.media-dock { overflow: visible; }
+.liquid-glass.media-dock::after { display: none; }
 .liquid-glass-supported .liquid-glass { filter: none; }
-.liquid-glass-supported .liquid-glass::before { filter: var(--liquid-filter, none); }
+.liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg#glass-distortion"); }
 .liquid-glass-fallback .liquid-glass { filter: none; }
 .playlist-panel { background: rgba(8, 18, 27, 0.1); border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .glass-interactive:hover, .button:hover, .instructions:hover, .preview-box:hover {
