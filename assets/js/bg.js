@@ -144,11 +144,13 @@
     const uMax = projected.length - 1;
     const vMax = projected[0].length - 1;
 
-    drawGlow(cx, cy, scale * 0.9, surface.color, 0.10);
-    const drawWireframe = (lineWidth, opacityScale, composite) => {
+    drawGlow(cx, cy, scale * 0.9, surface.color, 0.18);
+    const drawWireframe = (lineWidth, opacityScale, composite, glow) => {
       ctx.save();
       ctx.globalCompositeOperation = composite;
       ctx.lineWidth = lineWidth;
+      ctx.shadowBlur = glow;
+      ctx.shadowColor = `rgba(${surface.color},0.52)`;
       for (let i = 0; i < uMax; i += 1) {
         for (let j = 0; j < vMax; j += 1) {
           const point = projected[i][j];
@@ -166,8 +168,8 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 2.2 : 4.8, 0.22, "lighter");
-    drawWireframe(lowPower ? 0.85 : 1.25, 1, "source-over");
+    drawWireframe(lowPower ? 2.5 : 5.6, 0.38, "lighter", lowPower ? 8 : 18);
+    drawWireframe(lowPower ? 0.9 : 1.35, 1, "source-over", lowPower ? 2 : 5);
 
     if (surface.name === "mobius") {
       ctx.save();
@@ -202,20 +204,20 @@
 
   function drawBackground() {
     const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, "#071520");
-    gradient.addColorStop(0.48, "#0b2030");
-    gradient.addColorStop(1, "#0b1723");
+    gradient.addColorStop(0, "#0b2030");
+    gradient.addColorStop(0.48, "#12384a");
+    gradient.addColorStop(1, "#102538");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
-    drawGlow(width * 0.22, height * 0.22, Math.max(width, height) * 0.56, palette.cyan, 0.12);
-    drawGlow(width * 0.82, height * 0.56, Math.max(width, height) * 0.48, palette.gold, 0.09);
-    drawGlow(width * 0.48, height * 0.92, Math.max(width, height) * 0.42, palette.blue, 0.08);
+    drawGlow(width * 0.22, height * 0.22, Math.max(width, height) * 0.56, palette.cyan, 0.22);
+    drawGlow(width * 0.82, height * 0.56, Math.max(width, height) * 0.48, palette.gold, 0.16);
+    drawGlow(width * 0.48, height * 0.92, Math.max(width, height) * 0.42, palette.blue, 0.14);
   }
 
   function drawVignette() {
     const gradient = ctx.createRadialGradient(width * 0.5, height * 0.45, Math.min(width, height) * 0.18, width * 0.5, height * 0.45, Math.max(width, height) * 0.8);
     gradient.addColorStop(0, "rgba(0,0,0,0)");
-    gradient.addColorStop(1, "rgba(0,0,0,0.24)");
+    gradient.addColorStop(1, "rgba(0,0,0,0.14)");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
   }

@@ -18,7 +18,9 @@
   if (!targets.length) return;
 
   let svg = document.getElementById("liquid-glass-defs");
-  let filterId = "liquid-glass-filter";
+  const filterId = "liquid-glass-filter";
+  let turbulenceNode = null;
+  let displacementNode = null;
   if (!svg) {
     svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.id = "liquid-glass-defs";
@@ -41,9 +43,11 @@
     const displacement = document.createElementNS("http://www.w3.org/2000/svg", "feDisplacementMap");
     displacement.setAttribute("in", "SourceGraphic");
     displacement.setAttribute("in2", "noise");
-    displacement.setAttribute("scale", reduceMotion ? "0" : "3.5");
+    displacement.setAttribute("scale", reduceMotion ? "0" : "5.5");
     displacement.setAttribute("xChannelSelector", "R");
     displacement.setAttribute("yChannelSelector", "G");
+    turbulenceNode = turbulence;
+    displacementNode = displacement;
     filter.append(turbulence, displacement);
     defs.appendChild(filter);
     svg.appendChild(defs);
@@ -60,7 +64,20 @@
   let pointerX = 0;
   let pointerY = 0;
   let frame = 0;
+  let filterFrame = 0;
+  let lastFilterUpdate = 0;
   let visible = !document.hidden;
+  const updateFilter = (now) => {
+    filterFrame = 0;
+    if (!visible || !turbulenceNode || !displacementNode) return;
+    if (now - lastFilterUpdate >= 72) {
+      const phase = now * 0.00045;
+      turbulenceNode.setAttribute("baseFrequency", `${(0.009 + Math.sin(phase) * 0.002).toFixed(4)} ${(0.015 + Math.cos(phase * 1.27) * 0.003).toFixed(4)}`);
+      displacementNode.setAttribute("scale", `${(5.2 + Math.sin(phase * 1.6) * 1.2).toFixed(2)}`);
+      lastFilterUpdate = now;
+    }
+    filterFrame = requestAnimationFrame(updateFilter);
+  };
   const update = () => {
     frame = 0;
     if (!visible) return;
@@ -72,8 +89,10 @@
     pointerY = event.clientY;
     if (!frame) frame = requestAnimationFrame(update);
   }, { passive: true });
+  if (turbulenceNode && displacementNode) filterFrame = requestAnimationFrame(updateFilter);
   document.addEventListener("visibilitychange", () => {
     visible = !document.hidden;
     if (visible && !frame) frame = requestAnimationFrame(update);
+    if (visible && !filterFrame && turbulenceNode && displacementNode) filterFrame = requestAnimationFrame(updateFilter);
   });
 })();

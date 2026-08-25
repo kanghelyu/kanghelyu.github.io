@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
-  <link rel="stylesheet" href="../assets/css/base.css?v=9">
-  <script src="../assets/js/liquid-glass.js?v=2" defer></script>
-  <script src="../assets/js/bg.js?v=14" defer></script>
+  <link rel="stylesheet" href="../assets/css/base.css?v=10">
+  <script src="../assets/js/liquid-glass.js?v=3" defer></script>
+  <script src="../assets/js/bg.js?v=15" defer></script>
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,15 +22,15 @@
     main { background: transparent; }
     .instructions, .preview-box, .pre, .file-links { position: relative; }
     .instructions, .preview-box, .pre, .file-links, .bookmarklet, .file-links a, .lang-toggle button {
-      border-color: rgba(190,245,245,0.2) !important;
-      background: rgba(16,35,48,0.07) !important;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.1) !important;
-      backdrop-filter: blur(14px) saturate(1.15);
-      -webkit-backdrop-filter: blur(14px) saturate(1.15);
+      border-color: rgba(220,255,255,0.3) !important;
+      background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 26%, rgba(100,220,255,0.04) 72%, rgba(255,226,166,0.04)), rgba(172,240,250,0.035) !important;
+      box-shadow: 0 22px 58px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(111,221,255,0.16) !important;
+      backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
+      -webkit-backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
     }
     .instructions { padding: 1.25rem; }
     .preview-box { padding: 1.5rem; }
-    .pre { background: rgba(7,21,32,0.18) !important; }
+    .pre { background: rgba(7,21,32,0.08) !important; }
     .file-links { background: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0; }
 
     header h1 { font-size: 1.8rem; font-weight: 700; }
@@ -57,7 +57,7 @@
       border-radius: 3px; font-size: 0.9em;
     }
     .bookmarklet {
-      display: inline-block; background: rgba(16,35,48,0.08) !important; color: var(--accent) !important;
+      display: inline-block; background: rgba(172,240,250,0.045) !important; color: var(--accent) !important;
       font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem;
       border-radius: 8px; text-decoration: none; cursor: grab;
       transition: transform 0.15s, box-shadow 0.15s;
