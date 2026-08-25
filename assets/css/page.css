@@ -109,8 +109,8 @@ h2::before {
   border-radius: 14px;
   background: transparent;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
-  -webkit-backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
+  backdrop-filter: saturate(1.35) contrast(1.05);
+  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
   transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.35s ease;
   position: relative;
   overflow: clip;
@@ -142,8 +142,8 @@ h2::before {
   border-radius: var(--radius-md);
   border: 1px solid rgba(190, 245, 245, 0.2);
   background: transparent;
-  backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
-  -webkit-backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
+  backdrop-filter: saturate(1.35) contrast(1.05);
+  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
   box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
   transition: all 0.3s var(--ease-out-expo);
   position: relative;
@@ -186,6 +186,6 @@ h2::before {
   border-color: var(--glass-border);
   background: transparent;
   box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
-  backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
-  -webkit-backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
+  backdrop-filter: saturate(1.35) contrast(1.05);
+  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
 }

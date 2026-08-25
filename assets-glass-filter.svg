@@ -1,14 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
   <defs>
-    <filter id="glass-distortion" x="-12%" y="-16%" width="124%" height="132%" color-interpolation-filters="sRGB">
-      <feImage href="assets-glass-normal-map.svg" preserveAspectRatio="none" result="normal-map"/>
+    <filter id="glass-distortion" x="-20%" y="-24%" width="140%" height="148%" color-interpolation-filters="sRGB">
+      <feImage href="assets-glass-normal-x.svg" preserveAspectRatio="none" result="normal-x"/>
+      <feImage href="assets-glass-normal-y.svg" preserveAspectRatio="none" result="normal-y"/>
+      <feComposite in="normal-x" in2="normal-y" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="normal-map"/>
       <feImage href="assets-glass-highlight-map.svg" preserveAspectRatio="none" result="highlight-map"/>
-      <feDisplacementMap in="SourceGraphic" in2="normal-map" scale="8" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
-      <feDiffuseLighting in="normal-map" surfaceScale="2.2" diffuseConstant="0.62" lighting-color="#d9ffff" result="diffuse-light">
+      <feDisplacementMap in="SourceGraphic" in2="normal-map" scale="48" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+      <feDiffuseLighting in="normal-map" surfaceScale="2.6" diffuseConstant="0.58" lighting-color="#d9ffff" result="diffuse-light">
         <feDistantLight azimuth="218" elevation="52"/>
       </feDiffuseLighting>
-      <feSpecularLighting in="normal-map" surfaceScale="3" specularConstant="0.72" specularExponent="24" lighting-color="#ffffff" result="specular-light">
-        <feDistantLight azimuth="236" elevation="62"/>
+      <feSpecularLighting in="normal-map" surfaceScale="3.4" specularConstant="0.85" specularExponent="22" lighting-color="#ffffff" result="specular-light">
+        <feDistantLight azimuth="236" elevation="58"/>
       </feSpecularLighting>
       <feComposite in="diffuse-light" in2="refracted" operator="in" result="diffuse-clipped"/>
       <feComposite in="specular-light" in2="refracted" operator="in" result="specular-clipped"/>
