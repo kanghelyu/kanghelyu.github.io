@@ -69,9 +69,9 @@
   }
 
   const surfaces = [
-    { name: "torus", grid: buildSurface("torus"), center: [0.18, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.0007, 0.0009, 0.00025], alpha: 0.56 },
-    { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.0005, 0.0008, -0.0002], alpha: 0.48 },
-    { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.0004, -0.00045, 0.00015], alpha: 0.52 }
+    { name: "torus", grid: buildSurface("torus"), center: [0.18, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.56 },
+    { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.48 },
+    { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.07, -0.09, 0.03], alpha: 0.52 }
   ];
 
   function rotate(point, angles) {
@@ -91,12 +91,18 @@
     const dx = x - pointer.x;
     const dy = y - pointer.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
-    if (distance > 230) return { x, y };
-    const strength = Math.pow(1 - distance / 230, 2);
-    const pull = Math.min(strength * 16, Math.max(0, distance - 18));
+    const lensRadius = Math.min(width, height) * 0.58;
+    if (distance > lensRadius) return { x, y };
+    const normalized = 1 - distance / lensRadius;
+    const strength = normalized * normalized * (3 - 2 * normalized);
+    const pull = Math.min(strength * 52, Math.max(0, distance - 12));
+    const twist = strength * 28;
     const ux = dx / (distance || 1);
     const uy = dy / (distance || 1);
-    return { x: x - ux * pull - uy * strength * 5, y: y - uy * pull + ux * strength * 5 };
+    return {
+      x: x - ux * pull - uy * twist,
+      y: y - uy * pull + ux * twist
+    };
   }
 
   function initTexture() {
@@ -228,7 +234,7 @@
       return;
     }
     lastFrame = now;
-    time += 1;
+    time = now;
     ctx.clearRect(0, 0, width, height);
     drawBackground();
     surfaces.forEach(drawSurface);
