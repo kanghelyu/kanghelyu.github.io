@@ -38,10 +38,15 @@
     divider.setAttribute("aria-hidden", "true");
     dock.appendChild(divider);
     if (trackControls) {
-      Array.from(trackControls.children).forEach((child) => dock.appendChild(child));
+      const previous = document.getElementById("prev-track");
+      const next = document.getElementById("next-track");
+      if (previous) dock.appendChild(previous);
+      if (music) dock.appendChild(music);
+      if (next) dock.appendChild(next);
       trackControls.remove();
+    } else if (music) {
+      dock.appendChild(music);
     }
-    if (music) dock.appendChild(music);
     const label = document.createElement("span");
     label.id = "track-label";
     label.className = "track-label";
