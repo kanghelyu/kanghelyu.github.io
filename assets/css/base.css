@@ -133,7 +133,10 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
   -webkit-backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
   isolation: isolate;
+  overflow: clip;
 }
+.media-dock.liquid-glass { overflow: visible; }
+.media-dock.liquid-glass::after { display: none; }
 .liquid-glass::before, .glass-panel::before, .instructions::before, .preview-box::before, .bookmarklet::before, .file-links::before {
   position: absolute;
   inset: -1px;
@@ -151,8 +154,8 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 }
 .liquid-glass::after, .glass-panel::after, .instructions::after, .preview-box::after, .bookmarklet::after, .file-links::after {
   position: absolute;
-  top: var(--glass-pointer-y, -20%);
-  left: var(--glass-pointer-x, -20%);
+  top: var(--glass-pointer-y, 50%);
+  left: var(--glass-pointer-x, 50%);
   width: 220px;
   height: 220px;
   border-radius: 50%;
