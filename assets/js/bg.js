@@ -145,12 +145,10 @@
     const vMax = projected[0].length - 1;
 
     drawGlow(cx, cy, scale * 0.9, surface.color, 0.18);
-    const drawWireframe = (lineWidth, opacityScale, composite, glow) => {
+    const drawWireframe = (lineWidth, opacityScale, composite) => {
       ctx.save();
       ctx.globalCompositeOperation = composite;
       ctx.lineWidth = lineWidth;
-      ctx.shadowBlur = glow;
-      ctx.shadowColor = `rgba(${surface.color},0.52)`;
       for (let i = 0; i < uMax; i += 1) {
         for (let j = 0; j < vMax; j += 1) {
           const point = projected[i][j];
@@ -168,8 +166,8 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 2.5 : 5.6, 0.38, "lighter", lowPower ? 8 : 18);
-    drawWireframe(lowPower ? 0.9 : 1.35, 1, "source-over", lowPower ? 2 : 5);
+    drawWireframe(lowPower ? 2.5 : 5.6, 0.38, "lighter");
+    drawWireframe(lowPower ? 0.9 : 1.35, 1, "source-over");
 
     if (surface.name === "mobius") {
       ctx.save();
