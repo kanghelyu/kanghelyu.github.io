@@ -166,3 +166,25 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   border-color: rgba(208,255,255,0.42);
   box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
 }
+
+/* Embedded glass lens: lives inside the host, scrolls with it.
+   (No position here — hosts already set absolute/relative; overriding it
+   pulled the playlist into the dock's flow and stretched the bar.) */
+.has-glass-lens {
+  isolation: isolate;
+}
+.hero-actions .button,
+.playlist-panel {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+canvas.glass-lens-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  display: block;
+  border-radius: inherit;
+}

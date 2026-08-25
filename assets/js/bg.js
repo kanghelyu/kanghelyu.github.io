@@ -1,29 +1,46 @@
 /*
- * Shared mathematical background. The canvas's data-scene attribute picks
- * the scene:
- *   full   (homepage)     — rotating torus, Klein bottle and Möbius strip
- *   torus  (notes)        — one large static torus, elevated 3/4 view
- *   mobius (projects)     — one large static Möbius strip, same view
- *   klein  (stacks reader)— one large slanted static Klein bottle
- * The surfaces and their glow are the entire scene: no particles, no glyphs.
- * Static scenes render a single frame, so subpages run no animation loop.
+ * Shared mathematical background.
+ *
+ * data-scene:
+ *   full   (homepage)  — rotating torus, Klein bottle, Möbius strip
+ *   torus  (notes)     — one large static torus
+ *   mobius (projects)  — one large static Möbius strip
+ *   klein              — one large static Klein bottle
+ *
+ * Hero buttons + playlist panel are embedded lens canvases INSIDE those
+ * DOM nodes (see paintLenses). The warp therefore scrolls with the
+ * element. Nothing lens-shaped is ever drawn on the fixed background
+ * canvas — that was the mobile double-button ghost.
  */
 (function () {
   "use strict";
+
+  if (window.__kangheBgLoaded) return;
+  window.__kangheBgLoaded = true;
 
   const canvas = document.getElementById("bg");
   if (!canvas) return;
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) return;
 
-  const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reducedMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const touchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  const lowPower = touchDevice || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  const lowPower =
+    touchDevice || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   const palette = {
     cyan: "168,230,230",
     gold: "244,217,160",
     blue: "113,181,206"
   };
+  const BG = "#060d14";
+  const LENS_SELECTOR = ".hero-actions .button, .playlist-panel";
+  const BARREL_K = 0.42;
+  const SNAP_PAD = 0.45;
+
+  const widthLimit = lowPower ? 26 : 36;
+  const heightLimit = lowPower ? 12 : 18;
+  const STATIC_VIEW = [1.02, 0.55, 0.14];
 
   function buildSurface(kind) {
     const grid = [];
@@ -37,22 +54,40 @@
         if (kind === "torus") {
           const R = 1.85;
           const r = 0.72;
-          row.push([(R + r * Math.cos(v)) * Math.cos(u), (R + r * Math.cos(v)) * Math.sin(u), r * Math.sin(v)]);
+          row.push([
+            (R + r * Math.cos(v)) * Math.cos(u),
+            (R + r * Math.cos(v)) * Math.sin(u),
+            r * Math.sin(v)
+          ]);
         } else if (kind === "klein") {
           let x;
           let z;
           if (u < Math.PI) {
-            x = 3 * Math.cos(u) * (1 + Math.sin(u)) + 2 * (1 - Math.cos(u) / 2) * Math.cos(u) * Math.cos(v);
-            z = -8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
+            x =
+              3 * Math.cos(u) * (1 + Math.sin(u)) +
+              2 * (1 - Math.cos(u) / 2) * Math.cos(u) * Math.cos(v);
+            z =
+              -8 * Math.sin(u) -
+              2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v);
           } else {
-            x = 3 * Math.cos(u) * (1 + Math.sin(u)) + 2 * (1 - Math.cos(u) / 2) * Math.cos(v + Math.PI);
+            x =
+              3 * Math.cos(u) * (1 + Math.sin(u)) +
+              2 * (1 - Math.cos(u) / 2) * Math.cos(v + Math.PI);
             z = -8 * Math.sin(u);
           }
-          row.push([x * 0.19, -2 * (1 - Math.cos(u) / 2) * Math.sin(v) * 0.19, z * 0.19]);
+          row.push([
+            x * 0.19,
+            -2 * (1 - Math.cos(u) / 2) * Math.sin(v) * 0.19,
+            z * 0.19
+          ]);
         } else {
           const strip = -0.55 + (1.1 * j) / vCount;
           const R = 1.8;
-          row.push([(R + strip * Math.cos(u / 2)) * Math.cos(u), (R + strip * Math.cos(u / 2)) * Math.sin(u), strip * Math.sin(u / 2)]);
+          row.push([
+            (R + strip * Math.cos(u / 2)) * Math.cos(u),
+            (R + strip * Math.cos(u / 2)) * Math.sin(u),
+            strip * Math.sin(u / 2)
+          ]);
         }
       }
       grid.push(row);
@@ -60,336 +95,574 @@
     return grid;
   }
 
-  const widthLimit = lowPower ? 26 : 36;
-  const heightLimit = lowPower ? 12 : 18;
-
-  // Elevated ~45° with a slight yaw — the shared view for static scenes.
-  const STATIC_VIEW = [1.02, 0.55, 0.14];
-
   const SCENES = {
     full: [
-      // Torus & Klein bottle: fine, crisp wireframes; Möbius matches opacity.
-      { name: "torus", grid: buildSurface("torus"), center: [0.22, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.12, 0.18, 0.05], alpha: 0.95, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 },
-      { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.08, 0.16, -0.04], alpha: 0.85, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 },
-      { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.07, -0.09, 0.03], alpha: 0.9 }
+      {
+        name: "torus",
+        grid: buildSurface("torus"),
+        center: [0.28, 0.40],
+        scale: 0.8,
+        color: palette.cyan,
+        accent: palette.gold,
+        speed: [0.12, 0.18, 0.05],
+        alpha: 0.95,
+        coreWidth: 1.8,
+        glowWidth: 3.4,
+        glowFade: 0.2
+      },
+      {
+        name: "klein",
+        grid: buildSurface("klein"),
+        center: [0.81, 0.4],
+        scale: 0.92,
+        color: palette.gold,
+        accent: palette.cyan,
+        speed: [0.08, 0.16, -0.04],
+        alpha: 0.85,
+        coreWidth: 1.8,
+        glowWidth: 3.4,
+        glowFade: 0.2
+      },
+      {
+        name: "mobius",
+        grid: buildSurface("mobius"),
+        center: [0.58, 0.80],
+        scale: 0.62,
+        color: palette.blue,
+        accent: palette.gold,
+        speed: [0.07, -0.09, 0.03],
+        alpha: 0.9,
+        coreWidth: 1.7,
+        glowWidth: 3.2,
+        glowFade: 0.2
+      }
     ],
     torus: [
-      { name: "torus", grid: buildSurface("torus"), center: [0.5, 0.46], scale: 1.12, color: palette.cyan, accent: palette.gold, angles: STATIC_VIEW, alpha: 0.95, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 }
+      {
+        name: "torus",
+        grid: buildSurface("torus"),
+        center: [0.5, 0.42],
+        scale: 1.28,
+        color: palette.cyan,
+        accent: palette.gold,
+        speed: [0, 0, 0],
+        alpha: 0.95,
+        coreWidth: 1.9,
+        glowWidth: 3.6,
+        glowFade: 0.2,
+        view: STATIC_VIEW
+      }
     ],
     mobius: [
-      { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.48], scale: 1.08, color: palette.blue, accent: palette.gold, angles: STATIC_VIEW, alpha: 0.9 }
+      {
+        name: "mobius",
+        grid: buildSurface("mobius"),
+        center: [0.5, 0.46],
+        scale: 1.22,
+        color: palette.blue,
+        accent: palette.gold,
+        speed: [0, 0, 0],
+        alpha: 0.92,
+        coreWidth: 1.8,
+        glowWidth: 3.4,
+        glowFade: 0.2,
+        view: STATIC_VIEW
+      }
     ],
     klein: [
-      { name: "klein", grid: buildSurface("klein"), center: [0.5, 0.44], scale: 1.18, color: palette.gold, accent: palette.cyan, angles: [0.9, -0.6, 0.42], alpha: 0.85, coreWidth: 1.8, glowWidth: 3.4, glowFade: 0.2 }
+      {
+        name: "klein",
+        grid: buildSurface("klein"),
+        center: [0.5, 0.46],
+        scale: 1.35,
+        color: palette.gold,
+        accent: palette.cyan,
+        speed: [0, 0, 0],
+        alpha: 0.9,
+        coreWidth: 1.8,
+        glowWidth: 3.4,
+        glowFade: 0.2,
+        view: [0.9, 0.62, 0.22]
+      }
     ]
   };
 
-  const sceneName = canvas.dataset.scene || "full";
+  const sceneName = canvas.getAttribute("data-scene") || "full";
   const surfaces = SCENES[sceneName] || SCENES.full;
   const animated = sceneName === "full" && !reducedMotion;
 
-  let width = 0;
-  let height = 0;
   let dpr = 1;
-  let time = 0;
-  let frame = 0;
-  let lastFrame = 0;
-  let visible = !document.hidden;
-  // Pre-rendered once per size: everything behind the wireframes (gradient
-  // + surface halos) and everything in front of them (vignette). The frame
-  // loop then only blits these two layers and strokes the wireframes.
-  let staticLayer = null;
-  let vignetteLayer = null;
+  let cssW = 1;
+  let cssH = 1;
+  let frameLines = [];
+  let lastT = 0;
+  let elapsed = 0;
+  let running = false;
+  let snapCanvas = null;
+  let snapCtx = null;
+  const lensCache = new WeakMap();
 
-  function rotate(point, angles) {
-    const [ax, ay, az] = angles;
-    const ca = Math.cos(ax), sa = Math.sin(ax);
-    const cy = Math.cos(ay), sy = Math.sin(ay);
-    const cz = Math.cos(az), sz = Math.sin(az);
-    const y1 = point[1] * ca - point[2] * sa;
-    const z1 = point[1] * sa + point[2] * ca;
-    const x2 = point[0] * cy + z1 * sy;
-    const z2 = -point[0] * sy + z1 * cy;
-    return [x2 * cz - y1 * sz, x2 * sz + y1 * cz, z2];
+  function rotatePoint(p, ax, ay, az) {
+    let x = p[0];
+    let y = p[1];
+    let z = p[2];
+    let c = Math.cos(ax);
+    let s = Math.sin(ax);
+    let y2 = y * c - z * s;
+    let z2 = y * s + z * c;
+    y = y2;
+    z = z2;
+    c = Math.cos(ay);
+    s = Math.sin(ay);
+    let x2 = x * c + z * s;
+    z2 = -x * s + z * c;
+    x = x2;
+    z = z2;
+    c = Math.cos(az);
+    s = Math.sin(az);
+    x2 = x * c - y * s;
+    y2 = x * s + y * c;
+    return [x2, y2, z];
   }
 
-  function project(point, angles, cx, cy, scale) {
-    const rotated = rotate(point, angles);
-    const perspective = scale / (7.5 - rotated[2]);
-    return { x: cx + rotated[0] * perspective, y: cy + rotated[1] * perspective };
+  function pathRoundedRect(target, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    target.beginPath();
+    if (typeof target.roundRect === "function") {
+      target.roundRect(x, y, w, h, r);
+      return;
+    }
+    target.moveTo(x + r, y);
+    target.arcTo(x + w, y, x + w, y + h, r);
+    target.arcTo(x + w, y + h, x, y + h, r);
+    target.arcTo(x, y + h, x, y, r);
+    target.arcTo(x, y, x + w, y, r);
+    target.closePath();
   }
 
-  function drawGlow(context, cx, cy, radius, color, alpha) {
-    const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, radius);
-    gradient.addColorStop(0, `rgba(${color},${alpha})`);
-    gradient.addColorStop(0.32, `rgba(${color},${alpha * 0.34})`);
-    gradient.addColorStop(1, `rgba(${color},0)`);
-    context.fillStyle = gradient;
-    context.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  function ensureSnap(w, h) {
+    if (!snapCanvas) {
+      snapCanvas = document.createElement("canvas");
+      snapCtx = snapCanvas.getContext("2d", { alpha: false });
+    }
+    if (snapCanvas.width !== w || snapCanvas.height !== h) {
+      snapCanvas.width = w;
+      snapCanvas.height = h;
+    }
+    return snapCtx;
   }
 
-  function buildStaticLayers() {
-    staticLayer = document.createElement("canvas");
-    staticLayer.width = canvas.width;
-    staticLayer.height = canvas.height;
-    const sctx = staticLayer.getContext("2d");
-    sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const gradient = sctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, "#04080e");
-    gradient.addColorStop(0.5, "#081019");
-    gradient.addColorStop(1, "#060c15");
-    sctx.fillStyle = gradient;
-    sctx.fillRect(0, 0, width, height);
-    surfaces.forEach((surface) => {
-      drawGlow(sctx, width * surface.center[0], height * surface.center[1], Math.min(width, height) * surface.scale * 1.35, surface.color, 0.34);
-    });
-
-    vignetteLayer = document.createElement("canvas");
-    vignetteLayer.width = canvas.width;
-    vignetteLayer.height = canvas.height;
-    const vctx = vignetteLayer.getContext("2d");
-    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const vignette = vctx.createRadialGradient(width * 0.5, height * 0.45, Math.min(width, height) * 0.18, width * 0.5, height * 0.45, Math.max(width, height) * 0.8);
-    vignette.addColorStop(0, "rgba(0,0,0,0)");
-    vignette.addColorStop(1, "rgba(0,0,0,0.22)");
-    vctx.fillStyle = vignette;
-    vctx.fillRect(0, 0, width, height);
+  function ensureLensCanvas(el) {
+    let rec = lensCache.get(el);
+    if (rec && rec.canvas.isConnected) return rec;
+    let node = el.querySelector(":scope > canvas.glass-lens-canvas");
+    if (!node) {
+      node = document.createElement("canvas");
+      node.className = "glass-lens-canvas";
+      node.setAttribute("aria-hidden", "true");
+      el.insertBefore(node, el.firstChild);
+    }
+    el.classList.add("has-glass-lens");
+    rec = { canvas: node, ctx: node.getContext("2d") };
+    lensCache.set(el, rec);
+    return rec;
   }
 
-  function drawSurface(surface) {
-    const seconds = time * 0.001;
-    const angles = surface.angles || [
-      0.7 + seconds * surface.speed[0],
-      0.4 + seconds * surface.speed[1],
-      0.08 + seconds * surface.speed[2]
-    ];
-    const cx = width * surface.center[0];
-    const cy = height * surface.center[1];
-    const scale = Math.min(width, height) * surface.scale;
-    const projected = surface.grid.map((row) => row.map((point) => project(point, angles, cx, cy, scale)));
-    const uMax = projected.length - 1;
-    const vMax = projected[0].length - 1;
-
-    // One stroke per grid row instead of one per cell — same output,
-    // an order of magnitude fewer path submissions per frame.
-    const drawWireframe = (lineWidth, opacityScale, composite) => {
-      ctx.save();
-      ctx.globalCompositeOperation = composite;
-      ctx.lineWidth = lineWidth;
-      for (let i = 0; i < uMax; i += 1) {
-        ctx.strokeStyle = `rgba(${surface.color},${(surface.alpha * opacityScale * (0.66 + (i % 5) * 0.045)).toFixed(3)})`;
-        ctx.beginPath();
-        for (let j = 0; j < vMax; j += 1) {
-          const point = projected[i][j];
-          ctx.moveTo(point.x, point.y);
-          ctx.lineTo(projected[i + 1][j].x, projected[i + 1][j].y);
-          ctx.moveTo(point.x, point.y);
-          ctx.lineTo(projected[i][j + 1].x, projected[i][j + 1].y);
-        }
-        ctx.stroke();
+  function collectLenses() {
+    const list = [];
+    document.querySelectorAll(LENS_SELECTOR).forEach((el) => {
+      if (el.classList.contains("collapsed")) return;
+      const styles = window.getComputedStyle(el);
+      if (
+        styles.display === "none" ||
+        styles.visibility === "hidden" ||
+        styles.opacity === "0"
+      ) {
+        return;
       }
-      ctx.restore();
-    };
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 12 || rect.height < 10) return;
+      if (rect.bottom < -40 || rect.top > cssH + 40) return;
+      if (rect.right < -40 || rect.left > cssW + 40) return;
+      let radius = parseFloat(styles.borderTopLeftRadius) || 0;
+      if (String(styles.borderTopLeftRadius).includes("%")) {
+        radius = Math.min(rect.width, rect.height) * (radius / 100);
+      }
+      radius = Math.max(2, Math.min(radius, rect.width / 2, rect.height / 2));
+      const rec = ensureLensCanvas(el);
+      list.push({
+        el,
+        canvas: rec.canvas,
+        ctx: rec.ctx,
+        x: rect.left,
+        y: rect.top,
+        w: rect.width,
+        h: rect.height,
+        r: radius
+      });
+    });
+    return list;
+  }
 
-    const coreWidth = surface.coreWidth || (lowPower ? 1.2 : 1.6);
-    const glowWidth = surface.glowWidth || (lowPower ? 2.4 : 3.2);
-    const glowFade = surface.glowFade || 0.16;
-    drawWireframe(glowWidth, glowFade, "lighter");
-    drawWireframe(coreWidth, 1, "source-over");
+  function drawSurface(surface, time) {
+    const view = surface.view || STATIC_VIEW;
+    const ax = view[0] + (surface.speed[0] || 0) * time;
+    const ay = view[1] + (surface.speed[1] || 0) * time;
+    const az = view[2] + (surface.speed[2] || 0) * time;
+    const cx = cssW * surface.center[0];
+    const cy = cssH * surface.center[1];
+    const dim = Math.min(cssW, cssH);
+    const grid = surface.grid;
+    const rows = grid.length;
+    const cols = grid[0].length;
+    const projected = new Array(rows);
+
+    for (let i = 0; i < rows; i += 1) {
+      const row = grid[i];
+      const out = new Array(cols);
+      for (let j = 0; j < cols; j += 1) {
+        const p = rotatePoint(row[j], ax, ay, az);
+        const z = p[2] + 3.8;
+        const f = (surface.scale * 0.5 * dim) / z;
+        out[j] = [cx + p[0] * f, cy + p[1] * f, z];
+      }
+      projected[i] = out;
+    }
+
+    const segs = [];
+    function pushSeg(a, b) {
+      const z = (a[2] + b[2]) * 0.5;
+      segs.push(a[0], a[1], b[0], b[1], z);
+    }
+    for (let i = 0; i < rows; i += 1) {
+      for (let j = 0; j < cols - 1; j += 1) pushSeg(projected[i][j], projected[i][j + 1]);
+    }
+    for (let j = 0; j < cols; j += 1) {
+      for (let i = 0; i < rows - 1; i += 1) pushSeg(projected[i][j], projected[i + 1][j]);
+    }
+
+    const n = segs.length / 5;
+    const order = new Array(n);
+    for (let i = 0; i < n; i += 1) order[i] = i;
+    order.sort((a, b) => segs[b * 5 + 4] - segs[a * 5 + 4]);
+
+    const core = surface.coreWidth || 1.8;
+    const glow = surface.glowWidth || 3.4;
+    const glowFade = surface.glowFade || 0.2;
+    const alpha = surface.alpha || 0.9;
+
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    for (let s = 0; s < n; s += 1) {
+      const i = order[s];
+      const x1 = segs[i * 5];
+      const y1 = segs[i * 5 + 1];
+      const x2 = segs[i * 5 + 2];
+      const y2 = segs[i * 5 + 3];
+      const z = segs[i * 5 + 4];
+      const depth = Math.max(0.25, Math.min(1, 1.35 - (z - 3.2) * 0.18));
+      const a = alpha * depth;
+
+      ctx.strokeStyle = "rgba(" + surface.color + "," + (a * glowFade).toFixed(3) + ")";
+      ctx.lineWidth = glow;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(" + surface.color + "," + a.toFixed(3) + ")";
+      ctx.lineWidth = core;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+
+      frameLines.push({
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2,
+        color: surface.color,
+        accent: surface.accent,
+        alpha: a,
+        lw: core
+      });
+    }
 
     if (surface.name === "mobius") {
-      ctx.save();
       ctx.lineWidth = lowPower ? 1.3 : 1.8;
-      ctx.strokeStyle = `rgba(${surface.accent},0.8)`;
-      [0, vMax].forEach((edge) => {
+      ctx.strokeStyle = "rgba(" + surface.accent + ",0.8)";
+      [0, cols - 1].forEach(function (edge) {
         ctx.beginPath();
-        for (let i = 0; i <= uMax; i += 1) {
-          const point = projected[i][edge];
-          if (i === 0) ctx.moveTo(point.x, point.y);
-          else ctx.lineTo(point.x, point.y);
+        for (let i = 0; i < rows; i += 1) {
+          const p = projected[i][edge];
+          if (i === 0) ctx.moveTo(p[0], p[1]);
+          else ctx.lineTo(p[0], p[1]);
         }
         ctx.stroke();
       });
-      ctx.restore();
     }
   }
 
-  /* ============ Glass lens pass ============
-     The hero buttons and the playlist panel are transparent windows onto
-     this canvas. Their lens is rendered HERE — a slice-displaced copy of
-     the finished frame plus a catch-light rim — so the effect is visible
-     in every engine and does not depend on backdrop-filter: url() support.
-     liquid-glass.js supplies the live element rects. */
-
-  const lensFields = new Map();
-  let scratch = null;
-
-  function roundedRectSDF(px, py, hw, hh, r) {
-    const qx = Math.abs(px) - hw + r;
-    const qy = Math.abs(py) - hh + r;
-    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
+  function barrelDestToSrc(u, v, k) {
+    const nx = u * 2 - 1;
+    const ny = v * 2 - 1;
+    const r2 = nx * nx + ny * ny;
+    const f = 1 + k * r2;
+    return [0.5 + 0.5 * nx * f, 0.5 + 0.5 * ny * f];
   }
 
-  function lensField(w, h, r) {
-    const key = w + "x" + h + "x" + r;
-    if (lensFields.has(key)) return lensFields.get(key);
-    const cell = 8;
-    const cols = Math.ceil(w / cell);
-    const rows = Math.ceil(h / cell);
-    const offsets = new Float32Array(cols * rows * 2);
-    const hw = w / 2;
-    const hh = h / 2;
-    const rr = Math.max(2, Math.min(r, hw, hh));
-    const band = Math.max(26, Math.min(w, h) * 0.6);
-    const strength = 40;
-    for (let row = 0; row < rows; row += 1) {
-      for (let col = 0; col < cols; col += 1) {
-        const px = (col + 0.5) * cell - hw;
-        const py = (row + 0.5) * cell - hh;
-        const d = roundedRectSDF(px, py, hw, hh, rr);
-        const t = Math.exp(-Math.abs(d) / band);
-        let nx = 0;
-        let ny = 0;
-        if (t > 0.01) {
-          const gx = roundedRectSDF(px + 1, py, hw, hh, rr) - roundedRectSDF(px - 1, py, hw, hh, rr);
-          const gy = roundedRectSDF(px, py + 1, hw, hh, rr) - roundedRectSDF(px, py - 1, hw, hh, rr);
-          const len = Math.hypot(gx, gy);
-          if (len > 1e-6) {
-            nx = gx / len;
-            ny = gy / len;
+  function warpWorldToLens(wx, wy, lens) {
+    const cx = lens.x + lens.w / 2;
+    const cy = lens.y + lens.h / 2;
+    const dx = wx - cx;
+    const dy = wy - cy;
+    const nx = lens.w > 0 ? dx / (lens.w / 2) : 0;
+    const ny = lens.h > 0 ? dy / (lens.h / 2) : 0;
+    const r2 = nx * nx + ny * ny;
+    const f = 1 + BARREL_K * Math.min(2.2, r2);
+    return [lens.w / 2 + dx / f, lens.h / 2 + dy / f];
+  }
+
+  function lineHits(ln, lens, pad) {
+    const minX = Math.min(ln.x1, ln.x2);
+    const maxX = Math.max(ln.x1, ln.x2);
+    const minY = Math.min(ln.y1, ln.y2);
+    const maxY = Math.max(ln.y1, ln.y2);
+    return (
+      maxX >= lens.x - pad &&
+      minX <= lens.x + lens.w + pad &&
+      maxY >= lens.y - pad &&
+      minY <= lens.y + lens.h + pad
+    );
+  }
+
+  function paintOneLens(lens, canvasRect) {
+    const lctx = lens.ctx;
+    const lc = lens.canvas;
+    const bw = Math.max(1, Math.round(lens.w * dpr));
+    const bh = Math.max(1, Math.round(lens.h * dpr));
+    if (lc.width !== bw || lc.height !== bh) {
+      lc.width = bw;
+      lc.height = bh;
+    }
+
+    lctx.setTransform(1, 0, 0, 1, 0, 0);
+    lctx.clearRect(0, 0, bw, bh);
+    lctx.save();
+    pathRoundedRect(lctx, 0, 0, bw, bh, lens.r * dpr);
+    lctx.clip();
+    lctx.fillStyle = BG;
+    lctx.fill();
+
+    const scaleX = canvas.width / Math.max(1, canvasRect.width);
+    const scaleY = canvas.height / Math.max(1, canvasRect.height);
+    const padX = lens.w * SNAP_PAD;
+    const padY = lens.h * SNAP_PAD;
+
+    let srcCssX = lens.x - canvasRect.left - padX;
+    let srcCssY = lens.y - canvasRect.top - padY;
+    let srcCssW = lens.w + padX * 2;
+    let srcCssH = lens.h + padY * 2;
+
+    let sx = srcCssX * scaleX;
+    let sy = srcCssY * scaleY;
+    let sw = srcCssW * scaleX;
+    let sh = srcCssH * scaleY;
+
+    const maxW = canvas.width;
+    const maxH = canvas.height;
+    if (sx < 0) {
+      const cut = -sx;
+      sw -= cut;
+      srcCssW *= (srcCssW * scaleX - cut) / Math.max(1, srcCssW * scaleX);
+      srcCssX += cut / scaleX;
+      sx = 0;
+    }
+    if (sy < 0) {
+      const cut = -sy;
+      sh -= cut;
+      srcCssH *= (srcCssH * scaleY - cut) / Math.max(1, srcCssH * scaleY);
+      srcCssY += cut / scaleY;
+      sy = 0;
+    }
+    if (sx + sw > maxW) sw = maxW - sx;
+    if (sy + sh > maxH) sh = maxH - sy;
+
+    if (sw > 2 && sh > 2) {
+      const snapW = Math.max(2, Math.round(sw));
+      const snapH = Math.max(2, Math.round(sh));
+      const sctx = ensureSnap(snapW, snapH);
+      sctx.setTransform(1, 0, 0, 1, 0, 0);
+      sctx.fillStyle = BG;
+      sctx.fillRect(0, 0, snapW, snapH);
+      sctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, snapW, snapH);
+
+      const cols = lowPower ? 7 : 12;
+      const rows = lowPower ? 5 : 8;
+      lctx.imageSmoothingEnabled = true;
+      if (lctx.imageSmoothingQuality) lctx.imageSmoothingQuality = lowPower ? "low" : "high";
+
+      const snapOriginX = srcCssX;
+      const snapOriginY = srcCssY;
+      const snapCssW = sw / scaleX;
+      const snapCssH = sh / scaleY;
+
+      for (let j = 0; j < rows; j += 1) {
+        for (let i = 0; i < cols; i += 1) {
+          const u0 = i / cols;
+          const v0 = j / rows;
+          const u1 = (i + 1) / cols;
+          const v1 = (j + 1) / rows;
+          const um = (u0 + u1) * 0.5;
+          const vm = (v0 + v1) * 0.5;
+          const srcUV = barrelDestToSrc(um, vm, BARREL_K);
+          const worldX = lens.x + srcUV[0] * lens.w;
+          const worldY = lens.y + srcUV[1] * lens.h;
+          const tileSrcW = ((u1 - u0) * lens.w * (1 + BARREL_K * 0.35)) / snapCssW;
+          const tileSrcH = ((v1 - v0) * lens.h * (1 + BARREL_K * 0.35)) / snapCssH;
+          const srcPx = ((worldX - snapOriginX) / snapCssW - tileSrcW * 0.5) * snapW;
+          const srcPy = ((worldY - snapOriginY) / snapCssH - tileSrcH * 0.5) * snapH;
+          const srcPw = Math.max(1, tileSrcW * snapW);
+          const srcPh = Math.max(1, tileSrcH * snapH);
+
+          if (srcPx > snapW || srcPy > snapH || srcPx + srcPw < 0 || srcPy + srcPh < 0) {
+            continue;
           }
-        }
-        const idx = (row * cols + col) * 2;
-        offsets[idx] = nx * strength * t;
-        offsets[idx + 1] = ny * strength * t;
-      }
-    }
-    const field = { cell, cols, rows, offsets };
-    lensFields.set(key, field);
-    return field;
-  }
 
-  function drawLens() {
-    if (typeof window.__glassLensRects !== "function") return;
-    const rects = window.__glassLensRects();
-    for (const rect of rects) {
-      const x = rect.x;
-      const y = rect.y;
-      const w = rect.w;
-      const h = rect.h;
-      const pad = Math.min(48, x, y, width - (x + w), height - (y + h));
-      if (pad < 12 || w < 12 || h < 10) continue;
-      const field = lensField(w, h, rect.r);
-      const rw = w + pad * 2;
-      const rh = h + pad * 2;
-      if (!scratch || scratch.width < Math.ceil(rw * dpr) || scratch.height < Math.ceil(rh * dpr)) {
-        scratch = document.createElement("canvas");
-        scratch.width = Math.ceil(rw * dpr);
-        scratch.height = Math.ceil(rh * dpr);
-      }
-      const sctx = scratch.getContext("2d");
-      sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      sctx.clearRect(x - pad, y - pad, rw, rh);
-      sctx.drawImage(canvas, (x - pad) * dpr, (y - pad) * dpr, rw * dpr, rh * dpr, x - pad, y - pad, rw, rh);
-
-      ctx.save();
-      ctx.beginPath();
-      if (ctx.roundRect) ctx.roundRect(x, y, w, h, rect.r);
-      else ctx.rect(x, y, w, h);
-      ctx.clip();
-      const cell = field.cell;
-      for (let row = 0; row < field.rows; row += 1) {
-        for (let col = 0; col < field.cols; col += 1) {
-          const cw = Math.min(cell, w - col * cell);
-          const ch = Math.min(cell, h - row * cell);
-          if (cw <= 0 || ch <= 0) continue;
-          const idx = (row * field.cols + col) * 2;
-          const dx = x + col * cell;
-          const dy = y + row * cell;
-          ctx.drawImage(
-            scratch,
-            (dx + field.offsets[idx] - (x - pad)) * dpr,
-            (dy + field.offsets[idx + 1] - (y - pad)) * dpr,
-            cw * dpr,
-            ch * dpr,
-            dx,
-            dy,
-            cw,
-            ch
+          lctx.drawImage(
+            snapCanvas,
+            srcPx,
+            srcPy,
+            srcPw,
+            srcPh,
+            u0 * bw,
+            v0 * bh,
+            (u1 - u0) * bw + 0.6,
+            (v1 - v0) * bh + 0.6
           );
         }
       }
-      // Catch-light rim so the lens reads even over an empty backdrop.
-      ctx.globalCompositeOperation = "lighter";
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "rgba(168,230,230,0.10)";
-      if (ctx.roundRect) ctx.roundRect(x + 1, y + 1, w - 2, h - 2, Math.max(1, rect.r - 1));
-      else ctx.rect(x + 1, y + 1, w - 2, h - 2);
-      ctx.stroke();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(255,255,255,0.10)";
-      if (ctx.roundRect) ctx.roundRect(x + 2.5, y + 2.5, w - 5, h - 5, Math.max(1, rect.r - 2.5));
-      else ctx.rect(x + 2.5, y + 2.5, w - 5, h - 5);
-      ctx.stroke();
-      ctx.restore();
     }
-  }
 
-  function render(now) {
-    frame = 0;
-    if (!visible) return;
-    if (animated) {
-      if (now - lastFrame < (lowPower ? 52 : 32)) {
-        frame = requestAnimationFrame(render);
-        return;
+    const cr = canvasRect;
+    const pad = Math.max(lens.w, lens.h) * (SNAP_PAD + 0.15);
+    lctx.lineCap = "round";
+    lctx.lineJoin = "round";
+    for (let i = 0; i < frameLines.length; i += 1) {
+      const ln = frameLines[i];
+      const vx1 = cr.left + ln.x1;
+      const vy1 = cr.top + ln.y1;
+      const vx2 = cr.left + ln.x2;
+      const vy2 = cr.top + ln.y2;
+      if (
+        !lineHits(
+          { x1: vx1, y1: vy1, x2: vx2, y2: vy2 },
+          lens,
+          pad
+        )
+      ) {
+        continue;
       }
-      lastFrame = now;
+      const a = warpWorldToLens(vx1, vy1, lens);
+      const b = warpWorldToLens(vx2, vy2, lens);
+      const split = 1.4 * dpr;
+
+      lctx.strokeStyle = "rgba(" + ln.accent + "," + Math.min(0.7, ln.alpha * 0.7).toFixed(3) + ")";
+      lctx.lineWidth = ln.lw * dpr;
+      lctx.beginPath();
+      lctx.moveTo(a[0] * dpr - split, a[1] * dpr);
+      lctx.lineTo(b[0] * dpr - split, b[1] * dpr);
+      lctx.stroke();
+
+      lctx.strokeStyle = "rgba(" + ln.color + "," + ln.alpha.toFixed(3) + ")";
+      lctx.beginPath();
+      lctx.moveTo(a[0] * dpr + split * 0.7, a[1] * dpr);
+      lctx.lineTo(b[0] * dpr + split * 0.7, b[1] * dpr);
+      lctx.stroke();
     }
-    time = now;
-    ctx.clearRect(0, 0, width, height);
-    ctx.drawImage(staticLayer, 0, 0, width, height);
-    surfaces.forEach(drawSurface);
-    ctx.drawImage(vignetteLayer, 0, 0, width, height);
-    if (animated) drawLens();
-    if (animated) frame = requestAnimationFrame(render);
+
+    lctx.strokeStyle = "rgba(224,255,255,0.22)";
+    lctx.lineWidth = Math.max(1, dpr);
+    pathRoundedRect(
+      lctx,
+      1.25 * dpr,
+      1.25 * dpr,
+      bw - 2.5 * dpr,
+      bh - 2.5 * dpr,
+      Math.max(0, lens.r * dpr - 1.25 * dpr)
+    );
+    lctx.stroke();
+    lctx.restore();
   }
 
-  let stableWidth = 0;
-  let stableHeight = 0;
-  let resizeTimer = 0;
+  function paintLenses() {
+    const lenses = collectLenses();
+    if (!lenses.length) return;
+    const canvasRect = canvas.getBoundingClientRect();
+    for (let i = 0; i < lenses.length; i += 1) paintOneLens(lenses[i], canvasRect);
+  }
 
-  function applySize(w, h) {
-    width = w;
-    height = h;
-    dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.2 : 2);
-    canvas.width = Math.round(width * dpr);
-    canvas.height = Math.round(height * dpr);
+  function drawScene(time) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    buildStaticLayers();
-    render(0);
+    ctx.fillStyle = BG;
+    ctx.fillRect(0, 0, cssW, cssH);
+    frameLines = [];
+    for (let i = 0; i < surfaces.length; i += 1) drawSurface(surfaces[i], time);
+    paintLenses();
   }
 
   function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    // Phone toolbars fire resize with small height deltas while scrolling;
-    // redrawing on those is what makes the fixed backdrop visibly jump.
-    // The element is stretched by CSS in the meantime, which is imperceptible.
-    if (w === stableWidth && Math.abs(h - stableHeight) < 140) return;
-    stableWidth = w;
-    stableHeight = h;
-    applySize(w, h);
+    const nextDpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.5 : 2);
+    const w = Math.max(1, canvas.clientWidth || window.innerWidth || 1);
+    const h = Math.max(1, canvas.clientHeight || window.innerHeight || 1);
+    dpr = nextDpr;
+    cssW = w;
+    cssH = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    drawScene(elapsed);
   }
 
-  if (animated) {
-    document.addEventListener("visibilitychange", () => {
-      visible = !document.hidden;
-      if (visible && !frame) frame = requestAnimationFrame(render);
+  function loop(now) {
+    if (!running) return;
+    if (document.hidden) {
+      lastT = now;
+      requestAnimationFrame(loop);
+      return;
+    }
+    if (!lastT) lastT = now;
+    const dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    if (animated) elapsed += dt;
+    drawScene(elapsed);
+    requestAnimationFrame(loop);
+  }
+
+  function start() {
+    if (running) return;
+    running = true;
+    lastT = 0;
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener("resize", resize, { passive: true });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", resize, { passive: true });
+  }
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden && running) lastT = 0;
+  });
+
+  const playlistToggle = document.getElementById("playlist-toggle");
+  if (playlistToggle) {
+    playlistToggle.addEventListener("click", function () {
+      requestAnimationFrame(function () {
+        paintLenses();
+      });
     });
   }
-  window.addEventListener("resize", () => {
-    window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(resize, 200);
-  }, { passive: true });
+
   resize();
+  start();
 })();
