@@ -15,23 +15,23 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Kanghe Lyu — Mathematics" />
   <meta name="twitter:description" content="Research, notes, and projects by Kanghe Lyu." />
-  <link rel="stylesheet" href="assets/css/base.css?v=4" />
-  <link rel="stylesheet" href="assets/css/home.css?v=4" />
+  <link rel="stylesheet" href="assets/css/base.css?v=5" />
+  <link rel="stylesheet" href="assets/css/home.css?v=5" />
 </head>
 <body>
   <canvas id="bg" aria-hidden="true"></canvas>
 
-  <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch language" aria-pressed="false">EN / 中文</button>
-  <button id="music-toggle" class="music-toggle" type="button" aria-label="Play background music" aria-pressed="false">♪ Music</button>
-
-  <div class="track-controls" aria-label="Music track controls">
-    <button id="prev-track" class="track-btn" type="button" aria-label="Previous track">⏮</button>
-    <button id="next-track" class="track-btn" type="button" aria-label="Next track">⏭</button>
-  </div>
-
-  <div id="playlist-panel" class="playlist-panel collapsed" aria-label="Music playlist">
-    <button id="playlist-toggle" class="playlist-toggle" type="button" aria-expanded="false" aria-controls="playlist-list">Playlist ▾</button>
-    <div id="playlist-list" class="playlist-list" role="list"></div>
+  <div class="media-dock" aria-label="Site controls">
+    <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch language" aria-pressed="false">EN / 中文</button>
+    <span class="dock-divider" aria-hidden="true"></span>
+    <button id="prev-track" class="track-btn" type="button" aria-label="Previous track" title="Previous track">‹</button>
+    <button id="music-toggle" class="music-toggle" type="button" aria-label="Play background music" aria-pressed="false">Play</button>
+    <button id="next-track" class="track-btn" type="button" aria-label="Next track" title="Next track">›</button>
+    <span id="track-label" class="track-label" aria-live="polite">Music</span>
+    <button id="playlist-toggle" class="playlist-toggle" type="button" aria-expanded="false" aria-controls="playlist-list" title="Open playlist">List</button>
+    <div id="playlist-panel" class="playlist-panel collapsed" aria-label="Music playlist">
+      <div id="playlist-list" class="playlist-list" role="list"></div>
+    </div>
   </div>
 
   <audio id="bg-music" preload="metadata"></audio>
@@ -49,8 +49,6 @@
         <h1 id="name">Kanghe Lyu</h1>
         <p id="subtitle" class="subtitle">B.Sc. in Mathematics, Sichuan University (2022–2026)
 Ph.D. candidate at SUSTech SICM (2026–)</p>
-        <p id="hero-status" class="hero-status">Researcher · SUSTech SICM · Shenzhen</p>
-
         <nav class="reveal button-row hero-actions" aria-label="Selected links">
           <a id="btn-notes" href="notes.html" class="button button-primary">Notes</a>
           <a id="btn-projects" href="projects.html" class="button">Apps</a>
@@ -71,29 +69,7 @@ Ph.D. candidate at SUSTech SICM (2026–)</p>
           <p id="intro-p2">I will begin my Ph.D. study at the Southern University of Science and Technology in 2026, advised by Prof. Vyacheslav Futorny.</p>
           <p id="intro-p3">This page contains my personal information, curriculum vitae, and mathematical notes or surveys.</p>
         </div>
-        <div class="focus-grid" aria-label="Research areas">
-          <article class="focus-item">
-            <p class="focus-number">I</p>
-            <h3 id="focus-1-title">Representation theory</h3>
-            <p id="focus-1-text">Structure, symmetries, and the languages used to describe them.</p>
-          </article>
-          <article class="focus-item">
-            <p class="focus-number">II</p>
-            <h3 id="focus-2-title">Noncommutative geometry</h3>
-            <p id="focus-2-text">Geometry where algebra becomes the primary coordinate system.</p>
-          </article>
-          <article class="focus-item">
-            <p class="focus-number">III</p>
-            <h3 id="focus-3-title">Mathematical physics</h3>
-            <p id="focus-3-text">Connections between rigorous structures and physical intuition.</p>
-          </article>
-          <article class="focus-item">
-            <p class="focus-number">IV</p>
-            <h3 id="focus-4-title">Algebraic geometry</h3>
-            <p id="focus-4-text">Spaces, invariants, and the geometry hidden in equations.</p>
-          </article>
-        </div>
-        <aside class="music-callout" id="music-note">Use the music control to listen to AI music created to accompany this visual language.</aside>
+        <p id="interest-list" class="interest-list">Representation theory · Noncommutative geometry · Mathematical physics · Algebraic geometry</p>
       </section>
 
       <section id="experience" class="content-section reveal" aria-labelledby="exp-title">
@@ -114,7 +90,7 @@ Ph.D. candidate at SUSTech SICM (2026–)</p>
       <section id="awards" class="content-section reveal" aria-labelledby="awards-title">
         <div class="section-heading">
           <p class="section-index">03</p>
-          <h2 id="awards-title">Awards & projects</h2>
+          <h2 id="awards-title">Awards</h2>
         </div>
         <ul class="awards-list">
           <li id="awards-p1">Contemporary Undergraduate Mathematical Contest in Modeling, National Second Prize.</li>
@@ -143,8 +119,8 @@ Ph.D. candidate at SUSTech SICM (2026–)</p>
     </footer>
   </div>
 
-  <script src="assets/js/site.js?v=4"></script>
-  <script src="assets/js/home.js?v=4"></script>
-  <script src="assets/js/bg.js?v=10"></script>
+  <script src="assets/js/site.js?v=5"></script>
+  <script src="assets/js/home.js?v=5"></script>
+  <script src="assets/js/bg.js?v=11"></script>
 </body>
 </html>
