@@ -68,7 +68,7 @@
     html.en [data-lang="en"].block, html.zh [data-lang="zh"].block { display: block; }
     html.en [data-lang="en"].flex, html.zh [data-lang="zh"].flex { display: flex; }
     /* Shared math background: one large static Klein bottle behind the page. */
-    #bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+    #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; z-index: -1; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -185,7 +185,7 @@ document.head.appendChild(l);</code></div>
   <p>Based on <a href="https://stacks.math.columbia.edu">The Stacks Project</a> by Johan de Jong &amp; contributors · Dark mode by <a href="https://kanghelyu.github.io">Kanghe Lyu</a></p>
 </footer>
 
-<script src="../assets/js/bg.js?v=29" defer></script>
+<script src="../assets/js/bg.js?v=30" defer></script>
 <script>
 (function() {
   var STORAGE_KEY = 'stacks-dark-lang';

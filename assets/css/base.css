@@ -159,10 +159,8 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; border-radius: 20px; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .playlist-panel.liquid-glass {
-  /* Same material as the dock: dark glass backing + the shared saturate. */
-  background: rgba(7, 16, 24, 0.58);
-  backdrop-filter: saturate(1.35) contrast(1.05);
-  -webkit-backdrop-filter: saturate(1.35) contrast(1.05);
+  /* Canvas-lens window: barely-there backing so the warped scene reads. */
+  background: rgba(7, 16, 24, 0.18);
 }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
   border-color: rgba(208,255,255,0.42);

@@ -25,12 +25,29 @@
     if (element.parentElement && element.parentElement.closest(GLASS_CONTAINER_SELECTOR)) return;
     element.classList.add("liquid-glass");
   });
-  // The playlist popup gets the dock's material; hero buttons get the
-  // subpage cards' material — the exact same CSS and inline filter path,
-  // nothing custom. (They keep the .liquid-glass rim styling too.)
-  document.querySelectorAll(".playlist-panel").forEach((element) => {
+  // Hero buttons and the playlist panel are CANVAS lens windows: bg.js
+  // warps the background inside their rects every frame, so the effect
+  // works in every engine. They keep the .liquid-glass rim styling but no
+  // backdrop-filter of their own.
+  const lensElements = [];
+  document.querySelectorAll(".hero-actions .button, .playlist-panel").forEach((element) => {
     element.classList.add("liquid-glass");
+    element.dataset.glassLens = "1";
+    lensElements.push(element);
   });
+  window.__glassLensRects = function () {
+    const rects = [];
+    for (const element of lensElements) {
+      const styles = window.getComputedStyle(element);
+      if (styles.display === "none" || styles.visibility === "hidden") continue;
+      const rect = element.getBoundingClientRect();
+      if (rect.width < 12 || rect.height < 10) continue;
+      let radius = parseFloat(styles.borderTopLeftRadius) || 0;
+      radius = Math.max(2, Math.min(radius, rect.width / 2, rect.height / 2));
+      rects.push({ x: rect.left, y: rect.top, w: Math.round(rect.width), h: Math.round(rect.height), r: Math.round(radius) });
+    }
+    return rects;
+  };
 
   const ua = navigator.userAgent;
   // Safari (WebKit without a Chromium/Firefox shell) can't resolve SVG
@@ -200,6 +217,7 @@
     }
 
     function enhance(element) {
+      if (element.dataset.glassLens === "1") return; // lens is drawn by bg.js
       const rect = element.getBoundingClientRect();
       const w = Math.round(rect.width);
       const h = Math.round(rect.height);

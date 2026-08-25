@@ -9,10 +9,12 @@ body { background: var(--bg-deep); }
 /* ---- Full math background canvas (shared with homepage) ---- */
 #bg {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: 0;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: 100lvh;
   background: var(--bg-deep);
   pointer-events: none;
   touch-action: none;

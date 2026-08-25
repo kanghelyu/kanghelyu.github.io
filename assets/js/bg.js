@@ -214,6 +214,127 @@
     }
   }
 
+  /* ============ Glass lens pass ============
+     The hero buttons and the playlist panel are transparent windows onto
+     this canvas. Their lens is rendered HERE — a slice-displaced copy of
+     the finished frame plus a catch-light rim — so the effect is visible
+     in every engine and does not depend on backdrop-filter: url() support.
+     liquid-glass.js supplies the live element rects. */
+
+  const lensFields = new Map();
+  let scratch = null;
+
+  function roundedRectSDF(px, py, hw, hh, r) {
+    const qx = Math.abs(px) - hw + r;
+    const qy = Math.abs(py) - hh + r;
+    return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - r;
+  }
+
+  function lensField(w, h, r) {
+    const key = w + "x" + h + "x" + r;
+    if (lensFields.has(key)) return lensFields.get(key);
+    const cell = 8;
+    const cols = Math.ceil(w / cell);
+    const rows = Math.ceil(h / cell);
+    const offsets = new Float32Array(cols * rows * 2);
+    const hw = w / 2;
+    const hh = h / 2;
+    const rr = Math.max(2, Math.min(r, hw, hh));
+    const band = Math.max(26, Math.min(w, h) * 0.6);
+    const strength = 40;
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        const px = (col + 0.5) * cell - hw;
+        const py = (row + 0.5) * cell - hh;
+        const d = roundedRectSDF(px, py, hw, hh, rr);
+        const t = Math.exp(-Math.abs(d) / band);
+        let nx = 0;
+        let ny = 0;
+        if (t > 0.01) {
+          const gx = roundedRectSDF(px + 1, py, hw, hh, rr) - roundedRectSDF(px - 1, py, hw, hh, rr);
+          const gy = roundedRectSDF(px, py + 1, hw, hh, rr) - roundedRectSDF(px, py - 1, hw, hh, rr);
+          const len = Math.hypot(gx, gy);
+          if (len > 1e-6) {
+            nx = gx / len;
+            ny = gy / len;
+          }
+        }
+        const idx = (row * cols + col) * 2;
+        offsets[idx] = nx * strength * t;
+        offsets[idx + 1] = ny * strength * t;
+      }
+    }
+    const field = { cell, cols, rows, offsets };
+    lensFields.set(key, field);
+    return field;
+  }
+
+  function drawLens() {
+    if (typeof window.__glassLensRects !== "function") return;
+    const rects = window.__glassLensRects();
+    for (const rect of rects) {
+      const x = rect.x;
+      const y = rect.y;
+      const w = rect.w;
+      const h = rect.h;
+      const pad = Math.min(48, x, y, width - (x + w), height - (y + h));
+      if (pad < 12 || w < 12 || h < 10) continue;
+      const field = lensField(w, h, rect.r);
+      const rw = w + pad * 2;
+      const rh = h + pad * 2;
+      if (!scratch || scratch.width < Math.ceil(rw * dpr) || scratch.height < Math.ceil(rh * dpr)) {
+        scratch = document.createElement("canvas");
+        scratch.width = Math.ceil(rw * dpr);
+        scratch.height = Math.ceil(rh * dpr);
+      }
+      const sctx = scratch.getContext("2d");
+      sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      sctx.clearRect(x - pad, y - pad, rw, rh);
+      sctx.drawImage(canvas, (x - pad) * dpr, (y - pad) * dpr, rw * dpr, rh * dpr, x - pad, y - pad, rw, rh);
+
+      ctx.save();
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(x, y, w, h, rect.r);
+      else ctx.rect(x, y, w, h);
+      ctx.clip();
+      const cell = field.cell;
+      for (let row = 0; row < field.rows; row += 1) {
+        for (let col = 0; col < field.cols; col += 1) {
+          const cw = Math.min(cell, w - col * cell);
+          const ch = Math.min(cell, h - row * cell);
+          if (cw <= 0 || ch <= 0) continue;
+          const idx = (row * field.cols + col) * 2;
+          const dx = x + col * cell;
+          const dy = y + row * cell;
+          ctx.drawImage(
+            scratch,
+            (dx + field.offsets[idx] - (x - pad)) * dpr,
+            (dy + field.offsets[idx + 1] - (y - pad)) * dpr,
+            cw * dpr,
+            ch * dpr,
+            dx,
+            dy,
+            cw,
+            ch
+          );
+        }
+      }
+      // Catch-light rim so the lens reads even over an empty backdrop.
+      ctx.globalCompositeOperation = "lighter";
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgba(168,230,230,0.10)";
+      if (ctx.roundRect) ctx.roundRect(x + 1, y + 1, w - 2, h - 2, Math.max(1, rect.r - 1));
+      else ctx.rect(x + 1, y + 1, w - 2, h - 2);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(255,255,255,0.10)";
+      if (ctx.roundRect) ctx.roundRect(x + 2.5, y + 2.5, w - 5, h - 5, Math.max(1, rect.r - 2.5));
+      else ctx.rect(x + 2.5, y + 2.5, w - 5, h - 5);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
   function render(now) {
     frame = 0;
     if (!visible) return;
@@ -229,6 +350,7 @@
     ctx.drawImage(staticLayer, 0, 0, width, height);
     surfaces.forEach(drawSurface);
     ctx.drawImage(vignetteLayer, 0, 0, width, height);
+    if (animated) drawLens();
     if (animated) frame = requestAnimationFrame(render);
   }
 
