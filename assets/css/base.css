@@ -19,8 +19,8 @@
   --line-soft: rgba(168, 230, 230, 0.08);
   --focus: #ffe4b8;
   --shadow-dock: 0 14px 42px rgba(0, 0, 0, 0.34);
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --content-width: 920px;
   --reading-width: 720px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -98,7 +98,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .music-toggle.playing { color: var(--cyan) !important; }
 .track-label { max-width: 92px; padding: 0 8px; overflow: hidden; color: var(--muted); font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-toggle { padding: 0 10px; color: var(--subtle) !important; font-size: 0.76rem; }
-.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--panel); box-shadow: var(--shadow-dock); backdrop-filter: blur(8px) saturate(1.35); -webkit-backdrop-filter: blur(8px) saturate(1.35); }
+.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-dock); backdrop-filter: blur(8px) saturate(1.35); -webkit-backdrop-filter: blur(8px) saturate(1.35); }
 .playlist-panel.collapsed { display: none; }
 .playlist-list { max-height: 240px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: rgba(244, 217, 160, 0.38) transparent; scrollbar-width: thin; }
 .playlist-item { display: block; width: 100%; min-height: 36px; padding: 7px 12px; border: 0; border-bottom: 1px solid rgba(168, 230, 230, 0.06); background: transparent; color: var(--ink); cursor: pointer; text-align: left; font-size: 0.8rem; }
@@ -166,12 +166,12 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   align-items: center;
   min-height: 46px;
   padding: 4px 6px;
-  border-radius: 12px;
+  border-radius: 20px;
 }
 .liquid-glass.media-dock { overflow: visible; }
 .liquid-glass.media-dock::after { display: none; }
 .liquid-glass-supported .liquid-glass { filter: none; }
-.liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg?v=2#glass-distortion"); }
+.liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg?v=3#glass-distortion"); }
 .liquid-glass-fallback .liquid-glass { filter: none; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {

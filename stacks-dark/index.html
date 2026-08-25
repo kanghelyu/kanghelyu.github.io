@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
-  <link rel="stylesheet" href="../assets/css/base.css?v=18">
+  <link rel="stylesheet" href="../assets/css/base.css?v=19">
   <script src="../assets/js/liquid-glass.js?v=7" defer></script>
-  <script src="../assets/js/bg.js?v=22" defer></script>
+  <script src="../assets/js/bg.js?v=23" defer></script>
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -42,7 +42,7 @@
     }
     .lang-toggle button {
       background: transparent; color: #718096; border: 1px solid var(--border);
-      padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer;
+      padding: 0.25rem 0.6rem; border-radius: 10px; cursor: pointer;
       font-size: 0.8rem; transition: all 0.15s;
     }
     .lang-toggle button.active {
@@ -54,19 +54,19 @@
     p { margin-bottom: 1rem; }
     code {
       background: transparent; color: #e2e8f0; padding: 0.15em 0.4em;
-      border-radius: 3px; font-size: 0.9em;
+      border-radius: 6px; font-size: 0.9em;
     }
     .bookmarklet {
       display: inline-block; background: transparent !important; color: var(--accent) !important;
       font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem;
-      border-radius: 8px; text-decoration: none; cursor: grab;
+      border-radius: 14px; text-decoration: none; cursor: grab;
       transition: transform 0.15s, box-shadow 0.15s;
       box-shadow: 0 2px 8px rgba(99,179,237,0.3);
     }
     .bookmarklet:hover { transform: translateY(-2px); border-color: rgba(208,255,255,0.48) !important; color: #fff !important; box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.14); }
     .bookmarklet:active { cursor: grabbing; }
-    .instructions { background: transparent !important; border: 1px solid var(--glass-border); }
-    .preview-box { background: transparent !important; border: 1px solid var(--glass-border); }
+    .instructions { background: transparent !important; border: 1px solid var(--glass-border); border-radius: 16px; }
+    .preview-box { background: transparent !important; border: 1px solid var(--glass-border); border-radius: 16px; }
     .instructions ol { padding-left: 1.25rem; }
     .instructions li { margin-bottom: 0.5rem; }
     .preview-box { padding: 1.5rem; font-size: 0.9rem; }
@@ -78,7 +78,7 @@
     .bookmarklet { background: transparent !important; }
     .file-links a { background: transparent !important; }
     .pre code { background: none; padding: 0; }
-    .file-links a { background: transparent !important; border: 1px solid var(--glass-border); padding: 0.4rem 1rem; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+    .file-links a { background: transparent !important; border: 1px solid var(--glass-border); padding: 0.4rem 1rem; border-radius: 12px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
     .file-links a:hover { border-color: var(--accent); }
     footer { text-align: center; padding: 1.5rem; color: #718096; font-size: 0.85rem; border-top: 1px solid var(--border); }
     footer a { color: var(--accent); }

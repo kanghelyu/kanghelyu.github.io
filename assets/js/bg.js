@@ -152,12 +152,12 @@
       ctx.restore();
     };
 
-    drawWireframe(lowPower ? 1.35 : 1.85, 0.1, "lighter");
-    drawWireframe(lowPower ? 0.95 : 1.3, 1, "source-over");
+    drawWireframe(lowPower ? 2.4 : 3.2, 0.16, "lighter");
+    drawWireframe(lowPower ? 1.2 : 1.6, 1, "source-over");
 
     if (surface.name === "mobius") {
       ctx.save();
-      ctx.lineWidth = lowPower ? 1.1 : 1.6;
+      ctx.lineWidth = lowPower ? 1.3 : 1.8;
       ctx.strokeStyle = `rgba(${surface.accent},0.8)`;
       [0, vMax].forEach((edge) => {
         ctx.beginPath();

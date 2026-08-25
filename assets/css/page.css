@@ -106,7 +106,7 @@ h2::before {
   max-width: 100%;
   padding: 24px 24px 22px;
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
+  border-radius: 20px;
   background: transparent;
   box-shadow: var(--glass-shadow);
   backdrop-filter: saturate(1.35) contrast(1.05);

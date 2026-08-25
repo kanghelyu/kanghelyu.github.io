@@ -1,15 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256">
   <defs>
-    <filter id="glass-distortion" x="-20%" y="-24%" width="140%" height="148%" color-interpolation-filters="sRGB">
+    <filter id="glass-distortion" x="-25%" y="-30%" width="150%" height="160%" color-interpolation-filters="sRGB">
       <feImage href="assets-glass-normal-x.svg" preserveAspectRatio="none" result="normal-x"/>
       <feImage href="assets-glass-normal-y.svg" preserveAspectRatio="none" result="normal-y"/>
       <feComposite in="normal-x" in2="normal-y" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="normal-map"/>
       <feImage href="assets-glass-highlight-map.svg" preserveAspectRatio="none" result="highlight-map"/>
-      <feDisplacementMap in="SourceGraphic" in2="normal-map" scale="48" xChannelSelector="R" yChannelSelector="G" result="refracted"/>
+      <feColorMatrix in="SourceGraphic" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="ch-r"/>
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="ch-g"/>
+      <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="ch-b"/>
+      <feDisplacementMap in="ch-r" in2="normal-map" scale="56" xChannelSelector="R" yChannelSelector="G" result="d-r"/>
+      <feDisplacementMap in="ch-g" in2="normal-map" scale="48" xChannelSelector="R" yChannelSelector="G" result="d-g"/>
+      <feDisplacementMap in="ch-b" in2="normal-map" scale="40" xChannelSelector="R" yChannelSelector="G" result="d-b"/>
+      <feBlend in="d-r" in2="d-g" mode="screen" result="d-rg"/>
+      <feBlend in="d-rg" in2="d-b" mode="screen" result="refracted"/>
       <feDiffuseLighting in="normal-map" surfaceScale="2.6" diffuseConstant="0.58" lighting-color="#d9ffff" result="diffuse-light">
         <feDistantLight azimuth="218" elevation="52"/>
       </feDiffuseLighting>
-      <feSpecularLighting in="normal-map" surfaceScale="3.4" specularConstant="0.85" specularExponent="22" lighting-color="#ffffff" result="specular-light">
+      <feSpecularLighting in="normal-map" surfaceScale="3.4" specularConstant="0.9" specularExponent="22" lighting-color="#ffffff" result="specular-light">
         <feDistantLight azimuth="236" elevation="58"/>
       </feSpecularLighting>
       <feComposite in="diffuse-light" in2="refracted" operator="in" result="diffuse-clipped"/>
