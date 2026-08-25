@@ -14,7 +14,7 @@
   root.classList.add(canFilter ? "liquid-glass-supported" : "liquid-glass-fallback");
   if (reduceMotion) root.classList.add("liquid-glass-reduced");
 
-  const targets = document.querySelectorAll(".media-dock, .button, .glass-panel, .note, .project, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select");
+  const targets = document.querySelectorAll(".media-dock, .button, .glass-panel, .instructions, .preview-box, .file-links, .bookmarklet, .file-links a, .lang-toggle button, input, textarea, select");
   if (!targets.length) return;
 
   let svg = document.getElementById("liquid-glass-defs");

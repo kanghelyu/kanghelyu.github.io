@@ -28,7 +28,6 @@
   let height = 0;
   let dpr = 1;
   let time = 0;
-  let scrollY = 0;
   let visible = !document.hidden;
   let frame = 0;
   let lastFrame = 0;
@@ -70,9 +69,9 @@
   }
 
   const surfaces = [
-    { name: "torus", grid: buildSurface("torus"), center: [0.22, 0.3], scale: 0.48, color: palette.cyan, accent: palette.gold, speed: [0.0007, 0.0009, 0.00025], alpha: 0.42 },
-    { name: "klein", grid: buildSurface("klein"), center: [0.79, 0.39], scale: 0.64, color: palette.gold, accent: palette.cyan, speed: [0.0005, 0.0008, -0.0002], alpha: 0.34 },
-    { name: "mobius", grid: buildSurface("mobius"), center: [0.51, 0.78], scale: 0.43, color: palette.blue, accent: palette.gold, speed: [0.0004, -0.00045, 0.00015], alpha: 0.38 }
+    { name: "torus", grid: buildSurface("torus"), center: [0.18, 0.29], scale: 0.76, color: palette.cyan, accent: palette.gold, speed: [0.0007, 0.0009, 0.00025], alpha: 0.56 },
+    { name: "klein", grid: buildSurface("klein"), center: [0.81, 0.4], scale: 0.92, color: palette.gold, accent: palette.cyan, speed: [0.0005, 0.0008, -0.0002], alpha: 0.48 },
+    { name: "mobius", grid: buildSurface("mobius"), center: [0.5, 0.79], scale: 0.66, color: palette.blue, accent: palette.gold, speed: [0.0004, -0.00045, 0.00015], alpha: 0.52 }
   ];
 
   function rotate(point, angles) {
@@ -139,42 +138,52 @@
       0.08 + seconds * surface.speed[2]
     ];
     const cx = width * surface.center[0];
-    const cy = height * surface.center[1] - scrollY * (0.025 + index * 0.018);
+    const cy = height * surface.center[1];
     const scale = Math.min(width, height) * surface.scale;
     const projected = surface.grid.map((row) => row.map((point) => project(point, angles, cx, cy, scale)));
     const uMax = projected.length - 1;
     const vMax = projected[0].length - 1;
 
-    drawGlow(cx, cy, scale * 0.78, surface.color, 0.055);
-    ctx.lineWidth = lowPower ? 0.8 : 1.05;
-    for (let i = 0; i < uMax; i += 1) {
-      for (let j = 0; j < vMax; j += 1) {
-        const point = projected[i][j];
-        const nextU = projected[i + 1][j];
-        const nextV = projected[i][j + 1];
-        ctx.strokeStyle = `rgba(${surface.color},${(surface.alpha * (0.66 + (i % 5) * 0.045)).toFixed(3)})`;
-        ctx.beginPath();
-        ctx.moveTo(point.x, point.y);
-        ctx.lineTo(nextU.x, nextU.y);
-        ctx.moveTo(point.x, point.y);
-        ctx.lineTo(nextV.x, nextV.y);
-        ctx.stroke();
+    drawGlow(cx, cy, scale * 0.9, surface.color, 0.10);
+    const drawWireframe = (lineWidth, opacityScale, composite) => {
+      ctx.save();
+      ctx.globalCompositeOperation = composite;
+      ctx.lineWidth = lineWidth;
+      for (let i = 0; i < uMax; i += 1) {
+        for (let j = 0; j < vMax; j += 1) {
+          const point = projected[i][j];
+          const nextU = projected[i + 1][j];
+          const nextV = projected[i][j + 1];
+          ctx.strokeStyle = `rgba(${surface.color},${(surface.alpha * opacityScale * (0.66 + (i % 5) * 0.045)).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.moveTo(point.x, point.y);
+          ctx.lineTo(nextU.x, nextU.y);
+          ctx.moveTo(point.x, point.y);
+          ctx.lineTo(nextV.x, nextV.y);
+          ctx.stroke();
+        }
       }
-    }
+      ctx.restore();
+    };
+
+    drawWireframe(lowPower ? 2.2 : 4.8, 0.22, "lighter");
+    drawWireframe(lowPower ? 0.85 : 1.25, 1, "source-over");
 
     if (surface.name === "mobius") {
-      ctx.lineWidth = lowPower ? 1.2 : 1.8;
+      ctx.save();
+      ctx.lineWidth = lowPower ? 1.1 : 1.7;
       [0, vMax].forEach((edge) => {
         for (let i = 0; i < uMax; i += 1) {
           const first = projected[i][edge];
           const second = projected[i + 1][edge];
-          ctx.strokeStyle = `rgba(${surface.accent},0.58)`;
+          ctx.strokeStyle = `rgba(${surface.accent},0.76)`;
           ctx.beginPath();
           ctx.moveTo(first.x, first.y);
           ctx.lineTo(second.x, second.y);
           ctx.stroke();
         }
       });
+      ctx.restore();
     }
   }
 
@@ -186,7 +195,7 @@
       ctx.globalAlpha = item.alpha;
       ctx.fillStyle = `rgb(${item.color})`;
       ctx.font = `${item.size}px ${mathFont}`;
-      ctx.fillText(item.symbol, width * (item.x + drift), height * item.y - scrollY * 0.018);
+      ctx.fillText(item.symbol, width * (item.x + drift), height * item.y);
     });
     ctx.globalAlpha = 1;
   }
@@ -246,7 +255,6 @@
     if (visible && !reducedMotion && !frame) frame = requestAnimationFrame(render);
   });
   window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("scroll", () => { scrollY = window.scrollY; }, { passive: true });
   if (!touchDevice) {
     window.addEventListener("pointermove", (event) => { pointer.x = event.clientX; pointer.y = event.clientY; }, { passive: true });
     window.addEventListener("pointerleave", () => { pointer.x = -9999; pointer.y = -9999; }, { passive: true });

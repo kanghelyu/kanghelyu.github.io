@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
-  <link rel="stylesheet" href="../assets/css/base.css?v=7">
-  <script src="../assets/js/liquid-glass.js?v=1" defer></script>
-  <script src="../assets/js/bg.js?v=13" defer></script>
+  <link rel="stylesheet" href="../assets/css/base.css?v=9">
+  <script src="../assets/js/liquid-glass.js?v=2" defer></script>
+  <script src="../assets/js/bg.js?v=14" defer></script>
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,16 +18,20 @@
     }
     #bg { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
     header, main, footer { position: relative; z-index: 2; }
-    header { padding: 2rem 1.5rem; text-align: center; position: relative; background: rgba(14, 34, 47, 0.54); border-bottom: 1px solid rgba(190,245,245,0.22); backdrop-filter: blur(18px) saturate(1.2); -webkit-backdrop-filter: blur(18px) saturate(1.2); }
+    header { padding: 2rem 1.5rem; text-align: center; position: relative; background: transparent; border-bottom: 1px solid rgba(190,245,245,0.18); backdrop-filter: none; -webkit-backdrop-filter: none; }
     main { background: transparent; }
     .instructions, .preview-box, .pre, .file-links { position: relative; }
-    .glass-panel, .instructions, .preview-box, .pre, .file-links, .bookmarklet, .file-links a, .lang-toggle button {
-      border-color: rgba(190,245,245,0.28) !important;
-      background: linear-gradient(135deg, rgba(155,235,235,0.12), transparent 38%), rgba(16,35,48,0.56) !important;
-      box-shadow: 0 18px 48px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.14) !important;
-      backdrop-filter: blur(18px) saturate(1.25);
-      -webkit-backdrop-filter: blur(18px) saturate(1.25);
+    .instructions, .preview-box, .pre, .file-links, .bookmarklet, .file-links a, .lang-toggle button {
+      border-color: rgba(190,245,245,0.2) !important;
+      background: rgba(16,35,48,0.07) !important;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+      backdrop-filter: blur(14px) saturate(1.15);
+      -webkit-backdrop-filter: blur(14px) saturate(1.15);
     }
+    .instructions { padding: 1.25rem; }
+    .preview-box { padding: 1.5rem; }
+    .pre { background: rgba(7,21,32,0.18) !important; }
+    .file-links { background: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0; }
 
     header h1 { font-size: 1.8rem; font-weight: 700; }
     header h1 a { color: var(--accent); text-decoration: none; }
@@ -53,7 +57,7 @@
       border-radius: 3px; font-size: 0.9em;
     }
     .bookmarklet {
-      display: inline-block; background: rgba(16,35,48,0.7) !important; color: var(--accent) !important;
+      display: inline-block; background: rgba(16,35,48,0.08) !important; color: var(--accent) !important;
       font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem;
       border-radius: 8px; text-decoration: none; cursor: grab;
       transition: transform 0.15s, box-shadow 0.15s;
@@ -84,7 +88,7 @@
 <body>
 <canvas id="bg" aria-hidden="true"></canvas>
 
-<header class="glass-panel">
+<header>
   <div class="lang-toggle">
     <button id="lang-zh" class="active" onclick="setLang('zh')">中文</button>
     <button id="lang-en" onclick="setLang('en')">EN</button>

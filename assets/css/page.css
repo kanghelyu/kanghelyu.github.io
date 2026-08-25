@@ -32,7 +32,7 @@ body { background: var(--bg-deep); }
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(6, 13, 20, 0.45), transparent 320px);
+  background: linear-gradient(180deg, rgba(6, 13, 20, 0.18), transparent 320px);
 }
 
 .back {
@@ -101,42 +101,33 @@ h2::before {
   box-shadow: 0 0 8px rgba(244, 217, 160, 0.3);
 }
 
-/* ---- Card chrome ---- */
+/* ---- Open content layout ---- */
 .note,
 .project {
   min-width: 0;
   max-width: 100%;
-  padding: 24px 24px 22px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-soft), inset 0 1px 0 rgba(255,255,255,0.04);
-  transition: all 0.4s var(--ease-out-expo);
+  padding: 24px 0 22px;
+  border: 0;
+  border-top: 1px solid var(--line-soft);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: color 0.3s var(--ease-out-expo), border-color 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
+.note:first-child,
+.project:first-child { border-top-color: transparent; }
 .note::before,
-.project::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(168,230,230,0.04), transparent 50%, rgba(244,217,160,0.03));
-  opacity: 0;
-  transition: opacity 0.4s;
-}
+.project::before { display: none; }
 .note:hover,
 .project:hover {
-  border-color: rgba(168, 230, 230, 0.25);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-soft), 0 0 30px rgba(168, 230, 230, 0.1), 0 8px 32px rgba(0,0,0,0.3);
+  border-color: var(--line-soft);
+  transform: none;
+  box-shadow: none;
 }
-.note:hover::before,
-.project:hover::before {
-  opacity: 1;
-}
-
 .note-actions,
 .project-actions {
   display: flex;
@@ -154,11 +145,11 @@ h2::before {
   font-size: 0.88rem;
   font-family: var(--font-body);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(244, 217, 160, 0.2);
-  background: rgba(15, 28, 34, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: 1px solid rgba(190, 245, 245, 0.2);
+  background: rgba(16, 35, 48, 0.08);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
   transition: all 0.3s var(--ease-out-expo);
   position: relative;
   z-index: 1;
@@ -167,7 +158,8 @@ h2::before {
   border-color: var(--gold);
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(168, 230, 230, 0.15), 0 2px 8px rgba(0,0,0,0.2);
+  background: rgba(168, 230, 230, 0.08);
+  box-shadow: 0 10px 28px rgba(168, 230, 230, 0.12), 0 2px 8px rgba(0,0,0,0.16);
 }
 
 .footer {
@@ -194,15 +186,11 @@ h2::before {
   .page { width: 94vw; }
 }
 
-/* Keep the shared Liquid Glass material after legacy card rules. */
-.page,
-.note,
-.project,
+/* Keep buttons glassy without turning the whole page into a card. */
 .page .button {
   border-color: var(--glass-border);
-  background: linear-gradient(135deg, rgba(155,235,235,0.10), transparent 38%), var(--glass-fill);
-  box-shadow: var(--glass-shadow);
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  background: rgba(16, 35, 48, 0.08);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px) saturate(1.15);
+  -webkit-backdrop-filter: blur(12px) saturate(1.15);
 }
-.page .button { position: relative; }

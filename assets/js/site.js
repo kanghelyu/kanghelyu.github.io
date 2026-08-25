@@ -4,6 +4,7 @@
 
   const LANG_STATE_KEY = "kanghe-site-lang";
   const MUSIC_STATE_KEY = "kanghe-site-music-state";
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   const musicList = Array.from({ length: 41 }, (_, index) => `music/music${index + 1}.mp3`);
 
   const storage = {
