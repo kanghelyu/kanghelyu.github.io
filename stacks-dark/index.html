@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
-  <link rel="stylesheet" href="../assets/css/base.css?v=15">
+  <link rel="stylesheet" href="../assets/css/base.css?v=16">
   <script src="../assets/js/liquid-glass.js?v=7" defer></script>
   <script src="../assets/js/bg.js?v=21" defer></script>
   <style>
@@ -23,14 +23,14 @@
     .instructions, .preview-box, .pre, .file-links { position: relative; }
     .instructions, .preview-box, .pre, .file-links, .bookmarklet, .file-links a, .lang-toggle button {
       border-color: rgba(220,255,255,0.3) !important;
-      background: linear-gradient(120deg, rgba(255,255,255,0.08), transparent 26%, rgba(100,220,255,0.04) 72%, rgba(255,226,166,0.04)), rgba(172,240,250,0.035) !important;
-      box-shadow: 0 22px 58px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(111,221,255,0.16) !important;
-      backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
-      -webkit-backdrop-filter: blur(8px) saturate(1.5) contrast(1.05);
+      background: transparent !important;
+      box-shadow: var(--glass-shadow) !important;
+      backdrop-filter: url("../assets-glass-filter.svg#glass-distortion") blur(2px) saturate(1.65) contrast(1.08);
+      -webkit-backdrop-filter: url("../assets-glass-filter.svg#glass-distortion") blur(2px) saturate(1.65) contrast(1.08);
     }
     .instructions { padding: 1.25rem; }
     .preview-box { padding: 1.5rem; }
-    .pre { background: rgba(7,21,32,0.08) !important; }
+    .pre { background: transparent !important; }
     .file-links { background: transparent !important; border-color: transparent !important; box-shadow: none !important; padding: 0; }
 
     header h1 { font-size: 1.8rem; font-weight: 700; }
@@ -46,18 +46,18 @@
       font-size: 0.8rem; transition: all 0.15s;
     }
     .lang-toggle button.active {
-      color: var(--accent); border-color: var(--accent); background: rgba(99,179,237,0.1);
+      color: var(--accent); border-color: var(--accent); background: transparent;
     }
     main { flex: 1; max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; }
     section { margin-bottom: 2.5rem; }
     h2 { font-size: 1.3rem; color: var(--accent); margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
     p { margin-bottom: 1rem; }
     code {
-      background: #0d1b2a; color: #e2e8f0; padding: 0.15em 0.4em;
+      background: transparent; color: #e2e8f0; padding: 0.15em 0.4em;
       border-radius: 3px; font-size: 0.9em;
     }
     .bookmarklet {
-      display: inline-block; background: rgba(172,240,250,0.045) !important; color: var(--accent) !important;
+      display: inline-block; background: transparent !important; color: var(--accent) !important;
       font-weight: 700; font-size: 1.1rem; padding: 0.75rem 1.5rem;
       border-radius: 8px; text-decoration: none; cursor: grab;
       transition: transform 0.15s, box-shadow 0.15s;
@@ -65,17 +65,20 @@
     }
     .bookmarklet:hover { transform: translateY(-2px); border-color: rgba(208,255,255,0.48) !important; color: #fff !important; box-shadow: 0 20px 54px rgba(0,0,0,0.3), 0 0 34px rgba(168,230,230,0.14); }
     .bookmarklet:active { cursor: grabbing; }
-    .instructions { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+    .instructions { background: transparent !important; border: 1px solid var(--glass-border); }
+    .preview-box { background: transparent !important; border: 1px solid var(--glass-border); }
     .instructions ol { padding-left: 1.25rem; }
     .instructions li { margin-bottom: 0.5rem; }
-    .preview-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; font-size: 0.9rem; }
+    .preview-box { padding: 1.5rem; font-size: 0.9rem; }
     .preview-box .tag { color: var(--accent); }
     .preview-box a { color: var(--accent); }
     .preview-box .env-lemma { font-style: italic; background: rgba(255,255,255,0.02); padding: 0.25rem 0.5rem; border-radius: 4px; display: block; margin-top: 0.5rem; }
-    .pre { background: #0d1b2a; color: #e2e8f0; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; border: 1px solid var(--border); margin-top: 0.5rem; }
+    .pre { background: transparent !important; }
+    .instructions, .preview-box { background: transparent !important; }
+    .bookmarklet { background: transparent !important; }
+    .file-links a { background: transparent !important; }
     .pre code { background: none; padding: 0; }
-    .file-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
-    .file-links a { background: var(--card); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+    .file-links a { background: transparent !important; border: 1px solid var(--glass-border); padding: 0.4rem 1rem; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
     .file-links a:hover { border-color: var(--accent); }
     footer { text-align: center; padding: 1.5rem; color: #718096; font-size: 0.85rem; border-top: 1px solid var(--border); }
     footer a { color: var(--accent); }
