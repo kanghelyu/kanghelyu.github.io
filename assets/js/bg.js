@@ -34,8 +34,8 @@
 
   function buildSurface(kind) {
     const grid = [];
-    const uCount = kind === "mobius" ? widthLimit + 6 : widthLimit;
-    const vCount = kind === "mobius" ? Math.max(8, heightLimit - 4) : heightLimit;
+    const uCount = kind === "mobius" ? widthLimit + 6 : widthLimit + 8;
+    const vCount = kind === "mobius" ? Math.max(8, heightLimit - 4) : heightLimit + 4;
     for (let i = 0; i <= uCount; i += 1) {
       const row = [];
       const u = (i / uCount) * Math.PI * 2;
@@ -154,6 +154,22 @@
 
     drawWireframe(lowPower ? 1.35 : 1.85, 0.1, "lighter");
     drawWireframe(lowPower ? 0.95 : 1.3, 1, "source-over");
+
+    if (surface.name === "mobius") {
+      ctx.save();
+      ctx.lineWidth = lowPower ? 1.1 : 1.6;
+      ctx.strokeStyle = `rgba(${surface.accent},0.8)`;
+      [0, vMax].forEach((edge) => {
+        ctx.beginPath();
+        for (let i = 0; i <= uMax; i += 1) {
+          const point = projected[i][edge];
+          if (i === 0) ctx.moveTo(point.x, point.y);
+          else ctx.lineTo(point.x, point.y);
+        }
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
   }
 
   function drawTexture() {

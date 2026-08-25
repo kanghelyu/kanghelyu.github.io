@@ -130,8 +130,8 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   border: 1px solid var(--glass-border);
   background: transparent;
   box-shadow: var(--glass-shadow);
-  backdrop-filter: url("/assets-glass-filter.svg#glass-distortion") blur(2px) saturate(1.65) contrast(1.08);
-  -webkit-backdrop-filter: url("/assets-glass-filter.svg#glass-distortion") blur(2px) saturate(1.65) contrast(1.08);
+  backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
+  -webkit-backdrop-filter: blur(3px) saturate(1.6) contrast(1.06);
   isolation: isolate;
   overflow: clip;
 }
@@ -167,7 +167,7 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .liquid-glass.media-dock { overflow: visible; }
 .liquid-glass.media-dock::after { display: none; }
 .liquid-glass-supported .liquid-glass { filter: none; }
-.liquid-glass-supported .liquid-glass::before { filter: none; }
+.liquid-glass-supported .liquid-glass::before { filter: url("/assets-glass-filter.svg#glass-distortion"); }
 .liquid-glass-fallback .liquid-glass { filter: none; }
 .playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .glass-interactive:hover, .button:hover, .note:hover, .project:hover, .instructions:hover, .preview-box:hover {
