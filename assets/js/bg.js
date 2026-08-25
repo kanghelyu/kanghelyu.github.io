@@ -12,8 +12,7 @@
   if (!ctx) return;
 
   const reducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const touchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  const lowPower = touchDevice || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
+  const lowPower = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
   const widthLimit = lowPower ? 26 : 36;
   const heightLimit = lowPower ? 12 : 18;
   const palette = {

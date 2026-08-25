@@ -50,7 +50,7 @@ body { background: var(--bg-deep); }
 .back:hover {
   color: var(--cyan-bright);
   border-color: var(--glass-border);
-  background: var(--glass-bg);
+  background: transparent;
   text-shadow: 0 0 12px rgba(168, 230, 230, 0.4);
   transform: translateX(-4px);
 }
