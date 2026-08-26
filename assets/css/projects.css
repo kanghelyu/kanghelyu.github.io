@@ -17,6 +17,8 @@
 .project:nth-child(1) { animation-delay: 0.35s; }
 .project:nth-child(2) { animation-delay: 0.45s; }
 .project:nth-child(3) { animation-delay: 0.55s; }
+.project:nth-child(4) { animation-delay: 0.65s; }
+.project:nth-child(5) { animation-delay: 0.75s; }
 
 .project-icon {
   position: relative;
@@ -28,6 +30,8 @@
 }
 .project:nth-child(2) .project-icon { animation-delay: -1.3s; }
 .project:nth-child(3) .project-icon { animation-delay: -2.6s; }
+.project:nth-child(4) .project-icon { animation-delay: -3.4s; }
+.project:nth-child(5) .project-icon { animation-delay: -0.7s; }
 
 .project-title {
   position: relative;

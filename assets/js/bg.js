@@ -35,8 +35,9 @@
   };
   const BG = "#060d14";
   const LENS_SELECTOR = ".hero-actions .button, .playlist-panel";
-  const BARREL_K = 0.42;
-  const SNAP_PAD = 0.45;
+  const BARREL_K = 0.34;
+  const EDGE_RATIO = 0.2;
+  const FRAME_INTERVAL = lowPower ? 50 : 32;
 
   const widthLimit = lowPower ? 26 : 36;
   const heightLimit = lowPower ? 12 : 18;
@@ -100,8 +101,8 @@
       {
         name: "torus",
         grid: buildSurface("torus"),
-        center: [0.28, 0.40],
-        scale: 0.8,
+        center: [0.22, 0.29],
+        scale: 0.76,
         color: palette.cyan,
         accent: palette.gold,
         speed: [0.12, 0.18, 0.05],
@@ -126,8 +127,8 @@
       {
         name: "mobius",
         grid: buildSurface("mobius"),
-        center: [0.58, 0.80],
-        scale: 0.62,
+        center: [0.5, 0.79],
+        scale: 0.66,
         color: palette.blue,
         accent: palette.gold,
         speed: [0.07, -0.09, 0.03],
@@ -142,7 +143,7 @@
         name: "torus",
         grid: buildSurface("torus"),
         center: [0.5, 0.46],
-        scale: 1.22,
+        scale: 1.12,
         color: palette.cyan,
         accent: palette.gold,
         speed: [0, 0, 0],
@@ -158,7 +159,7 @@
         name: "mobius",
         grid: buildSurface("mobius"),
         center: [0.5, 0.48],
-        scale: 1.17,
+        scale: 1.08,
         color: palette.blue,
         accent: palette.gold,
         speed: [0, 0, 0],
@@ -174,7 +175,7 @@
         name: "klein",
         grid: buildSurface("klein"),
         center: [0.5, 0.44],
-        scale: 1.28,
+        scale: 1.18,
         color: palette.gold,
         accent: palette.cyan,
         speed: [0, 0, 0],
@@ -198,8 +199,10 @@
   let lastT = 0;
   let elapsed = 0;
   let running = false;
-  let snapCanvas = null;
-  let snapCtx = null;
+  let frameRequest = 0;
+  let staticLayer = null;
+  let vignetteLayer = null;
+  let lensCapture = null;
   const lensCache = new WeakMap();
 
   function rotatePoint(p, ax, ay, az) {
@@ -240,18 +243,6 @@
     target.closePath();
   }
 
-  function ensureSnap(w, h) {
-    if (!snapCanvas) {
-      snapCanvas = document.createElement("canvas");
-      snapCtx = snapCanvas.getContext("2d", { alpha: false });
-    }
-    if (snapCanvas.width !== w || snapCanvas.height !== h) {
-      snapCanvas.width = w;
-      snapCanvas.height = h;
-    }
-    return snapCtx;
-  }
-
   function ensureLensCanvas(el) {
     let rec = lensCache.get(el);
     if (rec && rec.canvas.isConnected) return rec;
@@ -263,7 +254,16 @@
       el.insertBefore(node, el.firstChild);
     }
     el.classList.add("has-glass-lens");
-    rec = { canvas: node, ctx: node.getContext("2d") };
+    const effectCanvas = document.createElement("canvas");
+    const maskCanvas = document.createElement("canvas");
+    rec = {
+      canvas: node,
+      ctx: node.getContext("2d", { alpha: true }),
+      effectCanvas: effectCanvas,
+      effectCtx: effectCanvas.getContext("2d", { alpha: true }),
+      maskCanvas: maskCanvas,
+      maskCtx: maskCanvas.getContext("2d", { alpha: true })
+    };
     lensCache.set(el, rec);
     return rec;
   }
@@ -294,6 +294,10 @@
         el,
         canvas: rec.canvas,
         ctx: rec.ctx,
+        effectCanvas: rec.effectCanvas,
+        effectCtx: rec.effectCtx,
+        maskCanvas: rec.maskCanvas,
+        maskCtx: rec.maskCtx,
         x: rect.left,
         y: rect.top,
         w: rect.width,
@@ -304,13 +308,56 @@
     return list;
   }
 
-  function drawGlow(cx, cy, radius, color, alpha) {
-    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+  function drawGlow(target, cx, cy, radius, color, alpha) {
+    const gradient = target.createRadialGradient(cx, cy, 0, cx, cy, radius);
     gradient.addColorStop(0, "rgba(" + color + "," + alpha + ")");
     gradient.addColorStop(0.32, "rgba(" + color + "," + alpha * 0.34 + ")");
     gradient.addColorStop(1, "rgba(" + color + ",0)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+    target.fillStyle = gradient;
+    target.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+  }
+
+  function buildStaticLayers() {
+    staticLayer = document.createElement("canvas");
+    staticLayer.width = canvas.width;
+    staticLayer.height = canvas.height;
+    const background = staticLayer.getContext("2d", { alpha: false });
+    background.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const gradient = background.createLinearGradient(0, 0, cssW, cssH);
+    gradient.addColorStop(0, "#04080e");
+    gradient.addColorStop(0.52, "#081019");
+    gradient.addColorStop(1, "#060c15");
+    background.fillStyle = gradient;
+    background.fillRect(0, 0, cssW, cssH);
+    for (let i = 0; i < surfaces.length; i += 1) {
+      const surface = surfaces[i];
+      drawGlow(
+        background,
+        cssW * surface.center[0],
+        cssH * surface.center[1],
+        Math.min(cssW, cssH) * surface.scale * 1.35,
+        surface.color,
+        0.34
+      );
+    }
+
+    vignetteLayer = document.createElement("canvas");
+    vignetteLayer.width = canvas.width;
+    vignetteLayer.height = canvas.height;
+    const vignetteContext = vignetteLayer.getContext("2d");
+    vignetteContext.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const vignette = vignetteContext.createRadialGradient(
+      cssW * 0.5,
+      cssH * 0.45,
+      Math.min(cssW, cssH) * 0.18,
+      cssW * 0.5,
+      cssH * 0.45,
+      Math.max(cssW, cssH) * 0.8
+    );
+    vignette.addColorStop(0, "rgba(0,0,0,0)");
+    vignette.addColorStop(1, "rgba(0,0,0,0.22)");
+    vignetteContext.fillStyle = vignette;
+    vignetteContext.fillRect(0, 0, cssW, cssH);
   }
 
   function drawSurface(surface, time) {
@@ -321,7 +368,6 @@
     const cx = cssW * surface.center[0];
     const cy = cssH * surface.center[1];
     const dim = Math.min(cssW, cssH);
-    drawGlow(cx, cy, surface.scale * 0.5 * dim * 1.35, surface.color, 0.34);
     const grid = surface.grid;
     const rows = grid.length;
     const cols = grid[0].length;
@@ -339,62 +385,60 @@
       projected[i] = out;
     }
 
-    const segs = [];
-    function pushSeg(a, b) {
-      const z = (a[2] + b[2]) * 0.5;
-      segs.push(a[0], a[1], b[0], b[1], z);
-    }
-    for (let i = 0; i < rows; i += 1) {
-      for (let j = 0; j < cols - 1; j += 1) pushSeg(projected[i][j], projected[i][j + 1]);
-    }
-    for (let j = 0; j < cols; j += 1) {
-      for (let i = 0; i < rows - 1; i += 1) pushSeg(projected[i][j], projected[i + 1][j]);
-    }
-
-    const n = segs.length / 5;
-    const order = new Array(n);
-    for (let i = 0; i < n; i += 1) order[i] = i;
-    order.sort((a, b) => segs[b * 5 + 4] - segs[a * 5 + 4]);
-
     const core = surface.coreWidth || 1.8;
     const glow = surface.glowWidth || 3.4;
     const glowFade = surface.glowFade || 0.2;
     const alpha = surface.alpha || 0.9;
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    for (let s = 0; s < n; s += 1) {
-      const i = order[s];
-      const x1 = segs[i * 5];
-      const y1 = segs[i * 5 + 1];
-      const x2 = segs[i * 5 + 2];
-      const y2 = segs[i * 5 + 3];
-      const a = alpha;
+    function drawWireframe(lineWidth, opacityScale, composite) {
+      ctx.save();
+      ctx.globalCompositeOperation = composite;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = lineWidth;
+      for (let i = 0; i < rows - 1; i += 1) {
+        const rowAlpha = alpha * opacityScale * (0.66 + (i % 5) * 0.045);
+        ctx.strokeStyle = "rgba(" + surface.color + "," + rowAlpha.toFixed(3) + ")";
+        ctx.beginPath();
+        for (let j = 0; j < cols - 1; j += 1) {
+          const point = projected[i][j];
+          ctx.moveTo(point[0], point[1]);
+          ctx.lineTo(projected[i + 1][j][0], projected[i + 1][j][1]);
+          ctx.moveTo(point[0], point[1]);
+          ctx.lineTo(projected[i][j + 1][0], projected[i][j + 1][1]);
+        }
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
 
-      ctx.strokeStyle = "rgba(" + surface.color + "," + (a * glowFade).toFixed(3) + ")";
-      ctx.lineWidth = glow;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
+    drawWireframe(glow, glowFade, "lighter");
+    drawWireframe(core, 1, "source-over");
 
-      ctx.strokeStyle = "rgba(" + surface.color + "," + a.toFixed(3) + ")";
-      ctx.lineWidth = core;
-      ctx.beginPath();
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-
+    // Only a sparse vector copy is retained for the tiny element lenses.
+    // The full mesh stays on the background, while these lines supply the
+    // crisp RGB fringe without thousands of per-element path submissions.
+    const stride = lowPower ? 3 : 2;
+    function keepLine(a, b) {
+      if (!lensCapture || !lineHits({ x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, lensCapture, 0)) {
+        return;
+      }
       frameLines.push({
-        x1: x1,
-        y1: y1,
-        x2: x2,
-        y2: y2,
+        x1: a[0],
+        y1: a[1],
+        x2: b[0],
+        y2: b[1],
         color: surface.color,
         accent: surface.accent,
-        alpha: a,
+        alpha: alpha,
         lw: core
       });
+    }
+    for (let i = 0; i < rows; i += stride) {
+      for (let j = 0; j < cols - 1; j += 1) keepLine(projected[i][j], projected[i][j + 1]);
+    }
+    for (let j = 0; j < cols; j += stride) {
+      for (let i = 0; i < rows - 1; i += 1) keepLine(projected[i][j], projected[i + 1][j]);
     }
 
     if (surface.name === "mobius") {
@@ -412,14 +456,6 @@
     }
   }
 
-  function barrelDestToSrc(u, v, k) {
-    const nx = u * 2 - 1;
-    const ny = v * 2 - 1;
-    const r2 = nx * nx + ny * ny;
-    const f = 1 + k * r2;
-    return [0.5 + 0.5 * nx * f, 0.5 + 0.5 * ny * f];
-  }
-
   function warpWorldToLens(wx, wy, lens) {
     const cx = lens.x + lens.w / 2;
     const cy = lens.y + lens.h / 2;
@@ -428,8 +464,10 @@
     const nx = lens.w > 0 ? dx / (lens.w / 2) : 0;
     const ny = lens.h > 0 ? dy / (lens.h / 2) : 0;
     const r2 = nx * nx + ny * ny;
-    const f = 1 + BARREL_K * Math.min(2.2, r2);
-    return [lens.w / 2 + dx / f, lens.h / 2 + dy / f];
+    const magnification = lowPower ? 1 / 0.86 : 1 / 0.82;
+    const edgeCompression = 1 + BARREL_K * Math.min(1.8, r2) * 0.18;
+    const factor = magnification / edgeCompression;
+    return [lens.w / 2 + dx * factor, lens.h / 2 + dy * factor];
   }
 
   function lineHits(ln, lens, pad) {
@@ -445,14 +483,48 @@
     );
   }
 
+  function buildEdgeMask(lens, width, height) {
+    const context = lens.maskCtx;
+    const image = context.createImageData(width, height);
+    const pixels = image.data;
+    const edgeWidth = Math.max(1, width * EDGE_RATIO);
+    const edgeHeight = Math.max(1, height * EDGE_RATIO);
+    for (let y = 0; y < height; y += 1) {
+      const vertical = Math.min(y + 0.5, height - y - 0.5) / edgeHeight;
+      for (let x = 0; x < width; x += 1) {
+        const horizontal = Math.min(x + 0.5, width - x - 0.5) / edgeWidth;
+        const distance = Math.max(0, Math.min(1, horizontal, vertical));
+        // Cubic smoothstep has zero slope at both ends: full effect at the
+        // rim, a continuous fade, then exactly normal pixels after 20%.
+        const smooth = distance * distance * (3 - 2 * distance);
+        const alpha = Math.round((1 - smooth) * 255);
+        const index = (y * width + x) * 4;
+        pixels[index] = 255;
+        pixels[index + 1] = 255;
+        pixels[index + 2] = 255;
+        pixels[index + 3] = alpha;
+      }
+    }
+    context.putImageData(image, 0, 0);
+  }
+
   function paintOneLens(lens, canvasRect) {
     const lctx = lens.ctx;
     const lc = lens.canvas;
+    const effectContext = lens.effectCtx;
     const bw = Math.max(1, Math.round(lens.w * dpr));
     const bh = Math.max(1, Math.round(lens.h * dpr));
-    if (lc.width !== bw || lc.height !== bh) {
+    if (
+      lc.width !== bw || lc.height !== bh ||
+      lens.effectCanvas.width !== bw || lens.effectCanvas.height !== bh
+    ) {
       lc.width = bw;
       lc.height = bh;
+      lens.effectCanvas.width = bw;
+      lens.effectCanvas.height = bh;
+      lens.maskCanvas.width = bw;
+      lens.maskCanvas.height = bh;
+      buildEdgeMask(lens, bw, bh);
     }
 
     lctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -465,98 +537,46 @@
 
     const scaleX = canvas.width / Math.max(1, canvasRect.width);
     const scaleY = canvas.height / Math.max(1, canvasRect.height);
-    const padX = lens.w * SNAP_PAD;
-    const padY = lens.h * SNAP_PAD;
-
-    let srcCssX = lens.x - canvasRect.left - padX;
-    let srcCssY = lens.y - canvasRect.top - padY;
-    let srcCssW = lens.w + padX * 2;
-    let srcCssH = lens.h + padY * 2;
-
-    let sx = srcCssX * scaleX;
-    let sy = srcCssY * scaleY;
-    let sw = srcCssW * scaleX;
-    let sh = srcCssH * scaleY;
-
-    const maxW = canvas.width;
-    const maxH = canvas.height;
-    if (sx < 0) {
-      const cut = -sx;
-      sw -= cut;
-      srcCssW *= (srcCssW * scaleX - cut) / Math.max(1, srcCssW * scaleX);
-      srcCssX += cut / scaleX;
-      sx = 0;
-    }
-    if (sy < 0) {
-      const cut = -sy;
-      sh -= cut;
-      srcCssH *= (srcCssH * scaleY - cut) / Math.max(1, srcCssH * scaleY);
-      srcCssY += cut / scaleY;
-      sy = 0;
-    }
-    if (sx + sw > maxW) sw = maxW - sx;
-    if (sy + sh > maxH) sh = maxH - sy;
-
-    if (sw > 2 && sh > 2) {
-      const snapW = Math.max(2, Math.round(sw));
-      const snapH = Math.max(2, Math.round(sh));
-      const sctx = ensureSnap(snapW, snapH);
-      sctx.setTransform(1, 0, 0, 1, 0, 0);
-      sctx.fillStyle = BG;
-      sctx.fillRect(0, 0, snapW, snapH);
-      sctx.drawImage(canvas, sx, sy, sw, sh, 0, 0, snapW, snapH);
-
-      const cols = lowPower ? 7 : 12;
-      const rows = lowPower ? 5 : 8;
+    // The center is an exact copy of the underlying scene. Refraction is
+    // confined to four 20% edge bands, so text stays crisp and the material
+    // reads like a lens rim instead of a fully warped sheet.
+    const baseX = Math.max(0, (lens.x - canvasRect.left) * scaleX);
+    const baseY = Math.max(0, (lens.y - canvasRect.top) * scaleY);
+    const baseWidth = Math.min(canvas.width - baseX, lens.w * scaleX);
+    const baseHeight = Math.min(canvas.height - baseY, lens.h * scaleY);
+    if (baseWidth > 2 && baseHeight > 2) {
       lctx.imageSmoothingEnabled = true;
-      if (lctx.imageSmoothingQuality) lctx.imageSmoothingQuality = lowPower ? "low" : "high";
+      if (lctx.imageSmoothingQuality) lctx.imageSmoothingQuality = "high";
+      lctx.drawImage(canvas, baseX, baseY, baseWidth, baseHeight, 0, 0, bw, bh);
+    }
 
-      const snapOriginX = srcCssX;
-      const snapOriginY = srcCssY;
-      const snapCssW = sw / scaleX;
-      const snapCssH = sh / scaleY;
+    effectContext.setTransform(1, 0, 0, 1, 0, 0);
+    effectContext.clearRect(0, 0, bw, bh);
+    effectContext.globalCompositeOperation = "source-over";
 
-      for (let j = 0; j < rows; j += 1) {
-        for (let i = 0; i < cols; i += 1) {
-          const u0 = i / cols;
-          const v0 = j / rows;
-          const u1 = (i + 1) / cols;
-          const v1 = (j + 1) / rows;
-          const um = (u0 + u1) * 0.5;
-          const vm = (v0 + v1) * 0.5;
-          const srcUV = barrelDestToSrc(um, vm, BARREL_K);
-          const worldX = lens.x + srcUV[0] * lens.w;
-          const worldY = lens.y + srcUV[1] * lens.h;
-          const tileSrcW = ((u1 - u0) * lens.w * (1 + BARREL_K * 0.35)) / snapCssW;
-          const tileSrcH = ((v1 - v0) * lens.h * (1 + BARREL_K * 0.35)) / snapCssH;
-          const srcPx = ((worldX - snapOriginX) / snapCssW - tileSrcW * 0.5) * snapW;
-          const srcPy = ((worldY - snapOriginY) / snapCssH - tileSrcH * 0.5) * snapH;
-          const srcPw = Math.max(1, tileSrcW * snapW);
-          const srcPh = Math.max(1, tileSrcH * snapH);
-
-          if (srcPx > snapW || srcPy > snapH || srcPx + srcPw < 0 || srcPy + srcPh < 0) {
-            continue;
-          }
-
-          lctx.drawImage(
-            snapCanvas,
-            srcPx,
-            srcPy,
-            srcPw,
-            srcPh,
-            u0 * bw,
-            v0 * bh,
-            (u1 - u0) * bw + 0.6,
-            (v1 - v0) * bh + 0.6
-          );
-        }
-      }
+    // One smooth affine sample replaces the old 7x5 / 12x8 tile warp. A
+    // cached SDF-style alpha mask feathers it continuously through the 20%
+    // rim instead of clipping at a visible rectangular boundary.
+    const zoom = lowPower ? 0.86 : 0.82;
+    const sourceWidth = lens.w * zoom;
+    const sourceHeight = lens.h * zoom;
+    const sourceX = lens.x - canvasRect.left + (lens.w - sourceWidth) * 0.5;
+    const sourceY = lens.y - canvasRect.top + (lens.h - sourceHeight) * 0.5;
+    const sx = Math.max(0, sourceX * scaleX);
+    const sy = Math.max(0, sourceY * scaleY);
+    const sw = Math.min(canvas.width - sx, sourceWidth * scaleX);
+    const sh = Math.min(canvas.height - sy, sourceHeight * scaleY);
+    if (sw > 2 && sh > 2) {
+      effectContext.imageSmoothingEnabled = true;
+      if (effectContext.imageSmoothingQuality) effectContext.imageSmoothingQuality = "high";
+      effectContext.drawImage(canvas, sx, sy, sw, sh, 0, 0, bw, bh);
     }
 
     const cr = canvasRect;
-    const pad = Math.max(lens.w, lens.h) * (SNAP_PAD + 0.15);
-    lctx.lineCap = "round";
-    lctx.lineJoin = "round";
+    const pad = Math.max(lens.w, lens.h) * 0.6;
+    const groups = new Map();
+    effectContext.lineCap = "round";
+    effectContext.lineJoin = "round";
     for (let i = 0; i < frameLines.length; i += 1) {
       const ln = frameLines[i];
       const vx1 = cr.left + ln.x1;
@@ -574,103 +594,158 @@
       }
       const a = warpWorldToLens(vx1, vy1, lens);
       const b = warpWorldToLens(vx2, vy2, lens);
-      const split = 1.4 * dpr;
-
-      lctx.strokeStyle = "rgba(" + ln.accent + "," + Math.min(0.7, ln.alpha * 0.7).toFixed(3) + ")";
-      lctx.lineWidth = ln.lw * dpr;
-      lctx.beginPath();
-      lctx.moveTo(a[0] * dpr - split, a[1] * dpr);
-      lctx.lineTo(b[0] * dpr - split, b[1] * dpr);
-      lctx.stroke();
-
-      lctx.strokeStyle = "rgba(" + ln.color + "," + ln.alpha.toFixed(3) + ")";
-      lctx.beginPath();
-      lctx.moveTo(a[0] * dpr + split * 0.7, a[1] * dpr);
-      lctx.lineTo(b[0] * dpr + split * 0.7, b[1] * dpr);
-      lctx.stroke();
+      let group = groups.get(ln.color);
+      if (!group) {
+        group = { color: ln.color, alpha: ln.alpha, width: ln.lw, lines: [] };
+        groups.set(ln.color, group);
+      }
+      group.lines.push(a[0] * dpr, a[1] * dpr, b[0] * dpr, b[1] * dpr);
     }
 
-    lctx.strokeStyle = "rgba(224,255,255,0.22)";
-    lctx.lineWidth = Math.max(1, dpr);
-    pathRoundedRect(
-      lctx,
-      1.25 * dpr,
-      1.25 * dpr,
-      bw - 2.5 * dpr,
-      bh - 2.5 * dpr,
-      Math.max(0, lens.r * dpr - 1.25 * dpr)
-    );
-    lctx.stroke();
+    // Batch every surface into three paths (red fringe, blue fringe, core).
+    // The previous implementation submitted three strokes per segment; this
+    // keeps the same visible dispersion with at most nine strokes per lens.
+    const split = (lowPower ? 0.9 : 1.25) * dpr;
+    function strokeGroup(group, offsetX, color, alpha) {
+      effectContext.strokeStyle = "rgba(" + color + "," + alpha.toFixed(3) + ")";
+      effectContext.lineWidth = Math.max(0.8, group.width * dpr * 0.84);
+      effectContext.beginPath();
+      for (let i = 0; i < group.lines.length; i += 4) {
+        effectContext.moveTo(group.lines[i] + offsetX, group.lines[i + 1]);
+        effectContext.lineTo(group.lines[i + 2] + offsetX, group.lines[i + 3]);
+      }
+      effectContext.stroke();
+    }
+    groups.forEach(function (group) {
+      strokeGroup(group, -split, "255,142,164", Math.min(0.42, group.alpha * 0.36));
+      strokeGroup(group, split, "102,219,255", Math.min(0.48, group.alpha * 0.42));
+      strokeGroup(group, 0, group.color, Math.min(0.88, group.alpha * 0.9));
+    });
+    effectContext.globalCompositeOperation = "destination-in";
+    effectContext.drawImage(lens.maskCanvas, 0, 0);
+    effectContext.globalCompositeOperation = "source-over";
+    lctx.drawImage(lens.effectCanvas, 0, 0);
+
+    const sheen = lctx.createLinearGradient(0, 0, bw, bh);
+    sheen.addColorStop(0, "rgba(225,252,255,0.1)");
+    sheen.addColorStop(0.42, "rgba(160,224,244,0.018)");
+    sheen.addColorStop(1, "rgba(255,226,181,0.055)");
+    lctx.fillStyle = sheen;
+    lctx.fillRect(0, 0, bw, bh);
     lctx.restore();
   }
 
-  function paintLenses() {
-    const lenses = collectLenses();
+  function paintLenses(lenses, canvasRect) {
+    lenses = lenses || collectLenses();
     if (!lenses.length) return;
-    const canvasRect = canvas.getBoundingClientRect();
+    canvasRect = canvasRect || canvas.getBoundingClientRect();
     for (let i = 0; i < lenses.length; i += 1) paintOneLens(lenses[i], canvasRect);
   }
 
   function drawScene(time) {
+    const lenses = collectLenses();
+    const canvasRect = canvas.getBoundingClientRect();
+    lensCapture = null;
+    if (lenses.length) {
+      let left = Infinity;
+      let top = Infinity;
+      let right = -Infinity;
+      let bottom = -Infinity;
+      let pad = 0;
+      for (let i = 0; i < lenses.length; i += 1) {
+        const lens = lenses[i];
+        left = Math.min(left, lens.x - canvasRect.left);
+        top = Math.min(top, lens.y - canvasRect.top);
+        right = Math.max(right, lens.x + lens.w - canvasRect.left);
+        bottom = Math.max(bottom, lens.y + lens.h - canvasRect.top);
+        pad = Math.max(pad, Math.max(lens.w, lens.h) * 0.6);
+      }
+      lensCapture = {
+        x: left - pad,
+        y: top - pad,
+        w: right - left + pad * 2,
+        h: bottom - top + pad * 2
+      };
+    }
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(staticLayer, 0, 0);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.fillStyle = BG;
-    ctx.fillRect(0, 0, cssW, cssH);
     frameLines = [];
     for (let i = 0; i < surfaces.length; i += 1) drawSurface(surfaces[i], time);
-    paintLenses();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(vignetteLayer, 0, 0);
+    paintLenses(lenses, canvasRect);
   }
 
+  let stableWidth = 0;
+  let stableHeight = 0;
+  let resizeTimer = 0;
+
   function resize() {
-    const nextDpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.5 : 2);
+    // CSS gives #bg a stable 100lvh box. Read that box before the dynamic
+    // window viewport so mobile browser chrome cannot resize the scene.
     const w = Math.max(1, canvas.clientWidth || window.innerWidth || 1);
     const h = Math.max(1, canvas.clientHeight || window.innerHeight || 1);
-    dpr = nextDpr;
+    // Mobile browser chrome repeatedly changes only the viewport height while
+    // scrolling. Keep the fixed scene stable until a real resize/orientation
+    // change instead of reallocating several canvases mid-gesture.
+    if (w === stableWidth && (lowPower || Math.abs(h - stableHeight) < 140)) return;
+    stableWidth = w;
+    stableHeight = h;
+    dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1.15 : 1.6);
     cssW = w;
     cssH = h;
     canvas.width = Math.round(w * dpr);
     canvas.height = Math.round(h * dpr);
+    buildStaticLayers();
     drawScene(elapsed);
   }
 
   function loop(now) {
     if (!running) return;
     if (document.hidden) {
-      lastT = now;
-      requestAnimationFrame(loop);
+      running = false;
+      frameRequest = 0;
       return;
     }
-    if (!lastT) lastT = now;
+    if (!lastT) lastT = now - FRAME_INTERVAL;
+    if (now - lastT < FRAME_INTERVAL) {
+      frameRequest = requestAnimationFrame(loop);
+      return;
+    }
     const dt = Math.min(0.05, (now - lastT) / 1000);
     lastT = now;
-    if (animated) elapsed += dt;
+    elapsed += dt;
     drawScene(elapsed);
-    requestAnimationFrame(loop);
+    frameRequest = requestAnimationFrame(loop);
   }
 
   function start() {
     if (running) return;
     running = true;
     lastT = 0;
-    requestAnimationFrame(loop);
+    frameRequest = requestAnimationFrame(loop);
   }
 
-  window.addEventListener("resize", resize, { passive: true });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", resize, { passive: true });
+  function scheduleResize() {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(resize, 180);
   }
+
+  window.addEventListener("resize", scheduleResize, { passive: true });
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden && running) lastT = 0;
+    if (!document.hidden && animated) start();
   });
 
   const playlistToggle = document.getElementById("playlist-toggle");
   if (playlistToggle) {
     playlistToggle.addEventListener("click", function () {
       requestAnimationFrame(function () {
-        paintLenses();
+        drawScene(elapsed);
       });
     });
   }
 
   resize();
-  start();
+  if (animated) start();
 })();

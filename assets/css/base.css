@@ -21,8 +21,11 @@
   --content-width: 920px;
   --reading-width: 720px;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-body: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
   --motion-fast: 180ms;
   --motion-base: 280ms;
+  --glass-bg: linear-gradient(120deg, rgba(160, 224, 244, 0.09), rgba(160, 224, 244, 0.03) 42%, rgba(255, 240, 214, 0.06));
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -35,15 +38,16 @@ html {
 
 html, body {
   width: 100%;
+  height: 100%;
   min-height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   background: var(--bg-deep);
   color: var(--paper);
   font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
   line-height: 1.7;
 }
 
-body { min-height: 100vh; }
+body { min-height: 100%; overscroll-behavior: none; }
 ::selection { background: rgba(168, 230, 230, 0.2); color: #fff; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -57,6 +61,27 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  50% { transform: translate3d(0, -7px, 0) rotate(1deg); }
+}
+
+@keyframes glassSweep {
+  0%, 68%, 100% { opacity: 0; transform: translate3d(-190%, 0, 0) rotate(18deg); }
+  76% { opacity: 0.26; }
+  88% { opacity: 0; transform: translate3d(410%, 0, 0) rotate(18deg); }
+}
+
+@keyframes playlistReveal {
+  from { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.985); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
 .reveal { opacity: 0; transform: translateY(16px); transition: opacity 650ms var(--ease-out), transform 650ms var(--ease-out); }
 .reveal.visible { opacity: 1; transform: none; }
 
@@ -67,7 +92,9 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
   z-index: 100;
   display: flex;
   align-items: center;
+  height: 46px;
   min-height: 46px;
+  max-height: 46px;
   padding: 4px 6px;
   border: 1px solid rgba(168, 230, 230, 0.2);
   border-radius: 12px;
@@ -95,9 +122,10 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .music-toggle.playing { color: var(--cyan) !important; }
 .track-label { max-width: 92px; padding: 0 8px; overflow: hidden; color: var(--muted); font-size: 0.72rem; text-overflow: ellipsis; white-space: nowrap; }
 .playlist-toggle { padding: 0 10px; color: var(--gold) !important; font-size: 0.78rem; letter-spacing: 0.03em; }
-.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-dock); }
+.playlist-panel { position: absolute; right: 4px; bottom: calc(100% + 8px); width: 188px; max-height: min(320px, calc(100lvh - 88px)); overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow-dock); contain: layout paint style; transform-origin: right bottom; }
 .playlist-panel.collapsed { display: none; }
-.playlist-list { max-height: 240px; overflow-y: auto; overscroll-behavior: contain; scrollbar-color: rgba(244, 217, 160, 0.38) transparent; scrollbar-width: thin; }
+.playlist-panel:not(.collapsed) { animation: playlistReveal 220ms var(--ease-out) both; }
+.playlist-list { max-height: min(240px, calc(100lvh - 120px)); overflow-y: auto; overscroll-behavior: contain; scrollbar-color: rgba(244, 217, 160, 0.38) transparent; scrollbar-width: thin; }
 .playlist-item { display: block; width: 100%; min-height: 36px; padding: 7px 12px; border: 0; border-bottom: 1px solid rgba(168, 230, 230, 0.06); background: transparent; color: var(--ink); cursor: pointer; text-align: left; font-size: 0.8rem; }
 .playlist-item:hover, .playlist-item.active { background: rgba(168, 230, 230, 0.1); color: var(--cyan-bright); }
 
@@ -154,10 +182,30 @@ a:hover { color: var(--cyan-bright); text-shadow: 0 0 12px rgba(168, 230, 230, 0
 .liquid-glass::after, .glass-panel::after, .note::after, .project::after, .instructions::after, .preview-box::after, .bookmarklet::after, .file-links::after {
   display: none;
 }
+.hero-actions .liquid-glass::after {
+  position: absolute;
+  top: -80%;
+  left: -45%;
+  z-index: 0;
+  display: block;
+  width: 34%;
+  height: 260%;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(236, 255, 255, 0.13), transparent);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-190%, 0, 0) rotate(18deg);
+  animation: glassSweep 8s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+.hero-actions .liquid-glass:nth-child(2)::after { animation-delay: -1.6s; }
+.hero-actions .liquid-glass:nth-child(3)::after { animation-delay: -3.2s; }
+.hero-actions .liquid-glass:nth-child(4)::after { animation-delay: -4.8s; }
 /* Re-assert the dock's fixed positioning after the glass group above,
    which resets position to relative for the refraction layers. */
-.media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; border-radius: 20px; }
-.playlist-panel { background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
+.media-dock { position: fixed; right: 24px; bottom: 22px; z-index: 100; height: 46px; min-height: 46px; max-height: 46px; border-radius: 20px; contain: layout style; }
+.playlist-panel { position: absolute !important; right: 4px; bottom: calc(100% + 8px); background: transparent; border-color: var(--glass-border); box-shadow: var(--glass-shadow); }
 .playlist-panel.liquid-glass {
   /* Canvas-lens window: barely-there backing so the warped scene reads. */
   background: rgba(7, 16, 24, 0.18);
@@ -187,4 +235,9 @@ canvas.glass-lens-canvas {
   z-index: -1;
   display: block;
   border-radius: inherit;
+  contain: strict;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-actions .liquid-glass::after, .project-icon, .playlist-panel { animation: none !important; }
 }

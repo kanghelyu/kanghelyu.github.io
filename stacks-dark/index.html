@@ -8,11 +8,15 @@
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; overflow: hidden; }
     body {
       background: var(--bg); color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      line-height: 1.6; min-height: 100vh; display: flex; flex-direction: column;
+      line-height: 1.6; width: 100%; height: 100%; min-height: 0; display: flex; flex-direction: column;
+      overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
     }
+    header, main, footer { position: relative; z-index: 1; }
     header {
       background: var(--card); border-bottom: 1px solid var(--border);
       padding: 2rem 1.5rem; text-align: center; position: relative;
@@ -68,7 +72,7 @@
     html.en [data-lang="en"].block, html.zh [data-lang="zh"].block { display: block; }
     html.en [data-lang="en"].flex, html.zh [data-lang="zh"].flex { display: flex; }
     /* Shared math background: one large static Klein bottle behind the page. */
-    #bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100lvh; z-index: -1; pointer-events: none; }
+    #bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100lvh; z-index: 0; pointer-events: none; transform: translate3d(0, 0, 0); backface-visibility: hidden; contain: strict; }
   </style>
 </head>
 <body>
@@ -185,7 +189,7 @@ document.head.appendChild(l);</code></div>
   <p>Based on <a href="https://stacks.math.columbia.edu">The Stacks Project</a> by Johan de Jong &amp; contributors · Dark mode by <a href="https://kanghelyu.github.io">Kanghe Lyu</a></p>
 </footer>
 
-<script src="../assets/js/bg.js?v=19" defer></script>
+<script src="../assets/js/bg.js?v=35" defer></script>
 <script>
 (function() {
   var STORAGE_KEY = 'stacks-dark-lang';

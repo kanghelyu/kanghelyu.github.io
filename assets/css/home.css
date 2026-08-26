@@ -1,8 +1,8 @@
 /* Kanghe Lyu site — homepage layout */
 
-html, body { overflow-y: auto; touch-action: pan-y; }
-#bg { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; background: var(--bg-deep); pointer-events: none; }
-.overlay-text { position: relative; z-index: 2; min-height: 100vh; padding: 30px 7vw 54px; }
+html, body { overflow: hidden; }
+#bg { position: fixed; top: 0; left: 0; z-index: 0; width: 100vw; height: 100vh; height: 100lvh; background: var(--bg-deep); pointer-events: none; transform: translate3d(0, 0, 0); backface-visibility: hidden; contain: strict; }
+.overlay-text { position: fixed; inset: 0; z-index: 2; width: 100%; height: 100%; min-height: 0; padding: 30px 7vw 54px; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; }
 /* Keep copy fully legible where bright wireframes cross the text. */
 .overlay-text p, .overlay-text li, .overlay-text h1, .overlay-text h2, .overlay-text .subtitle, .overlay-text .eyebrow, .overlay-text .footer {
   text-shadow: 0 1px 3px rgba(3, 8, 14, 0.72), 0 0 8px rgba(3, 8, 14, 0.45);
