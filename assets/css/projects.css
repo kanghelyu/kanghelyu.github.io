@@ -1,6 +1,6 @@
 /* ============================================================
-   Kanghe Lyu site — projects.css v2
-   Projects grid with staggered entrance and hover glow.
+   Kanghe Lyu site — projects.css v3
+   Projects grid with floating icons and hover glow.
    ============================================================ */
 
 .projects-grid {
@@ -10,15 +10,6 @@
   margin-top: 20px;
   width: 100%;
 }
-
-.project {
-  animation: none;
-}
-.project:nth-child(1) { animation-delay: 0.35s; }
-.project:nth-child(2) { animation-delay: 0.45s; }
-.project:nth-child(3) { animation-delay: 0.55s; }
-.project:nth-child(4) { animation-delay: 0.65s; }
-.project:nth-child(5) { animation-delay: 0.75s; }
 
 .project-icon {
   position: relative;

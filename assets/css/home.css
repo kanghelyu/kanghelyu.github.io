@@ -25,7 +25,6 @@ h1 { max-width: 780px; margin-bottom: 20px; color: var(--paper); font-size: clam
 /* The homepage buttons are the 20260826 subpage card material at button size. */
 .hero-actions .button { min-height: 48px; padding: 11px 22px; border-radius: 20px; }
 .hero-actions .button:hover { transform: translateY(-3px); }
-.hero-actions { animation: none; }
 
 .content-section { max-width: var(--reading-width); padding: 54px 0 60px; border-top: 1px solid var(--line); }
 .section-heading { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: baseline; margin-bottom: 26px; }

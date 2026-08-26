@@ -24,7 +24,6 @@ body { background: var(--bg-deep); }
   width: min(960px, 92vw);
   margin: 0 auto;
   padding: 100px 0 80px;
-  animation: none;
 }
 
 .back {
@@ -104,8 +103,6 @@ h2::before {
   border-radius: 20px;
   transition: transform 0.35s var(--ease-out-expo), border-color 0.35s ease, box-shadow 0.35s ease;
 }
-.note:first-child,
-.project:first-child { border-top-color: var(--glass-border); }
 .note:hover,
 .project:hover {
   border-color: rgba(224, 255, 255, 0.46);
