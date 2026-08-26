@@ -15,10 +15,11 @@
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Kanghe Lyu — Mathematics" />
   <meta name="twitter:description" content="Research, notes, and projects by Kanghe Lyu." />
-  <link rel="stylesheet" href="assets/css/base.css?v=32" />
-  <link rel="stylesheet" href="assets/css/home.css?v=18" />
-  <script src="assets/js/liquid-glass.js?v=22" defer></script>
-  <script src="assets/js/bg.js?v=35" defer></script>
+  <link rel="stylesheet" href="assets/css/base.css?v=34" />
+  <link rel="stylesheet" href="assets/css/home.css?v=20" />
+  <link rel="stylesheet" href="assets/css/unified-polish.css?v=4" />
+  <script src="assets/js/liquid-glass.js?v=24" defer></script>
+  <script src="assets/js/bg.js?v=38" defer></script>
 </head>
 <body>
   <canvas id="bg" aria-hidden="true"></canvas>
@@ -31,9 +32,10 @@
     <button id="next-track" class="track-btn" type="button" aria-label="Next track" title="Next track">›</button>
     <span id="track-label" class="track-label" aria-live="polite">Music</span>
     <button id="playlist-toggle" class="playlist-toggle" type="button" aria-expanded="false" aria-controls="playlist-list" title="Open playlist">List</button>
-    <div id="playlist-panel" class="playlist-panel collapsed" aria-label="Music playlist">
-      <div id="playlist-list" class="playlist-list" role="list"></div>
-    </div>
+  </div>
+
+  <div id="playlist-panel" class="playlist-panel collapsed" aria-label="Music playlist">
+    <div id="playlist-list" class="playlist-list" role="list"></div>
   </div>
 
   <audio id="bg-music" preload="metadata"></audio>

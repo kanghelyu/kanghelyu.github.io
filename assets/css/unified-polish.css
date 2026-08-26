@@ -1,0 +1,135 @@
+/* Cross-page finish: one radius, stable mobile canvas, and continuous glass rims. */
+:root {
+  --radius-unified: 20px;
+}
+
+.media-dock,
+.media-dock button,
+.playlist-panel,
+.button,
+.back,
+.glass-panel,
+.note,
+.project,
+.instructions,
+.preview-box,
+.bookmarklet,
+.file-links,
+.file-links a,
+.lang-toggle button,
+input,
+textarea,
+select,
+.pre,
+.env-lemma {
+  border-radius: var(--radius-unified) !important;
+}
+
+/* Subpage action buttons are not refractive. They keep one simple glow on the
+   element itself, with no pseudo-element or inner material layer. */
+.page .button,
+.stacks-page .bookmarklet,
+.stacks-page .file-links a,
+.stacks-page .lang-toggle button {
+  border: 1px solid rgba(202, 246, 255, 0.34) !important;
+  background: transparent !important;
+  box-shadow: 0 0 16px rgba(100, 220, 255, 0.14) !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.page .button::before,
+.stacks-page .bookmarklet::before,
+.stacks-page .file-links a::before,
+.stacks-page .lang-toggle button::before {
+  display: none !important;
+}
+
+/* Bring the standalone Stacks page into the same visual system without
+   changing its content or bilingual controls. */
+body.stacks-page {
+  --bg: var(--bg-deep);
+  --text: var(--paper);
+  --accent: var(--cyan);
+  --card: rgba(8, 18, 27, 0.56);
+  --border: var(--line);
+  background: var(--bg-deep);
+  color: var(--paper);
+  font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+}
+
+.stacks-page header {
+  border-color: var(--line);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.stacks-page header h1 a,
+.stacks-page h2,
+.stacks-page .preview-box .tag,
+.stacks-page .preview-box a,
+.stacks-page footer a {
+  color: var(--cyan);
+}
+
+.stacks-page header p,
+.stacks-page footer,
+.stacks-page .preview-box > div:first-child {
+  color: var(--muted);
+}
+
+.stacks-page .lang-toggle button.active {
+  border-color: var(--glass-border);
+  background: transparent;
+  color: var(--cyan-bright);
+}
+
+.stacks-page .bookmarklet {
+  border: 1px solid var(--glass-border);
+  background: transparent;
+  color: var(--paper);
+  box-shadow: 0 0 16px rgba(100, 220, 255, 0.14);
+}
+
+.stacks-page .instructions,
+.stacks-page .preview-box,
+.stacks-page .file-links {
+  isolation: isolate;
+}
+
+.stacks-page .file-links a {
+  background: transparent;
+}
+
+.stacks-page .pre,
+.stacks-page code {
+  background: rgba(4, 12, 20, 0.8);
+}
+
+@media (max-width: 760px) {
+  #bg {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100lvh !important;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    contain: strict;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glass,
+  .note,
+  .project,
+  .instructions,
+  .preview-box,
+  .bookmarklet,
+  .file-links {
+    transition-duration: 0.01ms !important;
+  }
+}

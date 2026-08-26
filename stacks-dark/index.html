@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Stacks Project · Dark Mode Reader</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌙</text></svg>">
+  <link rel="stylesheet" href="../assets/css/base.css?v=34" />
   <style>
     :root { --bg: #1a1a2e; --text: #e0e0e0; --accent: #63b3ed; --card: #16213e; --border: #2d3748; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +17,6 @@
       overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain;
       -webkit-overflow-scrolling: touch;
     }
-    header, main, footer { position: relative; z-index: 1; }
     header {
       background: var(--card); border-bottom: 1px solid var(--border);
       padding: 2rem 1.5rem; text-align: center; position: relative;
@@ -71,11 +71,13 @@
     html.en [data-lang="en"], html.zh [data-lang="zh"] { display: inline; }
     html.en [data-lang="en"].block, html.zh [data-lang="zh"].block { display: block; }
     html.en [data-lang="en"].flex, html.zh [data-lang="zh"].flex { display: flex; }
+    header, main, footer { position: relative; z-index: 1; }
     /* Shared math background: one large static Klein bottle behind the page. */
     #bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100lvh; z-index: 0; pointer-events: none; transform: translate3d(0, 0, 0); backface-visibility: hidden; contain: strict; }
   </style>
+  <link rel="stylesheet" href="../assets/css/unified-polish.css?v=4" />
 </head>
-<body>
+<body class="stacks-page">
   <canvas id="bg" data-scene="klein" aria-hidden="true"></canvas>
 
 <header>
@@ -189,7 +191,8 @@ document.head.appendChild(l);</code></div>
   <p>Based on <a href="https://stacks.math.columbia.edu">The Stacks Project</a> by Johan de Jong &amp; contributors · Dark mode by <a href="https://kanghelyu.github.io">Kanghe Lyu</a></p>
 </footer>
 
-<script src="../assets/js/bg.js?v=35" defer></script>
+<script src="../assets/js/liquid-glass-subpages.js?v=4" defer></script>
+<script src="../assets/js/bg.js?v=38" defer></script>
 <script>
 (function() {
   var STORAGE_KEY = 'stacks-dark-lang';

@@ -7,10 +7,8 @@
  *   mobius (projects)  — one large static Möbius strip
  *   klein              — one large static Klein bottle
  *
- * Hero buttons + playlist panel are embedded lens canvases INSIDE those
- * DOM nodes (see paintLenses). The warp therefore scrolls with the
- * element. Nothing lens-shaped is ever drawn on the fixed background
- * canvas — that was the mobile double-button ghost.
+ * This file only draws the fixed mathematical scene. Glass refraction lives
+ * in liquid-glass.js, so content blocks never allocate a second canvas layer.
  */
 (function () {
   "use strict";
@@ -33,15 +31,12 @@
     gold: "244,217,160",
     blue: "113,181,206"
   };
-  const BG = "#060d14";
-  const LENS_SELECTOR = ".hero-actions .button, .playlist-panel";
-  const BARREL_K = 0.34;
-  const EDGE_RATIO = 0.2;
   const FRAME_INTERVAL = lowPower ? 50 : 32;
 
   const widthLimit = lowPower ? 26 : 36;
   const heightLimit = lowPower ? 12 : 18;
   const STATIC_VIEW = [1.02, 0.55, 0.14];
+  const SUBPAGE_VIEW = [Math.PI / 4, Math.PI / 4, 0];
 
   function buildSurface(kind) {
     const grid = [];
@@ -142,8 +137,8 @@
       {
         name: "torus",
         grid: buildSurface("torus"),
-        center: [0.5, 0.46],
-        scale: 1.12,
+        center: [0.435, 0.5],
+        scale: 0.95,
         color: palette.cyan,
         accent: palette.gold,
         speed: [0, 0, 0],
@@ -151,14 +146,14 @@
         coreWidth: 1.9,
         glowWidth: 3.6,
         glowFade: 0.2,
-        view: STATIC_VIEW
+        view: SUBPAGE_VIEW
       }
     ],
     mobius: [
       {
         name: "mobius",
         grid: buildSurface("mobius"),
-        center: [0.5, 0.48],
+        center: [0.44, 0.5],
         scale: 1.08,
         color: palette.blue,
         accent: palette.gold,
@@ -167,7 +162,7 @@
         coreWidth: 1.8,
         glowWidth: 3.4,
         glowFade: 0.2,
-        view: STATIC_VIEW
+        view: SUBPAGE_VIEW
       }
     ],
     klein: [
@@ -195,15 +190,12 @@
   let dpr = 1;
   let cssW = 1;
   let cssH = 1;
-  let frameLines = [];
   let lastT = 0;
   let elapsed = 0;
   let running = false;
   let frameRequest = 0;
   let staticLayer = null;
   let vignetteLayer = null;
-  let lensCapture = null;
-  const lensCache = new WeakMap();
 
   function rotatePoint(p, ax, ay, az) {
     let x = p[0];
@@ -226,86 +218,6 @@
     x2 = x * c - y * s;
     y2 = x * s + y * c;
     return [x2, y2, z];
-  }
-
-  function pathRoundedRect(target, x, y, w, h, r) {
-    r = Math.max(0, Math.min(r, w / 2, h / 2));
-    target.beginPath();
-    if (typeof target.roundRect === "function") {
-      target.roundRect(x, y, w, h, r);
-      return;
-    }
-    target.moveTo(x + r, y);
-    target.arcTo(x + w, y, x + w, y + h, r);
-    target.arcTo(x + w, y + h, x, y + h, r);
-    target.arcTo(x, y + h, x, y, r);
-    target.arcTo(x, y, x + w, y, r);
-    target.closePath();
-  }
-
-  function ensureLensCanvas(el) {
-    let rec = lensCache.get(el);
-    if (rec && rec.canvas.isConnected) return rec;
-    let node = el.querySelector(":scope > canvas.glass-lens-canvas");
-    if (!node) {
-      node = document.createElement("canvas");
-      node.className = "glass-lens-canvas";
-      node.setAttribute("aria-hidden", "true");
-      el.insertBefore(node, el.firstChild);
-    }
-    el.classList.add("has-glass-lens");
-    const effectCanvas = document.createElement("canvas");
-    const maskCanvas = document.createElement("canvas");
-    rec = {
-      canvas: node,
-      ctx: node.getContext("2d", { alpha: true }),
-      effectCanvas: effectCanvas,
-      effectCtx: effectCanvas.getContext("2d", { alpha: true }),
-      maskCanvas: maskCanvas,
-      maskCtx: maskCanvas.getContext("2d", { alpha: true })
-    };
-    lensCache.set(el, rec);
-    return rec;
-  }
-
-  function collectLenses() {
-    const list = [];
-    document.querySelectorAll(LENS_SELECTOR).forEach((el) => {
-      if (el.classList.contains("collapsed")) return;
-      const styles = window.getComputedStyle(el);
-      if (
-        styles.display === "none" ||
-        styles.visibility === "hidden" ||
-        styles.opacity === "0"
-      ) {
-        return;
-      }
-      const rect = el.getBoundingClientRect();
-      if (rect.width < 12 || rect.height < 10) return;
-      if (rect.bottom < -40 || rect.top > cssH + 40) return;
-      if (rect.right < -40 || rect.left > cssW + 40) return;
-      let radius = parseFloat(styles.borderTopLeftRadius) || 0;
-      if (String(styles.borderTopLeftRadius).includes("%")) {
-        radius = Math.min(rect.width, rect.height) * (radius / 100);
-      }
-      radius = Math.max(2, Math.min(radius, rect.width / 2, rect.height / 2));
-      const rec = ensureLensCanvas(el);
-      list.push({
-        el,
-        canvas: rec.canvas,
-        ctx: rec.ctx,
-        effectCanvas: rec.effectCanvas,
-        effectCtx: rec.effectCtx,
-        maskCanvas: rec.maskCanvas,
-        maskCtx: rec.maskCtx,
-        x: rect.left,
-        y: rect.top,
-        w: rect.width,
-        h: rect.height,
-        r: radius
-      });
-    });
-    return list;
   }
 
   function drawGlow(target, cx, cy, radius, color, alpha) {
@@ -415,32 +327,6 @@
     drawWireframe(glow, glowFade, "lighter");
     drawWireframe(core, 1, "source-over");
 
-    // Only a sparse vector copy is retained for the tiny element lenses.
-    // The full mesh stays on the background, while these lines supply the
-    // crisp RGB fringe without thousands of per-element path submissions.
-    const stride = lowPower ? 3 : 2;
-    function keepLine(a, b) {
-      if (!lensCapture || !lineHits({ x1: a[0], y1: a[1], x2: b[0], y2: b[1] }, lensCapture, 0)) {
-        return;
-      }
-      frameLines.push({
-        x1: a[0],
-        y1: a[1],
-        x2: b[0],
-        y2: b[1],
-        color: surface.color,
-        accent: surface.accent,
-        alpha: alpha,
-        lw: core
-      });
-    }
-    for (let i = 0; i < rows; i += stride) {
-      for (let j = 0; j < cols - 1; j += 1) keepLine(projected[i][j], projected[i][j + 1]);
-    }
-    for (let j = 0; j < cols; j += stride) {
-      for (let i = 0; i < rows - 1; i += 1) keepLine(projected[i][j], projected[i + 1][j]);
-    }
-
     if (surface.name === "mobius") {
       ctx.lineWidth = lowPower ? 1.3 : 1.8;
       ctx.strokeStyle = "rgba(" + surface.accent + ",0.8)";
@@ -456,225 +342,13 @@
     }
   }
 
-  function warpWorldToLens(wx, wy, lens) {
-    const cx = lens.x + lens.w / 2;
-    const cy = lens.y + lens.h / 2;
-    const dx = wx - cx;
-    const dy = wy - cy;
-    const nx = lens.w > 0 ? dx / (lens.w / 2) : 0;
-    const ny = lens.h > 0 ? dy / (lens.h / 2) : 0;
-    const r2 = nx * nx + ny * ny;
-    const magnification = lowPower ? 1 / 0.86 : 1 / 0.82;
-    const edgeCompression = 1 + BARREL_K * Math.min(1.8, r2) * 0.18;
-    const factor = magnification / edgeCompression;
-    return [lens.w / 2 + dx * factor, lens.h / 2 + dy * factor];
-  }
-
-  function lineHits(ln, lens, pad) {
-    const minX = Math.min(ln.x1, ln.x2);
-    const maxX = Math.max(ln.x1, ln.x2);
-    const minY = Math.min(ln.y1, ln.y2);
-    const maxY = Math.max(ln.y1, ln.y2);
-    return (
-      maxX >= lens.x - pad &&
-      minX <= lens.x + lens.w + pad &&
-      maxY >= lens.y - pad &&
-      minY <= lens.y + lens.h + pad
-    );
-  }
-
-  function buildEdgeMask(lens, width, height) {
-    const context = lens.maskCtx;
-    const image = context.createImageData(width, height);
-    const pixels = image.data;
-    const edgeWidth = Math.max(1, width * EDGE_RATIO);
-    const edgeHeight = Math.max(1, height * EDGE_RATIO);
-    for (let y = 0; y < height; y += 1) {
-      const vertical = Math.min(y + 0.5, height - y - 0.5) / edgeHeight;
-      for (let x = 0; x < width; x += 1) {
-        const horizontal = Math.min(x + 0.5, width - x - 0.5) / edgeWidth;
-        const distance = Math.max(0, Math.min(1, horizontal, vertical));
-        // Cubic smoothstep has zero slope at both ends: full effect at the
-        // rim, a continuous fade, then exactly normal pixels after 20%.
-        const smooth = distance * distance * (3 - 2 * distance);
-        const alpha = Math.round((1 - smooth) * 255);
-        const index = (y * width + x) * 4;
-        pixels[index] = 255;
-        pixels[index + 1] = 255;
-        pixels[index + 2] = 255;
-        pixels[index + 3] = alpha;
-      }
-    }
-    context.putImageData(image, 0, 0);
-  }
-
-  function paintOneLens(lens, canvasRect) {
-    const lctx = lens.ctx;
-    const lc = lens.canvas;
-    const effectContext = lens.effectCtx;
-    const bw = Math.max(1, Math.round(lens.w * dpr));
-    const bh = Math.max(1, Math.round(lens.h * dpr));
-    if (
-      lc.width !== bw || lc.height !== bh ||
-      lens.effectCanvas.width !== bw || lens.effectCanvas.height !== bh
-    ) {
-      lc.width = bw;
-      lc.height = bh;
-      lens.effectCanvas.width = bw;
-      lens.effectCanvas.height = bh;
-      lens.maskCanvas.width = bw;
-      lens.maskCanvas.height = bh;
-      buildEdgeMask(lens, bw, bh);
-    }
-
-    lctx.setTransform(1, 0, 0, 1, 0, 0);
-    lctx.clearRect(0, 0, bw, bh);
-    lctx.save();
-    pathRoundedRect(lctx, 0, 0, bw, bh, lens.r * dpr);
-    lctx.clip();
-    lctx.fillStyle = BG;
-    lctx.fill();
-
-    const scaleX = canvas.width / Math.max(1, canvasRect.width);
-    const scaleY = canvas.height / Math.max(1, canvasRect.height);
-    // The center is an exact copy of the underlying scene. Refraction is
-    // confined to four 20% edge bands, so text stays crisp and the material
-    // reads like a lens rim instead of a fully warped sheet.
-    const baseX = Math.max(0, (lens.x - canvasRect.left) * scaleX);
-    const baseY = Math.max(0, (lens.y - canvasRect.top) * scaleY);
-    const baseWidth = Math.min(canvas.width - baseX, lens.w * scaleX);
-    const baseHeight = Math.min(canvas.height - baseY, lens.h * scaleY);
-    if (baseWidth > 2 && baseHeight > 2) {
-      lctx.imageSmoothingEnabled = true;
-      if (lctx.imageSmoothingQuality) lctx.imageSmoothingQuality = "high";
-      lctx.drawImage(canvas, baseX, baseY, baseWidth, baseHeight, 0, 0, bw, bh);
-    }
-
-    effectContext.setTransform(1, 0, 0, 1, 0, 0);
-    effectContext.clearRect(0, 0, bw, bh);
-    effectContext.globalCompositeOperation = "source-over";
-
-    // One smooth affine sample replaces the old 7x5 / 12x8 tile warp. A
-    // cached SDF-style alpha mask feathers it continuously through the 20%
-    // rim instead of clipping at a visible rectangular boundary.
-    const zoom = lowPower ? 0.86 : 0.82;
-    const sourceWidth = lens.w * zoom;
-    const sourceHeight = lens.h * zoom;
-    const sourceX = lens.x - canvasRect.left + (lens.w - sourceWidth) * 0.5;
-    const sourceY = lens.y - canvasRect.top + (lens.h - sourceHeight) * 0.5;
-    const sx = Math.max(0, sourceX * scaleX);
-    const sy = Math.max(0, sourceY * scaleY);
-    const sw = Math.min(canvas.width - sx, sourceWidth * scaleX);
-    const sh = Math.min(canvas.height - sy, sourceHeight * scaleY);
-    if (sw > 2 && sh > 2) {
-      effectContext.imageSmoothingEnabled = true;
-      if (effectContext.imageSmoothingQuality) effectContext.imageSmoothingQuality = "high";
-      effectContext.drawImage(canvas, sx, sy, sw, sh, 0, 0, bw, bh);
-    }
-
-    const cr = canvasRect;
-    const pad = Math.max(lens.w, lens.h) * 0.6;
-    const groups = new Map();
-    effectContext.lineCap = "round";
-    effectContext.lineJoin = "round";
-    for (let i = 0; i < frameLines.length; i += 1) {
-      const ln = frameLines[i];
-      const vx1 = cr.left + ln.x1;
-      const vy1 = cr.top + ln.y1;
-      const vx2 = cr.left + ln.x2;
-      const vy2 = cr.top + ln.y2;
-      if (
-        !lineHits(
-          { x1: vx1, y1: vy1, x2: vx2, y2: vy2 },
-          lens,
-          pad
-        )
-      ) {
-        continue;
-      }
-      const a = warpWorldToLens(vx1, vy1, lens);
-      const b = warpWorldToLens(vx2, vy2, lens);
-      let group = groups.get(ln.color);
-      if (!group) {
-        group = { color: ln.color, alpha: ln.alpha, width: ln.lw, lines: [] };
-        groups.set(ln.color, group);
-      }
-      group.lines.push(a[0] * dpr, a[1] * dpr, b[0] * dpr, b[1] * dpr);
-    }
-
-    // Batch every surface into three paths (red fringe, blue fringe, core).
-    // The previous implementation submitted three strokes per segment; this
-    // keeps the same visible dispersion with at most nine strokes per lens.
-    const split = (lowPower ? 0.9 : 1.25) * dpr;
-    function strokeGroup(group, offsetX, color, alpha) {
-      effectContext.strokeStyle = "rgba(" + color + "," + alpha.toFixed(3) + ")";
-      effectContext.lineWidth = Math.max(0.8, group.width * dpr * 0.84);
-      effectContext.beginPath();
-      for (let i = 0; i < group.lines.length; i += 4) {
-        effectContext.moveTo(group.lines[i] + offsetX, group.lines[i + 1]);
-        effectContext.lineTo(group.lines[i + 2] + offsetX, group.lines[i + 3]);
-      }
-      effectContext.stroke();
-    }
-    groups.forEach(function (group) {
-      strokeGroup(group, -split, "255,142,164", Math.min(0.42, group.alpha * 0.36));
-      strokeGroup(group, split, "102,219,255", Math.min(0.48, group.alpha * 0.42));
-      strokeGroup(group, 0, group.color, Math.min(0.88, group.alpha * 0.9));
-    });
-    effectContext.globalCompositeOperation = "destination-in";
-    effectContext.drawImage(lens.maskCanvas, 0, 0);
-    effectContext.globalCompositeOperation = "source-over";
-    lctx.drawImage(lens.effectCanvas, 0, 0);
-
-    const sheen = lctx.createLinearGradient(0, 0, bw, bh);
-    sheen.addColorStop(0, "rgba(225,252,255,0.1)");
-    sheen.addColorStop(0.42, "rgba(160,224,244,0.018)");
-    sheen.addColorStop(1, "rgba(255,226,181,0.055)");
-    lctx.fillStyle = sheen;
-    lctx.fillRect(0, 0, bw, bh);
-    lctx.restore();
-  }
-
-  function paintLenses(lenses, canvasRect) {
-    lenses = lenses || collectLenses();
-    if (!lenses.length) return;
-    canvasRect = canvasRect || canvas.getBoundingClientRect();
-    for (let i = 0; i < lenses.length; i += 1) paintOneLens(lenses[i], canvasRect);
-  }
-
   function drawScene(time) {
-    const lenses = collectLenses();
-    const canvasRect = canvas.getBoundingClientRect();
-    lensCapture = null;
-    if (lenses.length) {
-      let left = Infinity;
-      let top = Infinity;
-      let right = -Infinity;
-      let bottom = -Infinity;
-      let pad = 0;
-      for (let i = 0; i < lenses.length; i += 1) {
-        const lens = lenses[i];
-        left = Math.min(left, lens.x - canvasRect.left);
-        top = Math.min(top, lens.y - canvasRect.top);
-        right = Math.max(right, lens.x + lens.w - canvasRect.left);
-        bottom = Math.max(bottom, lens.y + lens.h - canvasRect.top);
-        pad = Math.max(pad, Math.max(lens.w, lens.h) * 0.6);
-      }
-      lensCapture = {
-        x: left - pad,
-        y: top - pad,
-        w: right - left + pad * 2,
-        h: bottom - top + pad * 2
-      };
-    }
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(staticLayer, 0, 0);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    frameLines = [];
     for (let i = 0; i < surfaces.length; i += 1) drawSurface(surfaces[i], time);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.drawImage(vignetteLayer, 0, 0);
-    paintLenses(lenses, canvasRect);
   }
 
   let stableWidth = 0;
@@ -736,15 +410,6 @@
   document.addEventListener("visibilitychange", function () {
     if (!document.hidden && animated) start();
   });
-
-  const playlistToggle = document.getElementById("playlist-toggle");
-  if (playlistToggle) {
-    playlistToggle.addEventListener("click", function () {
-      requestAnimationFrame(function () {
-        drawScene(elapsed);
-      });
-    });
-  }
 
   resize();
   if (animated) start();

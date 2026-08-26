@@ -12,7 +12,7 @@
 }
 
 .project {
-  animation: fadeInUp 0.7s var(--ease-out-expo) both;
+  animation: none;
 }
 .project:nth-child(1) { animation-delay: 0.35s; }
 .project:nth-child(2) { animation-delay: 0.45s; }
