@@ -1,6 +1,9 @@
 /* Kanghe Lyu site — homepage layout */
 
-html, body { overflow-y: auto; touch-action: pan-y; }
+/* Scrolling is the document-level path shared with the subpages (see the
+   overflow rules in base.css). Do not re-introduce html/body overflow-y here:
+   combined with base.css overflow-x it turns the root element into a scroll
+   container that locks the viewport. */
 #bg { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; background: var(--bg-deep); pointer-events: none; }
 .overlay-text { position: relative; z-index: 2; min-height: 100vh; padding: 30px 7vw 54px; }
 /* Keep copy fully legible where bright wireframes cross the text. */

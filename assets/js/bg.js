@@ -37,6 +37,11 @@
   const heightLimit = lowPower ? 12 : 18;
   const STATIC_VIEW = [1.02, 0.55, 0.14];
   const SUBPAGE_VIEW = [Math.PI / 4, Math.PI / 4, 0];
+  /* Camera distance. The old 3.8 gave a ~5.3x near/far size ratio (wide-angle
+     look); 8 gives ~1.8x. PROJ_SCALE keeps the z=0 size identical to the old
+     camera, so every scene's scale/center/glow layout stays as calibrated. */
+  const CAMERA_DIST = 8;
+  const PROJ_SCALE = (CAMERA_DIST / 3.8) * 0.5;
 
   function buildSurface(kind) {
     const grid = [];
@@ -137,7 +142,7 @@
       {
         name: "torus",
         grid: buildSurface("torus"),
-        center: [0.435, 0.5],
+        center: [0.479, 0.5],
         scale: 0.95,
         color: palette.cyan,
         accent: palette.gold,
@@ -153,7 +158,7 @@
       {
         name: "mobius",
         grid: buildSurface("mobius"),
-        center: [0.44, 0.5],
+        center: [0.476, 0.5],
         scale: 1.08,
         color: palette.blue,
         accent: palette.gold,
@@ -290,8 +295,8 @@
       const out = new Array(cols);
       for (let j = 0; j < cols; j += 1) {
         const p = rotatePoint(row[j], ax, ay, az);
-        const z = p[2] + 3.8;
-        const f = (surface.scale * 0.5 * dim) / z;
+        const z = p[2] + CAMERA_DIST;
+        const f = (surface.scale * PROJ_SCALE * dim) / z;
         out[j] = [cx + p[0] * f, cy + p[1] * f, z];
       }
       projected[i] = out;
