@@ -47,3 +47,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.project-icon img {
+  width: 40px;
+  height: 40px;
+  display: block;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(11, 122, 102, 0.35);
+}
