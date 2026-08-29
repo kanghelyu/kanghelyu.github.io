@@ -15,7 +15,7 @@
         title: "Projects",
         intro: "A collection of tools and web apps I have built.",
         descDark: "A dark mode reader for The Stacks Project \u2014 the open-source textbook on algebraic geometry. Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.",
-        descQinghe: "QingHe Ledger \u2014 A local-first, privacy-focused bilingual (Chinese/English) ledger app. No ads, no network required. Built with SwiftUI.",
+        descQinghe: "Piggy Ledger \u732a\u732a\u8d26\u672c \u2014 A liquid-glass, local-first expense tracker for Android. 306 currencies with daily ECB reference rates, a glass calculator, budgets, 8 languages and full offline privacy. 15-day free trial, lifetime activation code.",
         descDflow: "A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.",
         descAflow: "Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).",
         descClick: "A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.",
@@ -26,7 +26,7 @@
         btnDarkLanding: "Landing Page",
         btnDarkGH: "GitHub",
         btnQingheAPK: "Download APK",
-        btnQingheGH: "GitHub",
+        btnQingheSite: "Website",
         btnClickGH: "GitHub",
         footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
       },
@@ -37,7 +37,7 @@
         title: "项目",
         intro: "我开发的一些工具和网页应用。",
         descDark: "Stacks Project 深色模式阅读器。一键切换、支持系统偏好、快捷键，跨页面保持状态。",
-        descQinghe: "青禾记账 — 本地优先、隐私友好的双语记账 App。无广告、无需网络，纯 SwiftUI 构建。",
+        descQinghe: "猪猪账本 — 液态玻璃质感的本地优先记账 App：306 种货币、每日官方汇率、玻璃计算器、预算管理、8 国语言，全程离线隐私。15 天免费试用，兑换码永久激活。",
         descDflow: "DeepSeek Flow — 面向 DeepSeek Harness 的 Markdown 优先可视化工作流编辑器：画布连线、逻辑门、拓扑审查、一句话构建工作流。",
         descAflow: "AgentFlow（af）— Markdown 优先的分步工作流：确定性逻辑门 + 零依赖 CLI + 可视化 Studio 画布 + 桌面宠物窗，适用于任何编码代理（ZCode / Claude Code / Codex CLI）。",
         descClick: "click — 面向自有游戏或应用调试的本地 Android 连点录制与坐标脚本工具：支持录制短按、编辑时间，并绑定录制时的前台应用后再回放。",
@@ -48,7 +48,7 @@
         btnDarkLanding: "入口页面",
         btnDarkGH: "GitHub",
         btnQingheAPK: "下载 APK",
-        btnQingheGH: "GitHub",
+        btnQingheSite: "官网",
         btnClickGH: "GitHub",
         footer: "工具 · 项目 · 软件"
       }
@@ -77,7 +77,7 @@
     document.getElementById("btn-dark-landing").textContent = t.btnDarkLanding;
     document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
     document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
-    document.getElementById("btn-qinghe-gh").textContent = t.btnQingheGH;
+    document.getElementById("btn-qinghe-site").textContent = t.btnQingheSite;
     document.getElementById("btn-click-gh").textContent = t.btnClickGH;
   }
 
