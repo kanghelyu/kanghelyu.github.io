@@ -4,21 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | Kanghe Lyu</title>
-  <link rel="stylesheet" href="assets/css/base.css?v=33" />
-  <link rel="stylesheet" href="assets/css/page.css?v=18" />
-  <link rel="stylesheet" href="assets/css/projects.css?v=6" />
-  <script src="assets/js/liquid-glass.js?v=22" defer></script>
-  <script src="assets/js/bg.js?v=35" defer></script>
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/page.css" />
+  <link rel="stylesheet" href="assets/css/projects.css" />
 </head>
 <body>
-  <canvas id="bg" data-scene="mobius" aria-hidden="true"></canvas>
-
   <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
   <button id="music-toggle" class="music-toggle">♪ Music</button>
 
   <div class="track-controls">
-    <button id="prev-track" class="track-btn" aria-label="Previous track">‹</button>
-    <button id="next-track" class="track-btn" aria-label="Next track">›</button>
+    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
+    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
   </div>
 
   <div id="playlist-panel" class="playlist-panel collapsed">
@@ -39,18 +35,6 @@
     </p>
 
     <section class="projects-grid">
-      <article class="project">
-        <div class="project-icon">✦</div>
-        <div class="project-title">AgentFlow</div>
-        <div class="project-desc" id="desc-aflow">
-          Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).
-        </div>
-        <div class="project-actions">
-          <a id="btn-aflow-site" class="button" href="https://agentflow.kanghelyu.org/">Website</a>
-          <a id="btn-aflow-gh" class="button" href="https://github.com/kanghelyu/agent-flow">GitHub</a>
-        </div>
-      </article>
-
       <article class="project">
         <div class="project-icon">⚡</div>
         <div class="project-title">DeepSeek Flow</div>
@@ -77,25 +61,26 @@
       </article>
 
       <article class="project">
-        <div class="project-icon"><img src="assets/img/lilpig-ledger.svg" alt="Lil Pig Ledger app icon" width="40" height="40"></div>
-        <div class="project-title">Lil Pig Ledger · 小猪账本</div>
+        <div class="project-icon">📒</div>
+        <div class="project-title">QingHe Ledger</div>
         <div class="project-desc" id="desc-qinghe">
-          A real-time liquid-glass expense tracker for Android. Every entry stays manual on purpose — writing it down is what makes spending feel real. 306 currencies with daily ECB rates, a glass calculator, budgets, CSV export, 8 languages; no ads, lightweight, and nothing ever leaves your phone. 15-day free trial, lifetime activation code.
+          青禾记账 — A local-first, privacy-focused bilingual (Chinese/English) ledger app.
+          No ads, no network required. Built with SwiftUI.
         </div>
         <div class="project-actions">
-          <a id="btn-qinghe-site" class="button" href="https://lilpig.kanghelyu.org/">Website</a>
-          <a id="btn-qinghe-apk" class="button" href="https://lilpig.kanghelyu.org/LilPigLedger-v5.2.apk">Download APK</a>
+          <a id="btn-qinghe-apk" class="button" href="https://github.com/kanghelyu/QingHeLedger/releases/download/v1.5.1/qinghe.apk">Download APK</a>
+          <a id="btn-qinghe-gh" class="button" href="https://github.com/kanghelyu/QingHeLedger">GitHub</a>
         </div>
       </article>
 
       <article class="project">
-        <div class="project-icon">📱</div>
-        <div class="project-title">click</div>
-        <div class="project-desc" id="desc-click">
-          A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.
+        <div class="project-icon">CL</div>
+        <div class="project-title">ClassLens AI</div>
+        <div class="project-desc" id="desc-classlens">
+          An Android study workspace for importing class materials and reviewing AI-assisted analysis with clear provider and privacy guidance.
         </div>
         <div class="project-actions">
-          <a id="btn-click-gh" class="button" href="https://github.com/kanghelyu/click">GitHub</a>
+          <a id="btn-classlens-release" class="button" href="https://classlens.kanghelyu.org/">Release Site</a>
         </div>
       </article>
     </section>
@@ -103,7 +88,7 @@
     <div id="footer" class="footer">TOOLS · PROJECTS · SOFTWARE</div>
   </main>
 
-  <script src="assets/js/site.js?v=9"></script>
-  <script src="assets/js/projects.js?v=5"></script>
+  <script src="assets/js/site.js"></script>
+  <script src="assets/js/projects.js"></script>
 </body>
 </html>
