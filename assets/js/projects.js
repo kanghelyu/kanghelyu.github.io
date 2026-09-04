@@ -15,19 +15,16 @@
         title: "Projects",
         intro: "A collection of tools and web apps I have built.",
         descDark: "A dark mode reader for The Stacks Project \u2014 the open-source textbook on algebraic geometry. Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.",
-        descQinghe: "A real-time liquid-glass expense tracker for Android. Every entry stays manual on purpose — writing it down is what makes spending feel real. 306 currencies with daily ECB rates, a glass calculator, budgets, CSV export, 8 languages; no ads, lightweight, and nothing ever leaves your phone. 15-day free trial, lifetime activation code.",
+        descQinghe: "QingHe Ledger \u2014 A local-first, privacy-focused bilingual (Chinese/English) ledger app. No ads, no network required. Built with SwiftUI.",
         descDflow: "A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.",
-        descAflow: "Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).",
-        descClick: "A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.",
-        btnAflowSite: "Website",
-        btnAflowGH: "GitHub",
+        descClasslens: "An Android study workspace for importing class materials and reviewing AI-assisted analysis with clear provider and privacy guidance.",
         btnDflowSite: "Website",
         btnDflowGH: "GitHub",
         btnDarkLanding: "Landing Page",
         btnDarkGH: "GitHub",
         btnQingheAPK: "Download APK",
-        btnQingheSite: "Website",
-        btnClickGH: "GitHub",
+        btnQingheGH: "GitHub",
+        btnClasslensRelease: "Release Site",
         footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
       },
       zh: {
@@ -37,19 +34,16 @@
         title: "项目",
         intro: "我开发的一些工具和网页应用。",
         descDark: "Stacks Project 深色模式阅读器。一键切换、支持系统偏好、快捷键，跨页面保持状态。",
-        descQinghe: "实时液态玻璃质感的 Android 记账本。刻意不做自动记账——一笔一笔亲手写下，花钱才有感觉。306 种货币每日官方汇率、玻璃计算器、预算管理、CSV 导出、8 国语言；无广告、轻量化，数据只存本机。15 天免费试用，兑换码永久激活。",
+        descQinghe: "青禾记账 — 本地优先、隐私友好的双语记账 App。无广告、无需网络，纯 SwiftUI 构建。",
         descDflow: "DeepSeek Flow — 面向 DeepSeek Harness 的 Markdown 优先可视化工作流编辑器：画布连线、逻辑门、拓扑审查、一句话构建工作流。",
-        descAflow: "AgentFlow（af）— Markdown 优先的分步工作流：确定性逻辑门 + 零依赖 CLI + 可视化 Studio 画布 + 桌面宠物窗，适用于任何编码代理（ZCode / Claude Code / Codex CLI）。",
-        descClick: "click — 面向自有游戏或应用调试的本地 Android 连点录制与坐标脚本工具：支持录制短按、编辑时间，并绑定录制时的前台应用后再回放。",
-        btnAflowSite: "官网",
-        btnAflowGH: "GitHub",
+        descClasslens: "ClassLens AI — 用于导入课程资料并审阅 AI 辅助分析的 Android 学习工作区，提供清晰的服务提供商与隐私说明。",
         btnDflowSite: "官网",
         btnDflowGH: "GitHub",
         btnDarkLanding: "入口页面",
         btnDarkGH: "GitHub",
         btnQingheAPK: "下载 APK",
-        btnQingheSite: "官网",
-        btnClickGH: "GitHub",
+        btnQingheGH: "GitHub",
+        btnClasslensRelease: "发布页面",
         footer: "工具 · 项目 · 软件"
       }
     };
@@ -68,17 +62,14 @@
     document.getElementById("desc-dark").textContent = t.descDark;
     document.getElementById("desc-qinghe").textContent = t.descQinghe;
     document.getElementById("desc-dflow").textContent = t.descDflow;
-    document.getElementById("desc-aflow").textContent = t.descAflow;
-    document.getElementById("desc-click").textContent = t.descClick;
-    document.getElementById("btn-aflow-site").textContent = t.btnAflowSite;
-    document.getElementById("btn-aflow-gh").textContent = t.btnAflowGH;
     document.getElementById("btn-dflow-site").textContent = t.btnDflowSite;
     document.getElementById("btn-dflow-gh").textContent = t.btnDflowGH;
     document.getElementById("btn-dark-landing").textContent = t.btnDarkLanding;
     document.getElementById("btn-dark-gh").textContent = t.btnDarkGH;
     document.getElementById("btn-qinghe-apk").textContent = t.btnQingheAPK;
-    document.getElementById("btn-qinghe-site").textContent = t.btnQingheSite;
-    document.getElementById("btn-click-gh").textContent = t.btnClickGH;
+    document.getElementById("btn-qinghe-gh").textContent = t.btnQingheGH;
+    document.getElementById("desc-classlens").textContent = t.descClasslens;
+    document.getElementById("btn-classlens-release").textContent = t.btnClasslensRelease;
   }
 
   KangheSite.init(applyPageLanguage);
