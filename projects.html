@@ -4,91 +4,238 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects | Kanghe Lyu</title>
-  <link rel="stylesheet" href="assets/css/base.css" />
-  <link rel="stylesheet" href="assets/css/page.css" />
-  <link rel="stylesheet" href="assets/css/projects.css" />
+  <style>
+    :root {
+      --math-gold: #f4d9a0;
+      --math-ink: #0f1c22;
+      --glow-cyan: #a8e6e6;
+      --paper: #fff7e8;
+      --subtle: #d8c9a8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%; min-height: 100%;
+      background: var(--math-ink);
+      color: var(--paper);
+      font-family: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(168,230,230,0.13), transparent 28%),
+        radial-gradient(circle at 85% 70%, rgba(244,217,160,0.10), transparent 30%),
+        linear-gradient(180deg, #0d1b22, #132832 55%, #1b3038);
+    }
+
+    .page {
+      width: min(980px, 92vw);
+      margin: 0 auto;
+      padding: 96px 0 80px;
+    }
+
+    .back {
+      display: inline-flex; margin-bottom: 42px;
+      color: var(--glow-cyan); text-decoration: none; font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.45), 0 0 10px rgba(168,230,230,0.28);
+    }
+    .back:hover { text-shadow: 3px 3px 0 rgba(0,0,0,0.45), 0 0 18px rgba(168,230,230,0.55); }
+
+    .eyebrow {
+      font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--math-gold); margin-bottom: 18px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.55), 0 0 12px rgba(168,230,230,0.20);
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.2rem);
+      line-height: 1.05; font-weight: 400; letter-spacing: -0.04em;
+      color: #fff7e8; margin-bottom: 24px;
+      text-shadow: 4px 0 0 rgba(0,0,0,0.60), 0 4px 0 rgba(0,0,0,0.60), 4px 4px 0 rgba(0,0,0,0.60), 0 0 20px rgba(168,230,230,0.30);
+    }
+
+    .intro {
+      max-width: 720px;
+      font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+      line-height: 1.85; color: #e8d9c0; margin-bottom: 54px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.42), 0 0 8px rgba(0,0,0,0.28);
+    }
+
+    h2 {
+      font-size: 1.35rem; color: var(--math-gold);
+      letter-spacing: 0.08em; margin: 46px 0 18px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.48);
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      gap: 22px; margin-top: 20px; width: 100%;
+    }
+
+    .project {
+      min-width: 0; max-width: 100%;
+      padding: 24px 24px 22px;
+      border: 2px solid rgba(244,217,160,0.46);
+      background: rgba(15,28,34,0.34);
+      box-shadow: 5px 5px 0 rgba(0,0,0,0.50), 0 0 20px rgba(168,230,230,0.10), inset 0 0 0 1px rgba(255,255,255,0.035);
+    }
+
+    .project-icon {
+      font-size: 2.2rem; margin-bottom: 6px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.50);
+    }
+
+    .project-title {
+      font-size: 1.22rem; color: #fff7e8; margin-bottom: 12px;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.42), 0 0 8px rgba(0,0,0,0.28);
+    }
+
+    .project-desc {
+      color: var(--subtle); font-size: 1rem; line-height: 1.7; margin-bottom: 20px;
+    }
+
+    .project-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+    .button {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 18px; color: #f0e6d2; text-decoration: none; font-size: 0.98rem;
+      border: 2px solid rgba(244,217,160,0.62);
+      background: rgba(15,28,34,0.38);
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.55), 0 0 14px rgba(168,230,230,0.12);
+      transition: all 0.2s ease;
+    }
+    .button:hover {
+      border-color: var(--math-gold); color: #fff7e8;
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 rgba(0,0,0,0.65), 0 0 20px rgba(168,230,230,0.24);
+    }
+
+    .footer {
+      margin-top: 70px; color: #c8b68a; opacity: 0.82;
+      letter-spacing: 0.12em; font-size: 0.98rem;
+      text-shadow: 3px 3px 0 rgba(0,0,0,0.42);
+    }
+
+    @media (min-width: 761px) {
+      .projects-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    }
+
+    @media (max-width: 760px) {
+      .page { width: 92vw; padding: 180px 0 58px; }
+      .projects-grid { grid-template-columns: minmax(0, 1fr); }
+      .project { padding: 22px 18px 20px; }
+      .project-actions { gap: 10px; }
+      .button { padding: 10px 16px; }
+    }
+  </style>
 </head>
 <body>
-  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
-  <button id="music-toggle" class="music-toggle">♪ Music</button>
-
-  <div class="track-controls">
-    <button id="prev-track" class="track-btn" aria-label="Previous track">⏮</button>
-    <button id="next-track" class="track-btn" aria-label="Next track">⏭</button>
-  </div>
-
-  <div id="playlist-panel" class="playlist-panel collapsed">
-    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
-    <div id="playlist-list" class="playlist-list"></div>
-  </div>
-
-  <audio id="bg-music" preload="auto"></audio>
-
   <main class="page">
-    <a id="back-link" class="back" href="index.html">← Back to Home</a>
+    <a class="back" href="index.html">← Back to Home</a>
 
-    <div id="eyebrow" class="eyebrow">TOOLS &amp; PROJECTS</div>
-    <h1 id="title">Projects</h1>
+    <div class="eyebrow">TOOLS &amp; PROJECTS</div>
+    <h1>Projects</h1>
 
-    <p id="intro" class="intro">
-      A collection of tools and web apps I have built.
+    <p class="intro">
+      A collection of tools, web apps, and other things I have built.
     </p>
 
     <section class="projects-grid">
-      <article class="project">
-        <div class="project-icon">⚡</div>
-        <div class="project-title">DeepSeek Flow</div>
-        <div class="project-desc" id="desc-dflow">
-          A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.
-        </div>
-        <div class="project-actions">
-          <a id="btn-dflow-site" class="button" href="https://deepseekflow.kanghelyu.org/">Website</a>
-          <a id="btn-dflow-gh" class="button" href="https://github.com/kanghelyu/dsh-deepseek-flow">GitHub</a>
-        </div>
-      </article>
 
       <article class="project">
         <div class="project-icon">🌙</div>
         <div class="project-title">Stacks Project Dark Mode</div>
-        <div class="project-desc" id="desc-dark">
+        <div class="project-desc">
           A dark mode reader for The Stacks Project — the open-source textbook on algebraic geometry.
           Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.
         </div>
         <div class="project-actions">
-          <a id="btn-dark-landing" class="button" href="stacks-dark/">Landing Page</a>
-          <a id="btn-dark-gh" class="button" href="https://github.com/kanghelyu/stacks-project">GitHub</a>
+          <a class="button" href="stacks-dark/">Landing Page</a>
+          <a class="button" href="https://github.com/kanghelyu/stacks-project">GitHub</a>
         </div>
       </article>
 
       <article class="project">
-        <div class="project-icon">📒</div>
-        <div class="project-title">QingHe Ledger</div>
-        <div class="project-desc" id="desc-qinghe">
-          青禾记账 — A local-first, privacy-focused bilingual (Chinese/English) ledger app.
+        <div class="project-icon">🐷</div>
+        <div class="project-title">Lil Pig Ledger</div>
+        <div class="project-desc">
+          小猪账本 / Lil Pig Ledger — A local-first, privacy-focused bilingual (Chinese/English) ledger app.
           No ads, no network required. Built with SwiftUI.
         </div>
         <div class="project-actions">
-          <a id="btn-qinghe-apk" class="button" href="https://github.com/kanghelyu/QingHeLedger/releases/download/v1.5.1/qinghe.apk">Download APK</a>
-          <a id="btn-qinghe-gh" class="button" href="https://github.com/kanghelyu/QingHeLedger">GitHub</a>
+          <a class="button" href="https://github.com/kanghelyu/QingHeLedger">GitHub</a>
         </div>
       </article>
 
       <article class="project">
-        <div class="project-icon">CL</div>
-        <div class="project-title">ClassLens AI</div>
-        <div class="project-desc" id="desc-classlens">
-          An Android study workspace for importing class materials and reviewing AI-assisted analysis with clear provider and privacy guidance.
+        <div class="project-icon">🤖</div>
+        <div class="project-title">Hermes Chat</div>
+        <div class="project-desc">
+          Access an AI assistant from any device — browser, Telegram, Discord, WeChat, and more.
+          Multi-platform gateway with plugin system and scheduled tasks.
         </div>
         <div class="project-actions">
-          <a id="btn-classlens-release" class="button" href="https://classlens.kanghelyu.org/">Release Site</a>
+          <a class="button" href="https://github.com/kanghelyu/hermes-chat">GitHub</a>
         </div>
       </article>
+
+      <article class="project">
+        <div class="project-icon">🎵</div>
+        <div class="project-title">AI Music</div>
+        <div class="project-desc">
+          AI-generated music tracks created to accompany the visual atmosphere of this website.
+          Some pieces feature vocals sung by AI voices.
+        </div>
+        <div class="project-actions">
+          <a class="button" href="music/">Browse Music</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">📄</div>
+        <div class="project-title">Personal Homepage</div>
+        <div class="project-desc">
+          This website itself — open source, built with vanilla HTML/CSS/JS.
+          Features a dynamic starfield background, bilingual support, and a built-in music player.
+        </div>
+        <div class="project-actions">
+          <a class="button" href="https://github.com/kanghelyu/kanghelyu.github.io">GitHub</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">📝</div>
+        <div class="project-title">Mathematical Notes</div>
+        <div class="project-desc">
+          Collected mathematical notes and surveys on representation theory,
+          noncommutative geometry, and related topics. Viewable online or as PDF.
+        </div>
+        <div class="project-actions">
+          <a class="button" href="notes.html">View Notes</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">📅</div>
+        <div class="project-title">ClassLens AI</div>
+        <div class="project-desc">
+          课镜 AI — An Android study workspace for importing class materials and reviewing AI-assisted analysis with clear provider and privacy guidance.
+        </div>
+        <div class="project-actions">
+          <a class="button" href="https://classlens.kanghelyu.org/">Release Site</a>
+          <a class="button" href="https://github.com/kanghelyu/ClassLens">GitHub</a>
+        </div>
+      </article>
+
     </section>
 
-    <div id="footer" class="footer">TOOLS · PROJECTS · SOFTWARE</div>
+    <div class="footer">TOOLS · PROJECTS · SOFTWARE</div>
   </main>
-
-  <script src="assets/js/site.js"></script>
-  <script src="assets/js/projects.js"></script>
 </body>
 </html>
