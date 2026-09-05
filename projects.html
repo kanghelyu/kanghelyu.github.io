@@ -1,1 +1,121 @@
-@projects.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects | Kanghe Lyu</title>
+  <link rel="stylesheet" href="assets/css/base.css?v=33" />
+  <link rel="stylesheet" href="assets/css/page.css?v=18" />
+  <link rel="stylesheet" href="assets/css/projects.css?v=6" />
+  <script src="assets/js/liquid-glass.js?v=22" defer></script>
+  <script src="assets/js/bg.js?v=35" defer></script>
+</head>
+<body>
+  <canvas id="bg" data-scene="mobius" aria-hidden="true"></canvas>
+
+  <button id="lang-toggle" class="lang-toggle">EN / 中文</button>
+  <button id="music-toggle" class="music-toggle">♪ Music</button>
+
+  <div class="track-controls">
+    <button id="prev-track" class="track-btn" aria-label="Previous track">‹</button>
+    <button id="next-track" class="track-btn" aria-label="Next track">›</button>
+  </div>
+
+  <div id="playlist-panel" class="playlist-panel collapsed">
+    <button id="playlist-toggle" class="playlist-toggle">Playlist ▾</button>
+    <div id="playlist-list" class="playlist-list"></div>
+  </div>
+
+  <audio id="bg-music" preload="auto"></audio>
+
+  <main class="page">
+    <a id="back-link" class="back" href="index.html">← Back to Home</a>
+
+    <div id="eyebrow" class="eyebrow">TOOLS &amp; PROJECTS</div>
+    <h1 id="title">Projects</h1>
+
+    <p id="intro" class="intro">
+      A collection of tools and web apps I have built.
+    </p>
+
+    <section class="projects-grid">
+      <article class="project">
+        <div class="project-icon">✦</div>
+        <div class="project-title">AgentFlow</div>
+        <div class="project-desc" id="desc-aflow">
+          Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).
+        </div>
+        <div class="project-actions">
+          <a id="btn-aflow-site" class="button" href="https://agentflow.kanghelyu.org/">Website</a>
+          <a id="btn-aflow-gh" class="button" href="https://github.com/kanghelyu/agent-flow">GitHub</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">⚡</div>
+        <div class="project-title">DeepSeek Flow</div>
+        <div class="project-desc" id="desc-dflow">
+          A Markdown-first visual workflow editor for DeepSeek Harness — canvas, logic gates, topology review, and one-sentence workflow building.
+        </div>
+        <div class="project-actions">
+          <a id="btn-dflow-site" class="button" href="https://deepseekflow.kanghelyu.org/">Website</a>
+          <a id="btn-dflow-gh" class="button" href="https://github.com/kanghelyu/dsh-deepseek-flow">GitHub</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">🌙</div>
+        <div class="project-title">Stacks Project Dark Mode</div>
+        <div class="project-desc" id="desc-dark">
+          A dark mode reader for The Stacks Project — the open-source textbook on algebraic geometry.
+          Injects a toggle button, supports system preference, keyboard shortcut, and persists across pages.
+        </div>
+        <div class="project-actions">
+          <a id="btn-dark-landing" class="button" href="stacks-dark/">Landing Page</a>
+          <a id="btn-dark-gh" class="button" href="https://github.com/kanghelyu/stacks-project">GitHub</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon"><img src="assets/img/lilpig-ledger.svg" alt="Lil Pig Ledger app icon" width="40" height="40"></div>
+        <div class="project-title">Lil Pig Ledger · 小猪账本</div>
+        <div class="project-desc" id="desc-qinghe">
+          A real-time liquid-glass expense tracker for Android. Every entry stays manual on purpose — writing it down is what makes spending feel real. 306 currencies with daily ECB rates, a glass calculator, budgets, CSV export, 8 languages; no ads, lightweight, and nothing ever leaves your phone. 15-day free trial, lifetime activation code.
+        </div>
+        <div class="project-actions">
+          <a id="btn-qinghe-site" class="button" href="https://lilpig.kanghelyu.org/">Website</a>
+          <a id="btn-qinghe-apk" class="button" href="https://lilpig.kanghelyu.org/LilPigLedger-v5.2.apk">Download APK</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">🎓</div>
+        <div class="project-title">ClassLens AI · 课镜</div>
+        <div class="project-desc" id="desc-classlens">
+          A liquid-glass course schedule app for Android with AI import. Describe your timetable or attach a file and the AI fills in your week — with a preview and conflict check before anything is written. Also imports from your school's edu system, or from ICS / CSV / JSON / HTML / XLSX files. Local-first, bilingual, and your API key never leaves the device.
+        </div>
+        <div class="project-actions">
+          <a id="btn-classlens-site" class="button" href="https://classlens.kanghelyu.org/">Website</a>
+          <a id="btn-classlens-apk" class="button" href="https://classlens.kanghelyu.org/download/ClassLens-AI-v0.4.6.apk">Download APK</a>
+        </div>
+      </article>
+
+      <article class="project">
+        <div class="project-icon">📱</div>
+        <div class="project-title">click</div>
+        <div class="project-desc" id="desc-click">
+          A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.
+        </div>
+        <div class="project-actions">
+          <a id="btn-click-gh" class="button" href="https://github.com/kanghelyu/click">GitHub</a>
+        </div>
+      </article>
+    </section>
+
+    <div id="footer" class="footer">TOOLS · PROJECTS · SOFTWARE</div>
+  </main>
+
+  <script src="assets/js/site.js?v=9"></script>
+  <script src="assets/js/projects.js?v=6"></script>
+</body>
+</html>
