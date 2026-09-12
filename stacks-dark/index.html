@@ -65,6 +65,22 @@
     .file-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.5rem; }
     .file-links a { background: var(--card); border: 1px solid var(--border); padding: 0.4rem 1rem; border-radius: 6px; color: var(--accent); text-decoration: none; font-size: 0.9rem; }
     .file-links a:hover { border-color: var(--accent); }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--accent); margin: 1.75rem 0 0.6rem; }
+    /* Warning block: the single most common install mistake is saving this
+       page's URL instead of the snippet, so it gets its own callout. */
+    p.warn {
+      background: #3a2e1a; border: 1px solid #5a4e2a; border-radius: 8px;
+      padding: 0.85rem 1rem; color: #e8d5a0; font-size: 0.92rem;
+    }
+    p.warn code { background: #2a2113; color: #f0e0b8; }
+    .copy-btn {
+      background: var(--card); color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 8px;
+      padding: 0.7rem 1.4rem; font-size: 1rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .copy-btn:hover { background: rgba(99,179,237,0.12); }
+    .copy-btn.done { background: var(--accent); color: #1a1a2e; border-color: var(--accent); }
     footer { text-align: center; padding: 1.5rem; color: #718096; font-size: 0.85rem; border-top: 1px solid var(--border); }
     footer a { color: var(--accent); }
     [data-lang] { display: none; }
@@ -101,22 +117,29 @@
        dark-mode.js or dark-mode.css, bump the SHA in all six URLs below
        (bookmarklet, console snippet, file links) to the new commit. -->
   <section>
-    <h2 data-lang="zh">📌 Bookmarklet（推荐）</h2>
-    <h2 data-lang="en">📌 Bookmarklet (recommended)</h2>
+    <h2 data-lang="zh">📌 安装书签</h2>
+    <h2 data-lang="en">📌 Install the bookmark</h2>
 
-    <p data-lang="zh" class="block">把下面的按钮拖到浏览器书签栏。在任意 Stacks Project 页面点一下这个书签即可切换深色模式：<strong>第一次点击开启深色</strong>，之后每点一次就在深色与浅色之间切换。</p>
-    <p data-lang="en" class="block">Drag the button below to your bookmarks bar. On any Stacks Project page, click the bookmark to toggle dark mode: <strong>the first click turns dark mode on</strong>, and every click after that switches between dark and light.</p>
+    <p data-lang="zh" class="block">在任意 Stacks Project 页面点一下书签即可切换深色模式：<strong>第一次点击开启深色</strong>，之后每点一次就在深色与浅色之间切换。</p>
+    <p data-lang="en" class="block">On any Stacks Project page, click the bookmark to toggle dark mode: <strong>the first click turns dark mode on</strong>, and every click after that switches between dark and light.</p>
 
-    <p style="text-align:center;margin:1.5rem 0">
+    <p data-lang="zh" class="block warn">
+      ⚠️ <strong>不要用 ⌘D / Ctrl+D「添加书签」保存本页</strong>——那样存下来的网址是<em>本页地址</em>，点它只会跳回这一页，深色模式不会生效。请用下面任一种方式安装；装好后请确认<strong>书签的网址以 <code>javascript:</code> 开头</strong>。
+    </p>
+    <p data-lang="en" class="block warn">
+      ⚠️ <strong>Do not use ⌘D / Ctrl+D “Add bookmark” on this page</strong> — that stores <em>this page's address</em>, so clicking it only comes back here and dark mode never runs. Use method A or B below. Either way, check that <strong>the bookmark's URL starts with <code>javascript:</code></strong>.
+    </p>
+
+    <h3 data-lang="zh">方式 A · 拖拽（最快）</h3>
+    <h3 data-lang="en">Method A · Drag (fastest)</h3>
+
+    <p style="text-align:center;margin:1.25rem 0">
       <a class="bookmarklet"
          href="javascript:(function(){var d=document;if(window.__stacksDarkToggle){window.__stacksDarkToggle();return}if(d.querySelector('script[data-stacks-dark]'))return;var s=d.createElement('script');s.src='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@db1add94eb02e94f8764c63e42ce2763a2e8148a/stacks-dark/dark-mode.js';s.setAttribute('data-stacks-dark','1');d.body.appendChild(s);if(!d.querySelector('link[data-stacks-dark]')){var l=d.createElement('link');l.rel='stylesheet';l.href='https://cdn.jsdelivr.net/gh/kanghelyu/kanghelyu.github.io@db1add94eb02e94f8764c63e42ce2763a2e8148a/stacks-dark/dark-mode.css';l.setAttribute('data-stacks-dark','1');d.head.appendChild(l)}})();"
          onclick="alert('把它拖到书签栏，不是点击这里。');return false;">
         🌙 Stacks Dark
       </a>
     </p>
-
-    <p data-lang="zh" class="block">开启后，页面顶部导航栏会出现一个切换开关，之后不点书签也能随时切换；选择会被记住。</p>
-    <p data-lang="en" class="block">Once active, a switch appears in the page header, so you can toggle without the bookmark. Your choice is remembered.</p>
 
     <div class="instructions">
       <ol data-lang="zh" class="block">
@@ -132,6 +155,47 @@
         <li>Click the <strong>🌙 Stacks Dark</strong> bookmark (click again to switch back)</li>
       </ol>
     </div>
+
+    <h3 data-lang="zh">方式 B · 复制代码后手动新建书签（最可靠）</h3>
+    <h3 data-lang="en">Method B · Copy the code, then create the bookmark by hand (most reliable)</h3>
+
+    <p data-lang="zh" class="block">拖拽失败、或不确定书签存对没有时用这个方式——手动粘贴不会存错网址。</p>
+    <p data-lang="en" class="block">Use this when dragging fails or you are unsure the bookmark was stored correctly — pasting by hand cannot capture the wrong URL.</p>
+
+    <p style="text-align:center;margin:1.25rem 0">
+      <button id="copy-bm" type="button" class="copy-btn"><span data-lang="zh">复制安装代码</span><span data-lang="en">Copy install code</span></button>
+    </p>
+
+    <p data-lang="zh" class="block">下面是完整代码。复制按钮不可用时，直接选中这一段复制即可：</p>
+    <p data-lang="en" class="block">The full snippet is below. If the copy button is unavailable, just select this block and copy it:</p>
+
+    <!-- Filled from the drag link's href at runtime, so the drag button, the
+         copy button and this block can never drift apart. -->
+    <div class="pre"><code id="bm-code"></code></div>
+
+    <div class="instructions">
+      <ol data-lang="zh" class="block">
+        <li>点上面的按钮复制代码（括号里的 <code>javascript:</code> 开头也要一起复制）</li>
+        <li>在书签栏空白处右键 → <strong>添加网页 / 新建书签</strong>（Chrome 书签管理器里是「添加新书签」）</li>
+        <li>名称填 <strong>Stacks Dark</strong>；<strong>网址</strong>一栏粘贴刚复制的整段代码</li>
+        <li>保存后打开任意 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a>，点这个书签即可</li>
+      </ol>
+      <ol data-lang="en" class="block">
+        <li>Click the button above to copy the code (keep the leading <code>javascript:</code>)</li>
+        <li>Right-click the bookmarks bar → <strong>Add page / New bookmark</strong> (in Chrome's bookmark manager: “Add new bookmark”)</li>
+        <li>Name it <strong>Stacks Dark</strong>; paste the whole snippet into the <strong>URL</strong> field</li>
+        <li>Save, open any <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project page</a>, and click the bookmark</li>
+      </ol>
+      <p data-lang="zh" class="block" style="margin-top:0.75rem;margin-bottom:0">
+        ✅ <strong>自检：</strong>编辑该书签，网址应以 <code>javascript:(function(){</code> 开头、以 <code>})();</code> 结尾。若显示的是 <code>https://kanghelyu.org/…</code>，说明存错了，请删掉重做。
+      </p>
+      <p data-lang="en" class="block" style="margin-top:0.75rem;margin-bottom:0">
+        ✅ <strong>Self-check:</strong> edit the bookmark — its URL should start with <code>javascript:(function(){</code> and end with <code>})();</code>. If it shows <code>https://kanghelyu.org/…</code>, it was saved wrong; delete it and redo.
+      </p>
+    </div>
+
+    <p data-lang="zh" class="block" style="margin-top:1rem">开启后，页面顶部导航栏会出现一个切换开关，之后不点书签也能随时切换；选择会被记住。</p>
+    <p data-lang="en" class="block" style="margin-top:1rem">Once active, a switch appears in the page header, so you can toggle without the bookmark. Your choice is remembered.</p>
   </section>
 
   <!-- ===== Keyboard shortcut ===== -->
@@ -231,15 +295,90 @@ else {
   var defaultLang = stored || (navigator.language && navigator.language.startsWith('en') ? 'en' : 'zh');
   window.setLang(defaultLang);
 
-  // Also update the bookmarklet onclick alert language
+  // Also update the bookmarklet onclick alert language.
+  // Checked via classList: setLang() runs before liquid-glass-subpages.js
+  // appends its own class, so comparing the whole className string misfires.
+  function isEn() { return document.documentElement.classList.contains('en'); }
+
   var bml = document.querySelector('.bookmarklet');
   if (bml) {
     bml.onclick = function() {
-      alert(document.documentElement.className === 'en'
+      alert(isEn()
         ? 'Drag this to your bookmarks bar, not click it.'
         : '把它拖到书签栏，不是点击这里。');
       return false;
     };
+  }
+
+  // Copy-to-clipboard install path.  The payload is read back off the drag
+  // link so the two can never drift apart, and pasting into the bookmark's
+  // URL field cannot silently capture this page's address instead.
+  var copyBtn = document.getElementById('copy-bm');
+  var codeBlock = document.getElementById('bm-code');
+  if (copyBtn && bml) {
+    var payload = bml.getAttribute('href') || '';
+    var originalHtml = copyBtn.innerHTML;
+    var resetTimer = 0;
+
+    // Always render the snippet: manual selection must stay possible even
+    // where the async clipboard is blocked (non-secure context, denied
+    // permission, headless).
+    if (codeBlock) codeBlock.textContent = payload;
+
+    function flashDone() {
+      copyBtn.classList.add('done');
+      copyBtn.textContent = isEn() ? '\u2705  Copied' : '\u2705  已复制';
+      window.clearTimeout(resetTimer);
+      resetTimer = window.setTimeout(function () {
+        copyBtn.classList.remove('done');
+        copyBtn.innerHTML = originalHtml;
+      }, 2000);
+    }
+
+    function selectSnippet() {
+      if (!codeBlock) return;
+      var range = document.createRange();
+      range.selectNodeContents(codeBlock);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      if (codeBlock.scrollIntoView) codeBlock.scrollIntoView({ block: 'center' });
+    }
+
+    function legacyCopy() {
+      var ta = document.createElement('textarea');
+      ta.value = payload;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+      if (ok) {
+        flashDone();
+      } else {
+        // Not an error the reader can act on — hand them a selected block
+        // they only need to hit ⌘C / Ctrl+C on.
+        selectSnippet();
+        copyBtn.classList.add('done');
+        copyBtn.textContent = isEn() ? 'Now press \u2318C / Ctrl+C' : '已选中，按 \u2318C / Ctrl+C';
+        window.clearTimeout(resetTimer);
+        resetTimer = window.setTimeout(function () {
+          copyBtn.classList.remove('done');
+          copyBtn.innerHTML = originalHtml;
+        }, 4000);
+      }
+    }
+
+    copyBtn.addEventListener('click', function () {
+      if (!payload) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(payload).then(flashDone, legacyCopy);
+      } else {
+        legacyCopy();
+      }
+    });
   }
 })();
 </script>
