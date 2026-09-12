@@ -70,10 +70,14 @@ html.dark nav#second-bar.sticky-top {
 }
 
 /* --- Header title / logo --- */
+/* The site logo is a mid-grey glyph (mean channel ~148). Dimming it further
+   left it barely visible on the dark topbar, so it is lifted instead.  The
+   background-image is intentionally not redeclared here: the site stylesheet
+   already points at the logo, and repeating the URL only adds a rule that can
+   drift out of sync. */
 html.dark header h1 a {
   color: var(--dm-text-heading);
-  background-image: url('/static/stacks.png'); /* logo unchanged */
-  filter: brightness(0.9);
+  filter: brightness(1.5);
 }
 
 /* --- Breadcrumbs --- */
@@ -402,46 +406,8 @@ html.dark ul.entries li {
   color: var(--dm-text-primary);
 }
 
-/* --- The dark mode toggle button itself --- */
-.dark-mode-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
-  font-size: 0.9rem;
-  line-height: 1;
-}
-.dark-mode-toggle input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-  width: 36px;
-  height: 20px;
-  background-color: #ccc;
-  border-radius: 10px;
-  position: relative;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  flex-shrink: 0;
-}
-.dark-mode-toggle input[type="checkbox"]::after {
-  content: "";
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
-  background-color: white;
-  border-radius: 50%;
-  transition: transform 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-}
-html.dark .dark-mode-toggle input[type="checkbox"] {
-  background-color: var(--dm-text-link);
-}
-html.dark .dark-mode-toggle input[type="checkbox"]::after {
-  transform: translateX(16px);
-}
-.dark-mode-toggle .dm-label {
-  color: inherit;
-}
+/* The injected control (#stacks-dark-toggle) and the toggle hint
+   (#stacks-dark-hud) are styled inline by dark-mode.js on purpose: the
+   switch has to look and behave correctly even when this stylesheet is
+   still in flight or blocked entirely.  Styling them here as well would
+   create a second source of truth. */
