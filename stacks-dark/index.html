@@ -175,23 +175,58 @@
 
     <div class="instructions">
       <ol data-lang="zh" class="block">
-        <li>点上面的按钮复制代码（括号里的 <code>javascript:</code> 开头也要一起复制）</li>
-        <li>在书签栏空白处右键 → <strong>添加网页 / 新建书签</strong>（Chrome 书签管理器里是「添加新书签」）</li>
-        <li>名称填 <strong>Stacks Dark</strong>；<strong>网址</strong>一栏粘贴刚复制的整段代码</li>
-        <li>保存后打开任意 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a>，点这个书签即可</li>
+        <li>点上面的按钮复制代码（<code>javascript:</code> 开头也要一起复制）</li>
+        <li>在书签栏空白处右键 → <strong>「添加网页…」</strong></li>
+        <li>名称填 <strong>Stacks Dark</strong></li>
+        <li><strong>⚠️ 把「网址」栏里预填的本页地址整段删掉</strong>，再粘贴刚复制的代码
+          <br><span style="opacity:.8">（这一步漏掉，存下来的就是本页网址——点它只会跳回这一页。）</span></li>
+        <li>保存 → 打开任意 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a> → 点这个书签</li>
       </ol>
       <ol data-lang="en" class="block">
         <li>Click the button above to copy the code (keep the leading <code>javascript:</code>)</li>
-        <li>Right-click the bookmarks bar → <strong>Add page / New bookmark</strong> (in Chrome's bookmark manager: “Add new bookmark”)</li>
-        <li>Name it <strong>Stacks Dark</strong>; paste the whole snippet into the <strong>URL</strong> field</li>
-        <li>Save, open any <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project page</a>, and click the bookmark</li>
+        <li>Right-click the bookmarks bar → <strong>“Add page…”</strong></li>
+        <li>Name it <strong>Stacks Dark</strong></li>
+        <li><strong>⚠️ Delete the pre-filled address in the URL field entirely</strong>, then paste the snippet
+          <br><span style="opacity:.8">(Skip this and the bookmark stores this page's address — clicking it just comes back here.)</span></li>
+        <li>Save → open any <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project page</a> → click the bookmark</li>
       </ol>
+      <p data-lang="zh" class="block" style="margin-top:0.75rem">
+        💡 更稳妥的做法：按 <strong>⌘⌥B</strong> 打开书签管理器 → 右上角 <strong>「添加新书签」</strong>——
+        那里的<strong>网址栏是空的</strong>，直接粘贴不会存错。
+      </p>
+      <p data-lang="en" class="block" style="margin-top:0.75rem">
+        💡 More reliable: press <strong>⌘⌥B</strong> to open the bookmark manager → <strong>“Add new bookmark”</strong>.
+        Its <strong>URL field is empty</strong>, so a paste cannot capture the wrong address.
+      </p>
       <p data-lang="zh" class="block" style="margin-top:0.75rem;margin-bottom:0">
         ✅ <strong>自检：</strong>编辑该书签，网址应以 <code>javascript:(function(){</code> 开头、以 <code>})();</code> 结尾。若显示的是 <code>https://kanghelyu.org/…</code>，说明存错了，请删掉重做。
       </p>
       <p data-lang="en" class="block" style="margin-top:0.75rem;margin-bottom:0">
         ✅ <strong>Self-check:</strong> edit the bookmark — its URL should start with <code>javascript:(function(){</code> and end with <code>})();</code>. If it shows <code>https://kanghelyu.org/…</code>, it was saved wrong; delete it and redo.
       </p>
+    </div>
+
+    <h3 data-lang="zh">方式 C · 油猴脚本（装一次，永久生效）</h3>
+    <h3 data-lang="en">Method C · Userscript (install once, always on)</h3>
+
+    <p data-lang="zh" class="block">不想折腾书签就用这个：装一次之后，每个 Stacks Project 页面都会自动应用深色模式，不用点任何东西。需要先装 <a href="https://www.tampermonkey.net/">Tampermonkey</a> 扩展。</p>
+    <p data-lang="en" class="block">Skip the bookmark entirely: install this once and every Stacks Project page gets dark mode automatically, with nothing to click. Requires the <a href="https://www.tampermonkey.net/">Tampermonkey</a> extension.</p>
+
+    <div class="file-links">
+      <a href="stacks-dark.user.js">stacks-dark.user.js</a>
+    </div>
+
+    <div class="instructions" style="margin-top:0.75rem">
+      <ol data-lang="zh" class="block">
+        <li>装好 Tampermonkey 扩展</li>
+        <li>点上面这个链接，Tampermonkey 会弹出安装页 → 点「安装」</li>
+        <li>打开任意 <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project 页面</a>，应当自动变黑</li>
+      </ol>
+      <ol data-lang="en" class="block">
+        <li>Install the Tampermonkey extension</li>
+        <li>Click the link above — Tampermonkey opens its install page → click “Install”</li>
+        <li>Open any <a href="https://stacks.math.columbia.edu/tag/0001">Stacks Project page</a>; it should turn dark on its own</li>
+      </ol>
     </div>
 
     <p data-lang="zh" class="block" style="margin-top:1rem">开启后，页面顶部导航栏会出现一个切换开关，之后不点书签也能随时切换；选择会被记住。</p>
