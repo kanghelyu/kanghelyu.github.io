@@ -21,6 +21,8 @@
         descMathflow: "A gallery of interactive flow maps for mathematics \u2014 theorem dependencies, reconstruction-and-verification records, and close-reading notes. Each map opens as its own full-page OmniFlow workspace: the Studio client runs unmodified in the browser against a static snapshot, so pan, zoom, search, layout switching and inline KaTeX all work with no server at all.",
         descAflow: "Markdown-first step workflows with deterministic logic gates, a zero-dependency CLI, a visual Studio canvas and a desktop pet — for any coding agent (ZCode / Claude Code / Codex CLI).",
         descClick: "A local Android tap recorder and coordinate-script debugger for your own game or application. Records short taps, editable timing, and guarded replay tied to the recorded foreground package.",
+        descHwdash: "A native GTK4 hardware panel for Linux — temperature curves, a drag-to-edit fan curve editor with live duty feedback, per-core voltage read straight from MSR 0x198, system info, and OpenRGB lighting with a per-LED gradient painter and profiles. Daemon-backed, fully async, never freezes. For Linux only.",
+        descGitbackup: "Scheduled rsync snapshots of your folders into a dedicated private GitHub repo — checksum verification with mid-write retries, hard time budget, triple private-visibility checks, never force-push, and a machine-readable receipt for every run. GTK4 panel with one-click manual backup. For Linux only.",
         descClasslens: "A liquid-glass course schedule app for Android with AI import. Describe your timetable or attach a file and the AI fills in your week — with a preview and conflict check before anything is written. Each period shows its full time range, weekdays carry their dates, and the grid fits up to 30 periods a day by itself. Also imports from your school's edu system, or from ICS / CSV / JSON / HTML / XLSX files. Local-first, bilingual, and your API key never leaves the device.",
         btnOflowSite: "Website",
         btnMathflowSite: "Website",
@@ -37,6 +39,10 @@
         btnClasslensSite: "Website",
         btnClasslensAPK: "Download APK",
         btnClickGH: "GitHub",
+        btnHwdashSite: "Intro",
+        btnHwdashGH: "GitHub",
+        btnGitbackupSite: "Intro",
+        btnGitbackupGH: "GitHub",
         footer: "TOOLS \u00b7 PROJECTS \u00b7 SOFTWARE"
       },
       zh: {
@@ -52,6 +58,8 @@
         descMathflow: "mathflow — 数学流程图的在线画廊：定理依赖、重建与验证记录、精读笔记。每张图都是独立的整页 OmniFlow 工作区：Studio 客户端在浏览器里原样运行、直接读取构建期静态快照，平移缩放、全局搜索、布局切换与节点内的 KaTeX 公式全部可用，完全不需要后端。",
         descAflow: "AgentFlow（af）— Markdown 优先的分步工作流：确定性逻辑门 + 零依赖 CLI + 可视化 Studio 画布 + 桌面宠物窗，适用于任何编码代理（ZCode / Claude Code / Codex CLI）。",
         descClick: "click — 面向自有游戏或应用调试的本地 Android 连点录制与坐标脚本工具：支持录制短按、编辑时间，并绑定录制时的前台应用后再回放。",
+        descHwdash: "硬件面板 — for Linux 的原生 GTK4 硬件面板：温度曲线、图上拖拽的风扇曲线编辑器（占空比实时跟随）、直读 MSR 0x198 的每核心电压、系统信息，以及 OpenRGB 灯光（逐颗渐变绘制与配置档）。守护进程架构、全链路异步、界面永不冻结。",
+        descGitbackup: "Git 一键备份 — 按节奏把本地目录 rsync 快照进专用私有 GitHub 仓库：内容级校验 + mid-write 重试、硬性时间预算、三重私有可见性检查、永不强推，每轮附带机器可读回执；GTK4 面板一键手动备份。",
         descClasslens: "课镜 — 液态玻璃质感的 Android 课程表，支持 AI 导入：用一句话描述课表或附上课表文件，AI 帮你填满一周——写入前必须预览确认、自动检查冲突。左侧时间栏显示每节课的完整时间段，星期下方带具体日期，每天最多 30 节且网格会自动适配。也可以从学校教务系统直接抓取，或导入 ICS / CSV / JSON / HTML / XLSX 文件。本地优先、中英双语，API key 只存在你手机里。",
         btnOflowSite: "官网",
         btnMathflowSite: "官网",
@@ -68,6 +76,10 @@
         btnClasslensSite: "官网",
         btnClasslensAPK: "下载 APK",
         btnClickGH: "GitHub",
+        btnHwdashSite: "介绍",
+        btnHwdashGH: "GitHub",
+        btnGitbackupSite: "介绍",
+        btnGitbackupGH: "GitHub",
         footer: "工具 · 项目 · 软件"
       }
     };
@@ -91,6 +103,12 @@
     document.getElementById("desc-aflow").textContent = t.descAflow;
     document.getElementById("desc-click").textContent = t.descClick;
     document.getElementById("desc-classlens").textContent = t.descClasslens;
+    document.getElementById("desc-hwdash").textContent = t.descHwdash;
+    document.getElementById("desc-gitbackup").textContent = t.descGitbackup;
+    document.getElementById("btn-hwdash-site").textContent = t.btnHwdashSite;
+    document.getElementById("btn-hwdash-gh").textContent = t.btnHwdashGH;
+    document.getElementById("btn-gitbackup-site").textContent = t.btnGitbackupSite;
+    document.getElementById("btn-gitbackup-gh").textContent = t.btnGitbackupGH;
     document.getElementById("btn-oflow-site").textContent = t.btnOflowSite;
     document.getElementById("btn-oflow-gh").textContent = t.btnOflowGH;
     document.getElementById("btn-mathflow-site").textContent = t.btnMathflowSite;

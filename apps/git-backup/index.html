@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Git 一键备份 — One-Click Git Backup for Linux | Kanghe Lyu</title>
+  <meta name="description" content="Git 一键备份 — for Linux 的定时 GitHub 快照备份：rsync 内容级校验、私有仓库保护、永不强推，GTK4 面板一键控制。Scheduled rsync snapshots to GitHub with checksum verification and a GTK4 panel." />
+  <meta name="theme-color" content="#071018" />
+  <link rel="stylesheet" href="../../assets/css/base.css?v=36" />
+  <link rel="stylesheet" href="../../assets/css/page.css?v=18" />
+  <script src="../../assets/js/bg.js?v=39" defer></script>
+  <style>
+    .badge-row { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 6px; }
+    .badge { padding:5px 14px; border-radius:9999px; border:1px solid rgba(255,255,255,.22);
+             font-size:13px; letter-spacing:.4px; backdrop-filter: blur(6px); }
+    .badge.hot { border-color: rgba(255,120,80,.65); color:#ffb38a; }
+    .lead { font-size:17px; line-height:1.8; opacity:.92; max-width:900px; }
+    h2.sec { margin-top:44px; font-size:22px; }
+    ul.feat { line-height:1.85; opacity:.9; }
+    ul.feat li { margin:6px 0; }
+    pre.code { background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);
+               border-radius:12px; padding:16px 18px; overflow-x:auto;
+               font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; line-height:1.7; }
+    .flow { margin:20px 0; padding:18px; border-radius:14px; border:1px solid rgba(255,255,255,.14);
+            background:rgba(0,0,0,.25); font-family:ui-monospace,Menlo,Consolas,monospace;
+            font-size:13px; line-height:2.0; overflow-x:auto; white-space:nowrap; }
+    .actions-row { display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+    .license-note { margin-top:34px; padding:14px 18px; border-radius:12px;
+                    border:1px dashed rgba(255,255,255,.25); font-size:14px; opacity:.85; line-height:1.8; }
+    table.cfg { border-collapse:collapse; width:100%; font-size:14px; margin-top:10px; }
+    table.cfg th, table.cfg td { border:1px solid rgba(255,255,255,.16); padding:8px 12px; text-align:left; }
+    table.cfg th { opacity:.75; }
+  </style>
+</head>
+<body>
+  <canvas id="bg" data-scene="mobius" aria-hidden="true"></canvas>
+
+  <main class="page">
+    <a class="back" href="../../projects.html">← Back to Apps</a>
+
+    <div class="eyebrow">BACKUP TOOL · OPEN SOURCE</div>
+    <h1>Git 一键备份</h1>
+    <p class="intro lead">
+      <strong>for Linux</strong> 的定时 GitHub 快照备份：把你最怕丢的目录（笔记、配置、项目），
+      按节奏 rsync 进一个专用私有仓库——内容级校验、私有保护、永不强推，再配一个 GTK4
+      小面板一键控制。<br>
+      Scheduled rsync snapshots of the folders you fear losing into a dedicated GitHub
+      repository — checksum-verified, private-repo-guarded, never force-pushed, with a
+      one-click GTK4 panel.
+    </p>
+
+    <div class="badge-row">
+      <span class="badge hot">🐧 for Linux</span>
+      <span class="badge">systemd user timer</span>
+      <span class="badge">GTK4 面板</span>
+      <span class="badge">rsync --checksum</span>
+      <span class="badge">gh CLI</span>
+      <span class="badge">零第三方依赖</span>
+    </div>
+
+    <div class="actions-row">
+      <a class="button" href="https://github.com/kanghelyu/git-backup">GitHub 仓库</a>
+      <a class="button" href="#install">安装步骤</a>
+    </div>
+
+    <div class="flow">
+本地目录 ──rsync --checksum──▶ 专用仓库工作区 ──校验通过──▶ commit ──▶ push ──▶ 远端哈希复核
+     ▲                                                                        │
+     └──────────── GTK4 面板：状态 · 手动备份 · 调度开关 ◀────────────────────────┘
+    </div>
+
+    <h2 class="sec">✨ 备份核心</h2>
+    <ul class="feat">
+      <li><strong>多目录快照表</strong>：固定"源目录 → 仓库内位置"配对，绝不运行时重新发现路径</li>
+      <li><strong>内容级校验</strong>：<code>rsync --archive --checksum</code> 复制后，再用 dry-run 逐字节复核，不过就重试</li>
+      <li><strong>正在写入的文件不会坏账</strong>：mid-write 文件等写方稳定后重试；重试后仍不稳定则<strong>如实失败</strong></li>
+      <li><strong>硬性时间预算</strong>：单次运行限定秒数，到点优雅退出；已提交未推送的内容下次自动接续</li>
+      <li><strong>flock 防并发</strong> + <strong>大小守卫</strong>（100 MiB 文件拒绝提交）</li>
+      <li><strong>回执制度</strong>：每轮写机器可读回执（结果 / 提交号 / 远端哈希 / 耗时），成功必须以远端哈希一致收尾</li>
+    </ul>
+
+    <h2 class="sec">🛡️ 安全设计（一条都不让步）</h2>
+    <ul class="feat">
+      <li><strong>私有仓库保护</strong>：运行前 / 推送前 / 推送后三处复核可见性，变 public 立即中止、绝不自动改回</li>
+      <li><strong>仓库身份三重验证</strong>：slug、默认分支、origin URL 必须与配置一致</li>
+      <li><strong>永不强推</strong>：历史分叉直接失败，绝不 merge / reset / force push；远端领先只做 fast-forward</li>
+      <li><strong>工作区白名单</strong>：检出仓库只允许配置的 destination 目录有改动，无关脏路径一律拒绝提交</li>
+    </ul>
+
+    <h2 class="sec">🎛️ GTK4 控制面板</h2>
+    <ul class="feat">
+      <li>一屏状态：调度开关、下次触发时间、开机自启、后台常驻（linger）、是否在跑</li>
+      <li><strong>立即备份一次</strong>：systemd oneshot，窗口不卡、每 3 秒自动刷新进度</li>
+      <li>回执与日志尾部直接在面板里看；调度开关一键完成</li>
+    </ul>
+
+    <h2 class="sec">⏰ 调度</h2>
+    <ul class="feat">
+      <li>systemd 用户定时器默认<strong>每 5 小时</strong>一次 + 开机 5 分钟补跑</li>
+      <li><code>loginctl enable-linger</code> 之后不登录也照跑；<code>journalctl --user -u git-backup</code> 离线可查</li>
+    </ul>
+
+    <h2 class="sec" id="install">📦 安装</h2>
+    <pre class="code">git clone https://github.com/kanghelyu/git-backup.git &amp;&amp; cd git-backup
+
+# 1. 脚本装到工作目录
+mkdir -p ~/.local/share/git-backup
+cp git-backup-run.sh backup-run-supervisor.py git-backup-panel.py \
+   git-backup-enable.sh git-backup-disable.sh ~/.local/share/git-backup/
+chmod +x ~/.local/share/git-backup/*.sh ~/.local/share/git-backup/*.py
+
+# 2. 写配置（把 repo_slug 和 sources 改成你的）
+cp examples/config.json  ~/.local/share/git-backup/config.json
+cp examples/sources.json ~/.local/share/git-backup/sources.json
+
+# 3. systemd 用户定时器
+cp systemd/git-backup.{service,timer} ~/.config/systemd/user/
+systemctl --user daemon-reload
+loginctl enable-linger "$USER"
+systemctl --user enable --now git-backup.timer
+
+# 4. 手动验证一轮
+~/.local/share/git-backup/git-backup-run.sh
+cat ~/.local/share/git-backup/LAST-RUN.md</pre>
+
+    <h2 class="sec">⚙️ 关键配置</h2>
+    <table class="cfg">
+      <tr><th>键</th><th>默认</th><th>说明</th></tr>
+      <tr><td><code>repo_slug</code></td><td>必填</td><td>备份目标仓库（建议 Private）</td></tr>
+      <tr><td><code>branch</code></td><td><code>main</code></td><td>推送分支，须与仓库默认分支一致</td></tr>
+      <tr><td><code>require_private</code></td><td><code>true</code></td><td>仓库必须是 Private，否则拒绝运行</td></tr>
+      <tr><td><code>budget_seconds</code></td><td><code>900</code></td><td>单次运行硬预算（秒）</td></tr>
+      <tr><td><code>push_retries</code></td><td><code>2</code></td><td>推送重试次数</td></tr>
+    </table>
+
+    <div class="license-note">
+      📄 <strong>许可证</strong>：PolyForm Noncommercial 1.0.0 —— <strong>严格不可商用</strong>：个人学习、自用、修改、分享完全自由；
+      任何以商业利益或金钱补偿为主要目的的使用需另行获得书面授权。<strong>非传染性</strong>：修改版无强制开源义务，保留声明即可。
+      / License: PolyForm Noncommercial 1.0.0 — strictly non-commercial, non-copyleft.
+    </div>
+
+    <div class="actions-row">
+      <a class="button" href="https://github.com/kanghelyu/git-backup">GitHub 仓库</a>
+      <a class="button" href="../../projects.html">← 返回 Apps</a>
+    </div>
+
+    <div class="footer" style="margin-top:40px; opacity:.6; font-size:12px;">GIT-BACKUP · SYSTEMD · FOR LINUX</div>
+  </main>
+</body>
+</html>

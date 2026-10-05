@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>硬件面板 hw-dash — GTK4 Hardware Panel for Linux | Kanghe Lyu</title>
+  <meta name="description" content="hw-dash — for Linux 的原生 GTK4 硬件面板：温度曲线、风扇曲线调速、每核心电压、系统信息与 OpenRGB RGB 灯光控制。Native GTK4 hardware monitoring & control panel for Linux." />
+  <meta name="theme-color" content="#071018" />
+  <link rel="stylesheet" href="../../assets/css/base.css?v=36" />
+  <link rel="stylesheet" href="../../assets/css/page.css?v=18" />
+  <script src="../../assets/js/bg.js?v=39" defer></script>
+  <style>
+    .badge-row { display:flex; flex-wrap:wrap; gap:10px; margin:18px 0 6px; }
+    .badge { padding:5px 14px; border-radius:9999px; border:1px solid rgba(255,255,255,.22);
+             font-size:13px; letter-spacing:.4px; backdrop-filter: blur(6px); }
+    .badge.hot { border-color: rgba(255,120,80,.65); color:#ffb38a; }
+    .lead { font-size:17px; line-height:1.8; opacity:.92; max-width:900px; }
+    h2.sec { margin-top:44px; font-size:22px; }
+    ul.feat { line-height:1.85; opacity:.9; }
+    ul.feat li { margin:6px 0; }
+    .shots { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-top:18px; }
+    .shots figure { margin:0; border-radius:14px; overflow:hidden; border:1px solid rgba(255,255,255,.14); }
+    .shots img { width:100%; display:block; }
+    .shots figcaption { font-size:13px; opacity:.7; padding:8px 12px; }
+    pre.code { background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.12);
+               border-radius:12px; padding:16px 18px; overflow-x:auto;
+               font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; line-height:1.7; }
+    .actions-row { display:flex; gap:12px; margin-top:26px; flex-wrap:wrap; }
+    .license-note { margin-top:34px; padding:14px 18px; border-radius:12px;
+                    border:1px dashed rgba(255,255,255,.25); font-size:14px; opacity:.85; line-height:1.8; }
+  </style>
+</head>
+<body>
+  <canvas id="bg" data-scene="mobius" aria-hidden="true"></canvas>
+
+  <main class="page">
+    <a class="back" href="../../projects.html">← Back to Apps</a>
+
+    <div class="eyebrow">HARDWARE PANEL · OPEN SOURCE</div>
+    <h1>硬件面板 hw-dash</h1>
+    <p class="intro lead">
+      <strong>for Linux</strong> 的原生 GTK4 硬件监控与控制面板：温度曲线、风扇曲线调速、
+      每核心电压、系统信息、OpenRGB 灯光 —— 五页一屏，2 秒轮询，界面永不冻结。<br>
+      A native GTK4 desktop panel (not a web app) that monitors temperatures, edits fan curves
+      by dragging anchors, reads per-core voltages straight from the CPU, and drives OpenRGB
+      lighting — all on Linux.
+    </p>
+
+    <div class="badge-row">
+      <span class="badge hot">🐧 for Linux</span>
+      <span class="badge">GTK4 · libadwaita</span>
+      <span class="badge">Python 3</span>
+      <span class="badge">Wayland / X11</span>
+      <span class="badge">OpenRGB SDK</span>
+      <span class="badge">systemd</span>
+    </div>
+
+    <div class="actions-row">
+      <a class="button" href="https://github.com/kanghelyu/hw-dash">GitHub 仓库</a>
+      <a class="button" href="#install">安装步骤</a>
+    </div>
+
+    <h2 class="sec">五页全览 · Five pages</h2>
+    <div class="shots">
+      <figure><img src="img/temp.png" alt="温度页截图"><figcaption>🌡️ 温度 — 渐变填充曲线大图 + 可点击图例芯片</figcaption></figure>
+      <figure><img src="img/fan.png" alt="风扇页截图"><figcaption>🌀 风扇 — 卡片式通道 + 图上拖拽曲线</figcaption></figure>
+      <figure><img src="img/volt.png" alt="电压页截图"><figcaption>⚡ 电压 — 每核心 MSR 电压瓷砖 + 主板轨道</figcaption></figure>
+      <figure><img src="img/color.png" alt="灯光页截图"><figcaption>🎨 灯光 — 模式/参数 + 逐颗渐变编辑器</figcaption></figure>
+      <figure><img src="img/info.png" alt="信息页截图"><figcaption>💻 信息 — 每核频率瓷砖 + 内存条明细</figcaption></figure>
+    </div>
+
+    <h2 class="sec">🌀 风扇：图上直接拖曲线</h2>
+    <ul class="feat">
+      <li>卡片式通道列表（CPU_FAN / 水泵 / SYS_FAN…），实时转速与占空比</li>
+      <li><strong>曲线模式</strong>：左键拖锚点、空白点击加锚点、右键删除；拖动中 250ms 节流<strong>即时下发</strong>，转速实时跟随</li>
+      <li>距当前温度最近的锚点画<strong>亮圈</strong>——它决定此刻的转速</li>
+      <li><strong>手动模式</strong>拉滑块恒速；<strong>BIOS 模式</strong>一键交还主板</li>
+      <li>it87 驱动「Device or resource busy」自动重断言与限频自愈；守护进程退出时自动把 PWM 交还 BIOS</li>
+    </ul>
+
+    <h2 class="sec">⚡ 电压：读 CPU 自己报的数</h2>
+    <ul class="feat">
+      <li><strong>每核心电压</strong>：逐逻辑 CPU 读 <code>MSR 0x198</code>（IA32_PERF_STATUS，分辨率 1/8192 V），与 HWiNFO / XTU 同源</li>
+      <li>24 块核心瓷砖 + 当前最高核高亮 + 会话 min/max 汇总 + VCore 5 分钟曲线</li>
+      <li><strong>主板电压轨道</strong>：Super-I/O 全部 ADC 通道，带会话区间、芯片限值与报警标注</li>
+      <li>实测定案：主板 SIO 上并没有 VCore 轨道（本机三态交叉验证），面板明确标注每条轨道的真实语义</li>
+    </ul>
+
+    <h2 class="sec">🎨 灯光：OpenRGB 交互范式</h2>
+    <ul class="feat">
+      <li>纯 Python 实现 OpenRGB SDK 客户端（协议 v3 控制通道 + v6 配置档通道），零第三方依赖</li>
+      <li>模式列表按设备 flags 动态生成参数区：颜色数组、速度 / 亮度滑杆、方向</li>
+      <li><strong>逐颗渐变编辑器</strong>：画笔 / 彩虹 / 清除一键填充，150ms 节流批量下发，自动切入 Direct 模式</li>
+      <li><strong>Direct 模式亮度真正可用</strong>：按亮度系数缩放灯色重发（可逆、不叠加），修复了控制器对灯条忽略 brightness 的固有行为</li>
+      <li>配置档保存 / 加载 / 删除，与 OpenRGB 官方 profiles 完全兼容</li>
+    </ul>
+
+    <h2 class="sec">🌡️ 温度与 💻 信息</h2>
+    <ul class="feat">
+      <li>渐变填充曲线大图、可点击图例芯片、传感器限值与状态色</li>
+      <li>每逻辑 CPU 实时频率瓷砖；内存条插槽/厂商/容量/实时时钟频率；主板 / BIOS / GPU 概览</li>
+    </ul>
+
+    <h2 class="sec">🏗️ 架构</h2>
+    <ul class="feat">
+      <li><strong>界面与硬件分离</strong>：GTK4 界面（普通用户）+ systemd 守护进程（root：MSR / sysfs PWM / SDK），HTTP 本机通信</li>
+      <li>界面崩溃或重启都不影响风扇与灯光的既有策略</li>
+      <li>全部 SDK / HTTP 调用在工作线程执行，界面零卡顿</li>
+    </ul>
+
+    <h2 class="sec" id="install">📦 安装</h2>
+    <pre class="code">git clone https://github.com/kanghelyu/hw-dash.git ~/Applications/hw-dash
+
+# 先试运行（daemon 不在线也能看温度）
+python3 ~/Applications/hw-dash/hwdash.py
+
+# 安装守护进程（编辑 hwdashd.service 里的 YOUR_USER 与路径后）
+sudo cp hwdashd.service /etc/systemd/system/
+sudo systemctl daemon-reload &amp;&amp; sudo systemctl enable --now hwdashd</pre>
+
+    <div class="license-note">
+      📄 <strong>许可证</strong>：PolyForm Noncommercial 1.0.0 —— <strong>严格不可商用</strong>：个人学习、自用、修改、分享完全自由；
+      任何以商业利益或金钱补偿为主要目的的使用需另行获得书面授权。<strong>非传染性</strong>：修改版无强制开源义务，保留声明即可。
+      / License: PolyForm Noncommercial 1.0.0 — strictly non-commercial, non-copyleft.
+    </div>
+
+    <div class="actions-row">
+      <a class="button" href="https://github.com/kanghelyu/hw-dash">GitHub 仓库</a>
+      <a class="button" href="../../projects.html">← 返回 Apps</a>
+    </div>
+
+    <div class="footer" style="margin-top:40px; opacity:.6; font-size:12px;">HWDASH · GTK4 · FOR LINUX</div>
+  </main>
+</body>
+</html>
