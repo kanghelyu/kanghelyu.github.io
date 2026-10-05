@@ -53,6 +53,7 @@
       <span class="badge">Wayland / X11</span>
       <span class="badge">OpenRGB SDK</span>
       <span class="badge">systemd</span>
+                                    <span class="badge">中 / EN 双语界面</span>
     </div>
 
     <div class="actions-row">
@@ -99,6 +100,15 @@
     <ul class="feat">
       <li>渐变填充曲线大图、可点击图例芯片、传感器限值与状态色</li>
       <li>每逻辑 CPU 实时频率瓷砖；内存条插槽/厂商/容量/实时时钟频率；主板 / BIOS / GPU 概览</li>
+      <li><strong>实时占用</strong>：整机 CPU 利用率、内存进度条，GPU 利用率 / 频率 / 显存 / 温度（NVIDIA · AMD · Intel 核显，检测到什么显示什么）</li>
+      <li><strong>中 / EN 双语界面</strong>：标题栏一键切换，选择持久保存</li>
+    </ul>
+
+    <h2 class="sec">🔀 硬件泛化</h2>
+    <ul class="feat">
+      <li>风扇芯片自动发现：任何暴露 <code>pwmN + pwmN_enable</code> 的 hwmon 驱动（it87 / nct67xx / …）</li>
+      <li>每核心电压为 Intel 语义（MSR 0x198）；AMD / 其他架构给出明确提示，主板轨道不受影响</li>
+      <li>传感器、灯光设备、GPU 全部按探测结果动态生成，检测不到就降级隐藏</li>
     </ul>
 
     <h2 class="sec">🏗️ 架构</h2>
@@ -117,6 +127,15 @@ python3 ~/Applications/hw-dash/hwdash.py
 # 安装守护进程（编辑 hwdashd.service 里的 YOUR_USER 与路径后）
 sudo cp hwdashd.service /etc/systemd/system/
 sudo systemctl daemon-reload &amp;&amp; sudo systemctl enable --now hwdashd</pre>
+
+    <div class="license-note">
+      ⚠️ <strong>免责声明</strong>：本软件按现状提供，作者不对因使用或误用造成的任何硬件或数据问题负责。
+      <strong>风扇曲线 / 手动模式会接管散热</strong>——调速不合理可能导致散热不足；过热由硬件降频、强制关机兜底，但长期高温会加速老化。
+      电压 / 温度 / 频率等只读功能没有硬件风险。首启弹窗确认一次。
+      <br>
+      ⚠️ <strong>Disclaimer</strong>: provided as-is; fan curve/manual modes take over cooling — mis-tuned curves can cause insufficient cooling;
+      hardware throttling and forced shutdown are the last line of defense, but sustained heat ages hardware faster. Read-only pages carry no risk.
+    </div>
 
     <div class="license-note">
       📄 <strong>许可证</strong>：PolyForm Noncommercial 1.0.0 —— <strong>严格不可商用</strong>：个人学习、自用、修改、分享完全自由；
